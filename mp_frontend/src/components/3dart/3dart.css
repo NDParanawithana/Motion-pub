@@ -1,0 +1,286 @@
+/* ===== 3D Art Wrapper & Scene ===== */
+.three-d-art-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  perspective: 1200px;
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+.three-d-art-scene {
+  position: relative;
+  width: min(100%, 420px);
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+/* ===== Ambient Glows ===== */
+.art-glow-core {
+  position: absolute;
+  width: 65%;
+  height: 65%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(148, 224, 0, 0.3) 0%, rgba(148, 224, 0, 0.06) 50%, transparent 75%);
+  filter: blur(50px);
+  z-index: 1;
+  pointer-events: none;
+  animation: glowPulse 4s ease-in-out infinite alternate;
+}
+
+.art-glow-ring-outer {
+  position: absolute;
+  width: 88%;
+  height: 88%;
+  border-radius: 50%;
+  border: 1px solid rgba(148, 224, 0, 0.12);
+  box-shadow: 0 0 30px rgba(148, 224, 0, 0.1), inset 0 0 30px rgba(148, 224, 0, 0.06);
+  pointer-events: none;
+  z-index: 1;
+  transform-style: preserve-3d;
+  animation: ringSpin 22s linear infinite;
+}
+
+.art-glow-ring-inner {
+  position: absolute;
+  width: 105%;
+  height: 105%;
+  border-radius: 50%;
+  border: 1px dashed rgba(148, 224, 0, 0.18);
+  pointer-events: none;
+  z-index: 1;
+  transform-style: preserve-3d;
+  animation: ringSpinReverse 28s linear infinite;
+}
+
+/* ===== 3D Card / Floating ===== */
+.art-card-container {
+  position: relative;
+  width: 92%;
+  height: 92%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+.art-floating-layer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  animation: floatLevitate 6s ease-in-out infinite alternate;
+}
+
+/* ===== SVG Stage ===== */
+.art-svg-stage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateZ(30px);
+}
+
+.art-svg-canvas {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 15px 40px rgba(0, 0, 0, 0.65));
+}
+
+/* ===== Monitor Entry Animation ===== */
+.svg-monitor {
+  animation: monitorFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+/* ===== Play Button Pulse ===== */
+.svg-play-overlay {
+  animation: playBtnPulse 3s ease-in-out infinite;
+}
+
+/* ===== REC Dot Blink ===== */
+.svg-rec-dot {
+  animation: recBlink 1.5s ease-in-out infinite;
+}
+
+/* ===== Status LED Breathe ===== */
+.svg-status-led {
+  animation: ledBreathe 2.5s ease-in-out infinite;
+}
+
+/* ===== Timecode Flicker ===== */
+.svg-timecode {
+  animation: timecodeFlicker 4s steps(1) infinite;
+}
+
+/* ===== Timeline Panel Slide Up ===== */
+.svg-timeline-panel {
+  animation: timelineSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+}
+
+/* ===== Playhead Scrub ===== */
+.svg-playhead {
+  animation: playheadScrub 6s linear infinite;
+}
+
+/* ===== Film Strip Scroll ===== */
+.svg-filmstrip {
+  animation: filmScroll 8s linear infinite;
+}
+
+.svg-filmstrip-right {
+  animation: filmScrollReverse 10s linear infinite;
+}
+
+/* ===== Audio Waveform Shimmer ===== */
+.svg-waveform-bars {
+  animation: waveShimmer 3s ease-in-out infinite alternate;
+}
+
+/* ===== Timeline Clips Subtle Glow ===== */
+.svg-clip {
+  transition: opacity 0.3s ease;
+}
+
+.svg-clip-1 { animation: clipPulse 4s ease-in-out 0s infinite alternate; }
+.svg-clip-2 { animation: clipPulse 4s ease-in-out 0.5s infinite alternate; }
+.svg-clip-3 { animation: clipPulse 4s ease-in-out 1s infinite alternate; }
+.svg-clip-4 { animation: clipPulse 4s ease-in-out 1.5s infinite alternate; }
+.svg-clip-5 { animation: clipPulse 4s ease-in-out 0.8s infinite alternate; }
+.svg-clip-6 { animation: clipPulse 4s ease-in-out 1.2s infinite alternate; }
+.svg-clip-7 { animation: clipPulse 4s ease-in-out 0.3s infinite alternate; }
+
+/* ===== Floating Particles ===== */
+.art-particles {
+  position: absolute;
+  inset: -15%;
+  pointer-events: none;
+  z-index: 6;
+  transform-style: preserve-3d;
+}
+
+.art-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--primary-color, #94E000);
+  box-shadow: 0 0 12px var(--primary-color, #94E000);
+  animation: particleFloat 4s infinite ease-in-out;
+}
+
+.art-particle-1 { width: 5px; height: 5px; top: 18%; left: 10%; animation-delay: 0s; transform: translateZ(60px); }
+.art-particle-2 { width: 4px; height: 4px; top: 72%; left: 8%; animation-delay: 1.1s; transform: translateZ(50px); }
+.art-particle-3 { width: 7px; height: 7px; top: 18%; right: 14%; animation-delay: 1.8s; transform: translateZ(70px); }
+.art-particle-4 { width: 4px; height: 4px; bottom: 18%; right: 16%; animation-delay: 2.5s; transform: translateZ(45px); }
+
+/* ============================
+   KEYFRAME ANIMATIONS
+   ============================ */
+
+@keyframes monitorFadeIn {
+  0%   { opacity: 0; transform: scale(0.85) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes playBtnPulse {
+  0%, 100% { opacity: 0.9; }
+  50%      { opacity: 0.5; }
+}
+
+@keyframes recBlink {
+  0%, 100% { opacity: 0.9; }
+  50%      { opacity: 0.15; }
+}
+
+@keyframes ledBreathe {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 4px #94E000); }
+  50%      { opacity: 0.4; filter: drop-shadow(0 0 1px #94E000); }
+}
+
+@keyframes timecodeFlicker {
+  0%   { opacity: 0.8; }
+  25%  { opacity: 0.85; }
+  50%  { opacity: 0.75; }
+  75%  { opacity: 0.9; }
+  100% { opacity: 0.8; }
+}
+
+@keyframes timelineSlideIn {
+  0%   { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes playheadScrub {
+  0%   { transform: translateX(78px); }
+  100% { transform: translateX(335px); }
+}
+
+@keyframes filmScroll {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(-14px); }
+}
+
+@keyframes filmScrollReverse {
+  0%   { transform: translateY(-14px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes waveShimmer {
+  0%   { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+@keyframes clipPulse {
+  0%   { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+@keyframes glowPulse {
+  0%   { transform: scale(0.9); opacity: 0.5; }
+  100% { transform: scale(1.2); opacity: 1; }
+}
+
+@keyframes ringSpin {
+  0%   { transform: rotateZ(0deg) rotateX(60deg); }
+  100% { transform: rotateZ(360deg) rotateX(60deg); }
+}
+
+@keyframes ringSpinReverse {
+  0%   { transform: rotateZ(360deg) rotateY(55deg); }
+  100% { transform: rotateZ(0deg) rotateY(55deg); }
+}
+
+@keyframes floatLevitate {
+  0%   { transform: translateY(0px) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+  50%  { transform: translateY(-14px) rotateX(3deg) rotateY(-3deg) rotateZ(1deg); }
+  100% { transform: translateY(8px) rotateX(-2deg) rotateY(3deg) rotateZ(-1deg); }
+}
+
+@keyframes particleFloat {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
+  50%      { transform: translateY(-18px) scale(1.4); opacity: 1; }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .three-d-art-wrapper {
+    justify-content: center;
+    padding: 1rem 0.5rem 0;
+  }
+
+  .three-d-art-scene {
+    width: min(100%, 320px);
+  }
+}
