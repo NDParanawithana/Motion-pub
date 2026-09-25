@@ -1,10 +1,14 @@
 import Navbar from './components/navbar/navbar'
 import Hero from './components/hero/hero'
+import MongoStatus from './components/MongoStatus/MongoStatus'
 import './App.css'
 
 function App() {
   return (
     <div className="landing-page">
+      {/* MongoDB Connection Status Checker */}
+      <MongoStatus />
+
       {/* Navigation Bar */}
       <Navbar />
 
