@@ -1,10 +1,14 @@
 import Navbar from './components/navbar/navbar'
 import Hero from './components/hero/hero'
+import BackendTest from './components/BackendTest/BackendTest'
 import './App.css'
 
 function App() {
   return (
     <div className="landing-page">
+      {/* Temporary backend connection check widget */}
+      <BackendTest />
+
       {/* Navigation Bar */}
       <Navbar />
 
