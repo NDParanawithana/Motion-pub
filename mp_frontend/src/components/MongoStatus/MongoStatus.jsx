@@ -139,10 +139,17 @@ export default function MongoStatus() {
                 </div>
               )}
 
-              {(status.error.includes('whitelist') || status.error.includes('ETIMEDOUT')) && (
+              {(status.error.includes('whitelist') || status.error.includes('ETIMEDOUT') || status.error.includes('SSL alert') || status.error.includes('IP Access List')) && (
                 <div className="instruction-box">
-                  <strong>Network Hint:</strong>
-                  <p>In MongoDB Atlas &gt; <em>Network Access</em>, make sure you clicked <strong>Add IP Address &gt; Allow Access From Anywhere (0.0.0.0/0)</strong>.</p>
+                  <strong>How to Fix IP Access List (SSL Alert 80):</strong>
+                  <ol>
+                    <li>Log into <a href="https://cloud.mongodb.com" target="_blank" rel="noreferrer" style={{ color: '#38bdf8' }}>MongoDB Atlas</a>.</li>
+                    <li>In the left sidebar under <strong>Security</strong>, click <strong>Network Access</strong>.</li>
+                    <li>Click <strong>+ Add IP Address</strong>.</li>
+                    <li>Choose <strong>Add Current IP Address</strong> (or click <strong>Allow Access From Anywhere</strong> / <code>0.0.0.0/0</code> for development).</li>
+                    <li>Click <strong>Confirm</strong> and wait ~1 minute for Atlas to apply the changes.</li>
+                    <li>Click <strong>Retest Connection</strong> below.</li>
+                  </ol>
                 </div>
               )}
             </div>

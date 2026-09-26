@@ -69,6 +69,12 @@ export async function checkMongoStatus() {
 
     if (errorDetail.includes('bad auth') || errorDetail.includes('authentication failed')) {
       errorDetail = 'Authentication failed: The password or username in mp_backend/.env does not match your Database User in MongoDB Atlas.';
+    } else if (
+      errorDetail.includes('tlsv1 alert internal error') ||
+      errorDetail.includes('SSL alert number 80') ||
+      errorDetail.includes('ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR')
+    ) {
+      errorDetail = 'Atlas IP Access List Blocked (SSL alert 80): MongoDB Atlas rejected the connection because your current IP address is not in the Network Access IP Access List.';
     }
 
     return {
