@@ -1,9 +1,15 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { connectToMongoDB, checkMongoStatus, disconnectFromMongoDB } from './db.js';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { connectToMongoDB, checkMongoStatus, disconnectFromMongoDB } from './config/db.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // Express App Initialization
 const app = express();
