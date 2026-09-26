@@ -2,14 +2,50 @@ import { useState, useEffect, useRef } from 'react'
 import ThreeDArt from '../3dart/3dart'
 import './hero.css'
 
+const DEFAULT_HERO_TEXT = "Motion Pub transforms your ideas into powerful visual experiences through creative editing, motion, and storytelling."
+
 export default function Hero() {
-  const fullText = "Motion Pub transforms your ideas into powerful visual experiences through creative editing, motion, and storytelling."
+  const [fullText, setFullText] = useState(() => {
+    return localStorage.getItem('mp_hero_text') || DEFAULT_HERO_TEXT
+  })
   const [displayedText, setDisplayedText] = useState('')
   const [isTypingComplete, setIsTypingComplete] = useState(false)
 
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [isHovered, setIsHovered] = useState(false)
   const containerRef = useRef(null)
+
+  // Sync with MongoDB backend and window custom event
+  useEffect(() => {
+    let isMounted = true
+
+    // Fetch latest hero text from database
+    fetch('/api/content/hero')
+      .then(res => res.json())
+      .then(data => {
+        if (isMounted && data?.success && data?.fullText) {
+          setFullText(data.fullText)
+          localStorage.setItem('mp_hero_text', data.fullText)
+        }
+      })
+      .catch(() => {
+        // Fallback silently to current text
+      })
+
+    // Listen to real-time updates from Admin Dashboard
+    const handleUpdate = (e) => {
+      if (e?.detail?.fullText) {
+        setFullText(e.detail.fullText)
+        localStorage.setItem('mp_hero_text', e.detail.fullText)
+      }
+    }
+
+    window.addEventListener('hero-text-updated', handleUpdate)
+    return () => {
+      isMounted = false
+      window.removeEventListener('hero-text-updated', handleUpdate)
+    }
+  }, [])
 
   // Typing animation effect
   useEffect(() => {

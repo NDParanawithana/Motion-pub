@@ -1,14 +1,71 @@
+import { useState, useEffect } from 'react'
 import Navbar from './components/navbar/navbar'
 import Hero from './components/hero/hero'
 import MongoStatus from './components/MongoStatus/MongoStatus'
-import AdminLogin from './admin/adminLogin'
+import AdminLogin from './admin/adminlogin/adminLogin'
+import AdminDashboard from './admin/dashboard/dashboard'
 import './App.css'
 
 function App() {
+  const [currentView, setCurrentView] = useState(() => {
+    return window.location.hash === '#dashboard' ? 'dashboard' : 'site';
+  });
+
+  const [adminUser, setAdminUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('mp_admin_user')) || null;
+    } catch {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    const handleHash = () => {
+      if (window.location.hash === '#dashboard') {
+        setCurrentView('dashboard');
+      } else if (window.location.hash === '#site' || window.location.hash === '') {
+        setCurrentView('site');
+      }
+    };
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
+
+  const handleEnterDashboard = (user) => {
+    setAdminUser(user);
+    if (user) {
+      localStorage.setItem('mp_admin_user', JSON.stringify(user));
+    }
+    setCurrentView('dashboard');
+    window.location.hash = '#dashboard';
+  };
+
+  const handleBackToSite = () => {
+    setCurrentView('site');
+    window.location.hash = '';
+  };
+
+  const handleLogout = () => {
+    setAdminUser(null);
+    localStorage.removeItem('mp_admin_user');
+    setCurrentView('site');
+    window.location.hash = '';
+  };
+
+  if (currentView === 'dashboard') {
+    return (
+      <AdminDashboard
+        adminUser={adminUser}
+        onBackToSite={handleBackToSite}
+        onLogout={handleLogout}
+      />
+    );
+  }
+
   return (
     <div className="landing-page">
       {/* Admin Login Modal (Triggered by Ctrl+Q or bottom-right badge) */}
-      <AdminLogin />
+      <AdminLogin onEnterDashboard={handleEnterDashboard} />
 
       {/* MongoDB Connection Status Checker */}
       <MongoStatus />

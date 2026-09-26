@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { connectToMongoDB, checkMongoStatus, disconnectFromMongoDB } from './config/db.js';
 import adminLoginRoutes from './routes/admin/admin_login_routes.js';
+import heroRoutes from './routes/content/hero_routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +23,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/admin', adminLoginRoutes);
+app.use('/api/content', heroRoutes);
 
 // Attempt initial MongoDB connection
 connectToMongoDB().catch((err) => {
