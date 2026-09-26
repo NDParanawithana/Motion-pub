@@ -1,0 +1,387 @@
+/* Admin Login Modal Styling - Motion Pub Design System */
+
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background-color: rgba(10, 10, 10, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: adminOverlayFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes adminOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.admin-modal-container {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(180deg, #1c1f18 0%, #151713 50%, #10120f 100%);
+  border: 1px solid rgba(148, 224, 0, 0.28);
+  border-radius: 16px;
+  box-shadow: 
+    0 24px 70px rgba(0, 0, 0, 0.9),
+    0 0 50px rgba(148, 224, 0, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  animation: adminModalPopIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes adminModalPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Ambient Accent Glow Line at Top */
+.admin-modal-accent-bar {
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent 0%, #94E000 50%, transparent 100%);
+  box-shadow: 0 0 12px #94E000;
+}
+
+/* Close Button */
+.admin-modal-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #a0a0a0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-modal-close-btn:hover {
+  background: rgba(148, 224, 0, 0.15);
+  border-color: rgba(148, 224, 0, 0.4);
+  color: #94E000;
+  transform: rotate(90deg);
+}
+
+.admin-modal-content {
+  padding: 2rem 2.25rem 2rem 2.25rem;
+}
+
+/* Header */
+.admin-modal-header {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.admin-badge-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(148, 224, 0, 0.08);
+  border: 1px solid rgba(148, 224, 0, 0.25);
+  margin-bottom: 0.9rem;
+}
+
+.admin-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #94E000;
+  box-shadow: 0 0 8px #94E000;
+  animation: adminPulse 2s infinite ease-in-out;
+}
+
+@keyframes adminPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.admin-badge-text {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #94E000;
+  text-transform: uppercase;
+}
+
+.admin-modal-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.35rem;
+}
+
+.admin-modal-subtitle {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  line-height: 1.4;
+}
+
+/* Form Styles */
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.admin-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.admin-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #e5e7eb;
+  letter-spacing: 0.01em;
+}
+
+.admin-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.admin-input-icon {
+  position: absolute;
+  left: 0.95rem;
+  color: #6b7280;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
+.admin-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 2.6rem 0 2.6rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-input::placeholder {
+  color: #4b5563;
+}
+
+.admin-input:focus {
+  background: rgba(148, 224, 0, 0.03);
+  border-color: #94E000;
+  box-shadow: 0 0 0 3px rgba(148, 224, 0, 0.15);
+}
+
+.admin-input:focus + .admin-input-icon,
+.admin-input-wrapper:focus-within .admin-input-icon {
+  color: #94E000;
+}
+
+.admin-password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color 0.2s ease;
+}
+
+.admin-password-toggle:hover {
+  color: #e5e7eb;
+}
+
+/* Auxiliary Options */
+.admin-form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin-top: -0.2rem;
+}
+
+.admin-remember-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #9ca3af;
+  cursor: pointer;
+  user-select: none;
+}
+
+.admin-checkbox {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  position: relative;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.admin-checkbox:checked {
+  background: #94E000;
+  border-color: #94E000;
+}
+
+.admin-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  left: 4.5px;
+  top: 1.5px;
+  width: 4px;
+  height: 8px;
+  border: solid #000;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.admin-link-hint {
+  color: #9ca3af;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.admin-link-hint:hover {
+  color: #94E000;
+  text-decoration: underline;
+}
+
+/* Submit Button */
+.admin-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 46px;
+  margin-top: 0.5rem;
+  background: #94E000;
+  color: #0b0c0a;
+  border: none;
+  border-radius: 9px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 16px rgba(148, 224, 0, 0.28);
+}
+
+.admin-submit-btn:hover {
+  background: #a6f505;
+  box-shadow: 0 6px 24px rgba(148, 224, 0, 0.42);
+  transform: translateY(-1px);
+}
+
+.admin-submit-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(148, 224, 0, 0.25);
+}
+
+/* Footer / Shortcut info */
+.admin-modal-footer {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.admin-shortcut-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.admin-kbd {
+  display: inline-block;
+  padding: 0.15rem 0.4rem;
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #94E000;
+  background: rgba(148, 224, 0, 0.08);
+  border: 1px solid rgba(148, 224, 0, 0.2);
+  border-radius: 4px;
+}
+
+.admin-security-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #9ca3af;
+}
+
+/* Subtle Floating Hotkey Hint (Bottom-Right of screen when modal is closed) */
+.admin-hint-pill {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  z-index: 9998;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.85rem;
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  font-size: 0.74rem;
+  color: #9ca3af;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  user-select: none;
+}
+
+.admin-hint-pill:hover {
+  border-color: rgba(148, 224, 0, 0.4);
+  color: #ffffff;
+  background: rgba(28, 28, 28, 0.95);
+  box-shadow: 0 4px 20px rgba(148, 224, 0, 0.15);
+}
+
+.admin-hint-pill .admin-kbd {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.35rem;
+}

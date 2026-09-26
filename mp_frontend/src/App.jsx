@@ -1,11 +1,15 @@
 import Navbar from './components/navbar/navbar'
 import Hero from './components/hero/hero'
 import MongoStatus from './components/MongoStatus/MongoStatus'
+import AdminLogin from './admin/adminLogin'
 import './App.css'
 
 function App() {
   return (
     <div className="landing-page">
+      {/* Admin Login Modal (Triggered by Ctrl+Q or bottom-right badge) */}
+      <AdminLogin />
+
       {/* MongoDB Connection Status Checker */}
       <MongoStatus />
 
