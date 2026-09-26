@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { connectToMongoDB, checkMongoStatus, disconnectFromMongoDB } from './config/db.js';
+import adminLoginRoutes from './routes/admin/admin_login_routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,6 +19,9 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors({ origin: 'http://localhost:5173' }));
 app.use(express.json());
+
+// Routes
+app.use('/api/admin', adminLoginRoutes);
 
 // Attempt initial MongoDB connection
 connectToMongoDB().catch((err) => {

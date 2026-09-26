@@ -50,6 +50,11 @@ export async function connectToMongoDB() {
   return client;
 }
 
+export async function getDb(dbName = 'motionpub_db') {
+  const c = await connectToMongoDB();
+  return c.db(dbName);
+}
+
 export async function checkMongoStatus() {
   const uri = getMongoUri();
 
