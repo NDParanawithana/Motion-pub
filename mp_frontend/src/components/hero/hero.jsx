@@ -8,6 +8,10 @@ export default function Hero() {
   const [fullText, setFullText] = useState(() => {
     return localStorage.getItem('mp_hero_text') || DEFAULT_HERO_TEXT
   })
+  const [typingSpeed, setTypingSpeed] = useState(() => {
+    const saved = localStorage.getItem('mp_typing_speed')
+    return saved ? parseInt(saved, 10) : 40
+  })
   const [displayedText, setDisplayedText] = useState('')
   const [isTypingComplete, setIsTypingComplete] = useState(false)
 
@@ -32,7 +36,7 @@ export default function Hero() {
         // Fallback silently to current text
       })
 
-    // Listen to real-time updates from Admin Dashboard
+    // Listen to real-time updates from Admin Dashboard (same window and cross-tab)
     const handleUpdate = (e) => {
       if (e?.detail?.fullText) {
         setFullText(e.detail.fullText)
@@ -40,10 +44,29 @@ export default function Hero() {
       }
     }
 
+    const handleStorage = (e) => {
+      if (e.key === 'mp_hero_text' && e.newValue) {
+        setFullText(e.newValue)
+      }
+      if (e.key === 'mp_typing_speed' && e.newValue) {
+        setTypingSpeed(parseInt(e.newValue, 10))
+      }
+    }
+
+    const handleSpeedUpdate = (e) => {
+      if (e?.detail?.speed) {
+        setTypingSpeed(e.detail.speed)
+      }
+    }
+
     window.addEventListener('hero-text-updated', handleUpdate)
+    window.addEventListener('hero-speed-updated', handleSpeedUpdate)
+    window.addEventListener('storage', handleStorage)
     return () => {
       isMounted = false
       window.removeEventListener('hero-text-updated', handleUpdate)
+      window.removeEventListener('hero-speed-updated', handleSpeedUpdate)
+      window.removeEventListener('storage', handleStorage)
     }
   }, [])
 
@@ -61,10 +84,10 @@ export default function Hero() {
         setIsTypingComplete(true)
         clearInterval(timer)
       }
-    }, 40)
+    }, typingSpeed)
 
     return () => clearInterval(timer)
-  }, [fullText])
+  }, [fullText, typingSpeed])
 
   const handleMouseMove = (e) => {
     if (!containerRef.current) return

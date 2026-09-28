@@ -123,9 +123,9 @@
   z-index: 2;
 }
 
-/* ===== TOP CARD: Raven Noir Portrait ===== */
+/* ===== TOP CARD: Video Showcase ===== */
 .art-card-top {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 16 / 9;
   transform: translateZ(35px);
   animation: topCardShift 6s ease-in-out infinite alternate;
 }

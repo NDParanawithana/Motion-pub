@@ -31,18 +31,57 @@ function App() {
     return () => window.removeEventListener('hashchange', handleHash);
   }, []);
 
+  // Set page title dynamically based on active view
+  useEffect(() => {
+    if (currentView === 'dashboard') {
+      document.title = 'MP Admin';
+    } else {
+      document.title = 'Motion Pub';
+    }
+  }, [currentView]);
+
+  // Sync admin user across browser tabs
+  useEffect(() => {
+    const handleStorage = (e) => {
+      if (e.key === 'mp_admin_user') {
+        try {
+          const user = e.newValue ? JSON.parse(e.newValue) : null;
+          setAdminUser(user);
+        } catch {
+          setAdminUser(null);
+        }
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
+
   const handleEnterDashboard = (user) => {
     setAdminUser(user);
     if (user) {
       localStorage.setItem('mp_admin_user', JSON.stringify(user));
     }
-    setCurrentView('dashboard');
-    window.location.hash = '#dashboard';
+    const dashboardUrl = `${window.location.origin}${window.location.pathname}#dashboard`;
+    const newWindow = window.open(dashboardUrl, '_blank');
+    if (newWindow) {
+      newWindow.focus();
+    } else {
+      // Fallback to same tab if browser blocks popups
+      setCurrentView('dashboard');
+      window.location.hash = '#dashboard';
+    }
   };
 
   const handleBackToSite = () => {
-    setCurrentView('site');
-    window.location.hash = '';
+    const siteUrl = `${window.location.origin}${window.location.pathname}`;
+    const newWindow = window.open(siteUrl, '_blank');
+    if (newWindow) {
+      newWindow.focus();
+    } else {
+      // Fallback to same tab if browser blocks popups
+      setCurrentView('site');
+      window.location.hash = '';
+    }
   };
 
   const handleLogout = () => {
@@ -65,7 +104,7 @@ function App() {
   return (
     <div className="landing-page">
       {/* Admin Login Modal (Triggered by Ctrl+Q or bottom-right badge) */}
-      <AdminLogin onEnterDashboard={handleEnterDashboard} />
+      <AdminLogin onEnterDashboard={handleEnterDashboard} adminUser={adminUser} />
 
       {/* MongoDB Connection Status Checker */}
       <MongoStatus />

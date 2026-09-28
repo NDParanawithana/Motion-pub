@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import crowPortrait from '../../assets/images/crow_portrait.jpg'
+import defaultVideo from '../../assets/videos/default.mp4'
 import timelinePreview from '../../assets/images/timeline_preview.jpg'
 import './3dart.css'
 
@@ -47,15 +47,17 @@ export default function ThreeDArt() {
           }}
         >
           <div className="art-floating-layer">
-            {/* TOP CARD: Raven in Trench Coat */}
+            {/* TOP CARD: Video Showcase */}
             <div className="art-card art-card-top">
               <div className="art-card-border-glow"></div>
               <div className="art-card-content">
-                <img
-                  src={crowPortrait}
-                  alt="Cinematic Raven in Trench Coat"
+                <video
+                  src={defaultVideo}
                   className="art-card-img"
-                  loading="eager"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
                 />
                 {/* Subtle Glass / Sheen Overlay */}
                 <div className="art-card-sheen"></div>

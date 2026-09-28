@@ -1,0 +1,348 @@
+/* Hero Section Editor Styling */
+@import '../dashboard.css';
+
+.mp-hero-editor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .mp-hero-editor-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Prefixed Statement Editor with Locked Brand Tag */
+.mp-prefixed-editor {
+  position: relative;
+  width: 100%;
+  min-height: 125px;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  transition: all 0.2s ease;
+  cursor: text;
+}
+
+.mp-prefixed-editor:focus-within {
+  border-color: #94E000;
+  background: rgba(148, 224, 0, 0.02);
+  box-shadow: 0 0 0 3px rgba(148, 224, 0, 0.15);
+}
+
+.mp-prefix-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mp-prefix-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(148, 224, 0, 0.12);
+  border: 1px solid rgba(148, 224, 0, 0.35);
+  border-radius: 6px;
+  padding: 0.22rem 0.55rem;
+  color: #94E000;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  user-select: none;
+}
+
+.mp-prefix-status {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  background: rgba(148, 224, 0, 0.2);
+  color: #d9f99d;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.mp-prefixed-textarea {
+  width: 100%;
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  padding: 0;
+  min-height: 75px;
+}
+
+.mp-prefixed-textarea::placeholder {
+  color: #4b5563;
+}
+
+/* Action Buttons */
+.mp-editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.mp-btn-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.6rem;
+  border-radius: 9px;
+  background: #94E000;
+  color: #0b0c0a;
+  font-weight: 700;
+  font-size: 0.88rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 15px rgba(148, 224, 0, 0.25);
+}
+
+.mp-btn-save:hover:not(:disabled) {
+  background: #a8f705;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(148, 224, 0, 0.38);
+}
+
+.mp-btn-save:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  box-shadow: none;
+  filter: grayscale(40%);
+  transform: none;
+}
+
+.mp-btn-reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.25rem;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #9ca3af;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mp-btn-reset:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+/* Live Simulator / Preview Card */
+.mp-preview-card {
+  background: #11130f;
+  border: 1px solid rgba(148, 224, 0, 0.25);
+  border-radius: 14px;
+  padding: 1.75rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.mp-preview-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.mp-preview-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  color: #94E000;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.mp-btn-restart-sim {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.72rem;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mp-btn-restart-sim:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mp-preview-mockup-window {
+  background: #171a15;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 1.5rem;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.mp-mockup-typing-text {
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.55;
+  color: #ffffff;
+}
+
+.mp-mockup-brand {
+  color: #94E000;
+  font-weight: 700;
+  text-shadow: 0 0 12px rgba(148, 224, 0, 0.45);
+}
+
+.mp-mockup-cursor {
+  display: inline-block;
+  color: #94E000;
+  font-weight: 300;
+  margin-left: 2px;
+  animation: mpBlink 0.9s infinite;
+}
+
+@keyframes mpBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.mp-preview-meta {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.mp-speed-control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.mp-speed-label-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #9ca3af;
+}
+
+.mp-speed-label-wrap svg {
+  color: #94E000;
+}
+
+.mp-speed-stepper {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 0.15rem;
+  gap: 0.2rem;
+}
+
+.mp-speed-btn {
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: #e5e7eb;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  line-height: 1;
+}
+
+.mp-speed-btn:hover:not(:disabled) {
+  background: rgba(148, 224, 0, 0.15);
+  border-color: rgba(148, 224, 0, 0.4);
+  color: #94E000;
+}
+
+.mp-speed-btn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.mp-speed-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 0.35rem;
+}
+
+.mp-speed-input {
+  width: 38px;
+  background: transparent;
+  border: none;
+  color: #94E000;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 800;
+  text-align: center;
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.mp-speed-input::-webkit-outer-spin-button,
+.mp-speed-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.mp-speed-unit {
+  font-size: 0.72rem;
+  color: #6b7280;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.mp-speed-reset-btn {
+  background: transparent;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  color: #9ca3af;
+  border-radius: 6px;
+  padding: 0.22rem 0.55rem;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mp-speed-reset-btn:hover {
+  border-color: #94E000;
+  color: #94E000;
+  background: rgba(148, 224, 0, 0.05);
+}

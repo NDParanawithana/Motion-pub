@@ -9,7 +9,8 @@ import './adminLogin.css';
 export default function AdminLogin({
   isOpen: controlledIsOpen,
   onClose: controlledOnClose,
-  onEnterDashboard
+  onEnterDashboard,
+  adminUser
 }) {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -20,7 +21,6 @@ export default function AdminLogin({
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [loggedInUser, setLoggedInUser] = useState(null);
 
   const usernameInputRef = useRef(null);
 
@@ -29,6 +29,7 @@ export default function AdminLogin({
   const isModalOpen = isControlled ? controlledIsOpen : internalIsOpen;
 
   const handleClose = () => {
+    setError('');
     if (isControlled && controlledOnClose) {
       controlledOnClose();
     } else {
@@ -37,6 +38,11 @@ export default function AdminLogin({
   };
 
   const handleOpen = () => {
+    if (adminUser && onEnterDashboard) {
+      onEnterDashboard(adminUser);
+      return;
+    }
+    setError('');
     if (isControlled && controlledOnClose) {
       // If controlled, parent handles opening
     } else {
@@ -50,6 +56,10 @@ export default function AdminLogin({
       // Toggle modal on Ctrl + Q or Cmd + Q
       if ((e.ctrlKey || e.metaKey) && (e.key === 'q' || e.key === 'Q')) {
         e.preventDefault();
+        if (adminUser && onEnterDashboard) {
+          onEnterDashboard(adminUser);
+          return;
+        }
         if (isModalOpen) {
           handleClose();
         } else {
@@ -65,11 +75,11 @@ export default function AdminLogin({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isModalOpen, isControlled]);
+  }, [isModalOpen, isControlled, adminUser, onEnterDashboard]);
 
-  // Focus the username input automatically when modal opens (unless already logged in)
+  // Focus the username input automatically when modal opens
   useEffect(() => {
-    if (isModalOpen && !loggedInUser) {
+    if (isModalOpen) {
       const timer = setTimeout(() => {
         if (usernameInputRef.current) {
           usernameInputRef.current.focus();
@@ -77,7 +87,7 @@ export default function AdminLogin({
       }, 100);
       return () => clearTimeout(timer);
     }
-  }, [isModalOpen, loggedInUser]);
+  }, [isModalOpen]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -111,19 +121,16 @@ export default function AdminLogin({
         throw new Error(data.message || 'Invalid admin credentials');
       }
 
-      // Successfully logged in!
-      setLoggedInUser(data.user);
+      // Successfully logged in! Close modal and direct immediately to dashboard
+      handleClose();
+      if (onEnterDashboard) {
+        onEnterDashboard(data.user);
+      }
     } catch (err) {
       setError(err.message || 'Connection to authentication service failed.');
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleLogout = () => {
-    setLoggedInUser(null);
-    setCredentials({ username: '', password: '', remember: false });
-    setError('');
   };
 
   return (
@@ -141,7 +148,7 @@ export default function AdminLogin({
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
           </svg>
-          <span>{loggedInUser ? 'Admin Active' : 'Admin'}</span>
+          <span>{adminUser ? 'Admin Active' : 'Admin'}</span>
           <kbd className="admin-kbd">Ctrl+Q</kbd>
         </button>
       )}
@@ -177,74 +184,7 @@ export default function AdminLogin({
             </button>
 
             <div className="admin-modal-content">
-              {loggedInUser ? (
-                /* Success View */
-                <div className="admin-success-view">
-                  <div className="admin-success-icon-wrap">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                  </div>
-                  <h2 className="admin-success-title">Successfully Logged In!</h2>
-                  <p className="admin-success-msg">
-                    Welcome back, <strong>{loggedInUser.name}</strong>. Your session is active.
-                  </p>
-
-                  <div className="admin-user-details-card">
-                    <div className="admin-detail-row">
-                      <span className="admin-detail-label">Username:</span>
-                      <span className="admin-detail-val">{loggedInUser.username}</span>
-                    </div>
-                    <div className="admin-detail-row">
-                      <span className="admin-detail-label">Role:</span>
-                      <span className="admin-role-badge">{loggedInUser.role}</span>
-                    </div>
-                    <div className="admin-detail-row">
-                      <span className="admin-detail-label">Database:</span>
-                      <span className="admin-detail-val">motionpub_db.site_admin</span>
-                    </div>
-                  </div>
-
-                  <div className="admin-success-actions" style={{ flexDirection: 'column', gap: '0.65rem' }}>
-                    <button
-                      type="button"
-                      className="admin-submit-btn"
-                      style={{ marginTop: 0 }}
-                      onClick={() => {
-                        handleClose();
-                        if (onEnterDashboard) {
-                          onEnterDashboard(loggedInUser);
-                        }
-                      }}
-                    >
-                      <span>Open Admin Dashboard</span>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                      </svg>
-                    </button>
-                    <div style={{ display: 'flex', gap: '0.6rem', width: '100%' }}>
-                      <button
-                        type="button"
-                        className="admin-btn-secondary"
-                        onClick={handleLogout}
-                      >
-                        Log Out
-                      </button>
-                      <button
-                        type="button"
-                        className="admin-btn-secondary"
-                        onClick={handleClose}
-                      >
-                        Done / Close
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                /* Login Form View */
-                <>
-                  {/* Header */}
+              {/* Header */}
                   <div className="admin-modal-header">
                     <div className="admin-badge-container">
                       <span className="admin-badge-dot" />
@@ -410,8 +350,6 @@ export default function AdminLogin({
                       <span>256-bit TLS</span>
                     </div>
                   </div>
-                </>
-              )}
             </div>
           </div>
         </div>
