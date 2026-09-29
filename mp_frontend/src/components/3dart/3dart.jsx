@@ -3,10 +3,12 @@ import defaultVideo from '../../assets/videos/default.mp4'
 import timelinePreview from '../../assets/images/timeline_preview.jpg'
 import './3dart.css'
 
-export default function ThreeDArt() {
+export default function ThreeDArt({ videoSrc }) {
   const sceneRef = useRef(null)
   const [rotation, setRotation] = useState({ x: 0, y: 0 })
   const [isHovered, setIsHovered] = useState(false)
+
+  const activeVideo = videoSrc || defaultVideo
 
   const handleMouseMove = (e) => {
     if (!sceneRef.current) return
@@ -52,7 +54,8 @@ export default function ThreeDArt() {
               <div className="art-card-border-glow"></div>
               <div className="art-card-content">
                 <video
-                  src={defaultVideo}
+                  key={activeVideo}
+                  src={activeVideo}
                   className="art-card-img"
                   autoPlay
                   loop
