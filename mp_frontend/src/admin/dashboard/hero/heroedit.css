@@ -84,18 +84,6 @@
   gap: 0.75rem;
 }
 
-.mp-section-badge {
-  display: inline-block;
-  font-size: 0.68rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 0.2rem 0.6rem;
-  border-radius: 9999px;
-  background: rgba(148, 224, 0, 0.12);
-  color: #94E000;
-  border: 1px solid rgba(148, 224, 0, 0.3);
-}
 
 .mp-section-heading {
   font-size: 1.15rem;
@@ -124,18 +112,6 @@
   .mp-hero-editor-grid {
     grid-template-columns: 1fr;
   }
-}
-
-/* Card Tag & Active Status Badges */
-.mp-card-tag {
-  font-size: 0.68rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #9ca3af;
-  background: rgba(255, 255, 255, 0.06);
-  padding: 0.15rem 0.45rem;
-  border-radius: 4px;
 }
 
 .mp-active-status-wrap {
@@ -184,10 +160,13 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.4;
     transform: scale(0.85);
@@ -830,8 +809,15 @@
 }
 
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
 }
 
 .mp-preview-meta {

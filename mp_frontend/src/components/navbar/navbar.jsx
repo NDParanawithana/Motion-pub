@@ -30,7 +30,7 @@ export default function Navbar() {
       { id: 'works', name: 'Our Works' },
       { id: 'testimonials', name: 'Testimonials' },
       { id: 'partners', name: 'Partners' },
-      { id: 'contact', name: 'Contact' }
+      { id: 'contact', name: 'Contact Us' }
     ]
 
     const updateActiveSection = () => {
@@ -102,7 +102,7 @@ export default function Navbar() {
         if (match) {
           setActiveLink(match.name)
         } else if (hash === '#contact') {
-          setActiveLink('Contact')
+          setActiveLink('Contact Us')
         }
       }
     }
@@ -158,10 +158,10 @@ export default function Navbar() {
         <div className="mp-desktop-cta">
           <a
             href="#contact"
-            className={`mp-cta-btn ${activeLink === 'Contact' ? 'active' : ''}`}
-            onClick={() => handleLinkClick('Contact')}
+            className={`mp-cta-btn ${activeLink === 'Contact Us' ? 'active' : ''}`}
+            onClick={() => handleLinkClick('Contact Us')}
           >
-            Contact
+            Contact Us
           </a>
         </div>
 
