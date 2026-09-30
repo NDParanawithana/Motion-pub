@@ -95,12 +95,17 @@
   color: var(--text-primary);
 }
 
+.mp-nav-link.active {
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
+}
+
 .mp-nav-link:hover::after,
 .mp-nav-link.active::after {
   width: 100%;
 }
 
-/* Contact Us Button / CTA */
+/* Contact Button / CTA */
 .mp-cta-btn {
   display: inline-flex;
   align-items: center;
@@ -124,6 +129,11 @@
   color: var(--primary-color);
   box-shadow: 0 0 25px var(--primary-color);
   transform: translateY(-2px);
+}
+
+.mp-cta-btn.active {
+  box-shadow: 0 0 25px var(--primary-color), 0 0 45px var(--primary-glow);
+  transform: translateY(-1px);
 }
 
 .mp-cta-btn:active {
@@ -189,7 +199,7 @@
 }
 
 .mp-mobile-drawer.open {
-  max-height: 450px;
+  max-height: 520px;
   opacity: 1;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.8);
 }
@@ -225,6 +235,12 @@
 }
 
 /* Responsive Breakpoints */
+@media (max-width: 1080px) {
+  .mp-nav-links {
+    gap: 1.25rem;
+  }
+}
+
 @media (max-width: 900px) {
   .mp-nav-links,
   .mp-desktop-cta {

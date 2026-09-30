@@ -8,6 +8,66 @@
   width: 100%;
 }
 
+/* Page Header & Switcher Pill Tabs */
+.mp-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.mp-hero-subnav-pills {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0.25rem;
+  gap: 0.35rem;
+}
+
+.mp-hero-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 7px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #9ca3af;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.mp-hero-pill-btn svg {
+  color: #6b7280;
+  transition: color 0.15s ease;
+}
+
+.mp-hero-pill-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mp-hero-pill-btn:hover svg {
+  color: #38bdf8;
+}
+
+.mp-hero-pill-btn.active {
+  background: rgba(0, 180, 216, 0.15);
+  border-color: rgba(0, 180, 216, 0.45);
+  color: #38bdf8;
+  box-shadow: 0 2px 8px rgba(0, 180, 216, 0.15);
+}
+
+.mp-hero-pill-btn.active svg {
+  color: #38bdf8;
+}
+
 /* Section Dividers */
 .mp-section-divider {
   display: flex;

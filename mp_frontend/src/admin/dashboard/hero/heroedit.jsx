@@ -16,7 +16,7 @@ const buildFullStatement = (body) => {
 
 const DEFAULT_HERO_TEXT = "Motion Pub transforms your ideas into powerful visual experiences through creative editing, motion, and storytelling.";
 
-export default function HeroEdit({ onHeroTextChange }) {
+export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSelectSection }) {
     const textareaRef = useRef(null);
     const fileInputRef = useRef(null);
     const previewVideoRef = useRef(null);
@@ -466,6 +466,9 @@ export default function HeroEdit({ onHeroTextChange }) {
         );
     };
 
+    const showTextSection = activeSection === 'all' || activeSection === 'text';
+    const showVideoSection = activeSection === 'all' || activeSection === 'video';
+
     return (
         <div className="mp-hero-management-page">
             {/* Alert Banner */}
@@ -498,25 +501,261 @@ export default function HeroEdit({ onHeroTextChange }) {
             {/* Page Header */}
             <div className="mp-page-header">
                 <div className="mp-page-header-text">
-                    <h2 className="mp-page-title">Hero Section CMS</h2>
+                    <h2 className="mp-page-title">
+                        {activeSection === 'text'
+                            ? 'Hero Text Statement'
+                            : activeSection === 'video'
+                            ? 'Hero 3D Showcase Video'
+                            : 'Hero Section CMS'}
+                    </h2>
                     <p className="mp-page-desc">
-                        Customize the live typing statement and manage the 3D showcase video streamed via Cloudinary.
+                        {activeSection === 'text'
+                            ? 'Configure the real-time typing statement rendered on the landing page.'
+                            : activeSection === 'video'
+                            ? 'Upload and manage high-definition 3D showcase video hosted on Cloudinary.'
+                            : 'Customize the live typing statement and manage the 3D showcase video streamed via Cloudinary.'}
                     </p>
+                </div>
+
+                {/* Sub-menu Switcher Pill Tabs */}
+                <div className="mp-hero-subnav-pills">
+                    <button
+                        type="button"
+                        className={`mp-hero-pill-btn ${activeSection === 'all' ? 'active' : ''}`}
+                        onClick={() => onSelectSection?.('all')}
+                        title="Show all Hero sections"
+                    >
+                        <span>All</span>
+                    </button>
+                    <button
+                        type="button"
+                        className={`mp-hero-pill-btn ${activeSection === 'text' ? 'active' : ''}`}
+                        onClick={() => onSelectSection?.('text')}
+                        title="Show Text Statement section"
+                    >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                            <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                            <line x1="9" y1="20" x2="15" y2="20"></line>
+                            <line x1="12" y1="4" x2="12" y2="20"></line>
+                        </svg>
+                        <span>Text Section</span>
+                    </button>
+                    <button
+                        type="button"
+                        className={`mp-hero-pill-btn ${activeSection === 'video' ? 'active' : ''}`}
+                        onClick={() => onSelectSection?.('video')}
+                        title="Show Video Showcase section"
+                    >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                            <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                        </svg>
+                        <span>Video Section</span>
+                    </button>
                 </div>
             </div>
 
             {/* ========================================================= */}
-            {/* SECTION 1: CLOUDINARY 3D SHOWCASE VIDEO                   */}
+            {/* SECTION 1: HERO TYPING STATEMENT                          */}
             {/* ========================================================= */}
-            <div className="mp-section-divider">
-                <div className="mp-section-title-wrap">
-                    <span className="mp-section-badge">Cloudinary Media</span>
-                    <h3 className="mp-section-heading">Hero 3D Showcase Video</h3>
+            {showTextSection && (
+                <>
+                    <div className="mp-section-divider">
+                        <div className="mp-section-title-wrap">
+                            <span className="mp-section-badge">Hero Typography</span>
+                            <h3 className="mp-section-heading">Hero Section Statement</h3>
+                        </div>
+                        <p className="mp-section-subheading">
+                            Edit the animated typing sentence rendered dynamically on the Hero section.
+                        </p>
+                    </div>
+
+            <div className="mp-hero-editor-grid">
+                {/* Left Card: Text Editor */}
+                <div className="mp-card">
+                    <div className="mp-card-header">
+                        <div className="mp-card-title-group">
+                            <span className="mp-card-title">Typing Statement</span>
+                        </div>
+                    </div>
+
+                    <div className="mp-field-group">
+                        <div className="mp-field-label-row">
+                            <label htmlFor="hero-text-input" className="mp-field-label">
+                                Statement Content
+                            </label>
+                            <span className="mp-char-count">{heroText.length} characters (10 fixed)</span>
+                        </div>
+
+                        <div
+                            className="mp-prefixed-editor"
+                            onClick={() => textareaRef.current?.focus()}
+                        >
+                            <div className="mp-prefix-header">
+                                <div className="mp-prefix-pill" title="Brand prefix is fixed and cannot be edited">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                    </svg>
+                                    <span>Motion Pub</span>
+                                </div>
+                            </div>
+
+                            <textarea
+                                ref={textareaRef}
+                                id="hero-text-input"
+                                className="mp-prefixed-textarea"
+                                value={statementBody}
+                                onChange={handleBodyChange}
+                                placeholder="transforms your ideas into powerful visual experiences through creative editing, motion, and storytelling."
+                                rows={4}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="mp-editor-actions">
+                        <button
+                            type="button"
+                            className="mp-btn-save"
+                            onClick={handleSaveHero}
+                            disabled={isSaveDisabled}
+                            title={
+                                isSavingText
+                                    ? 'Saving...'
+                                    : !hasTextChanges
+                                        ? 'No changes to save'
+                                        : 'Save changes to hero section'
+                            }
+                        >
+                            {isSavingText ? (
+                                <span>Saving to Database...</span>
+                            ) : (
+                                <>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                        <polyline points="7 3 7 8 15 8"></polyline>
+                                    </svg>
+                                    <span>Save Changes to Hero</span>
+                                </>
+                            )}
+                        </button>
+
+                        <button
+                            type="button"
+                            className="mp-btn-reset"
+                            onClick={handleResetDefault}
+                        >
+                            Reset Default
+                        </button>
+                    </div>
                 </div>
-                <p className="mp-section-subheading">
-                    Upload and manage the video featured inside the interactive 3D card display on the landing page.
-                </p>
+
+                {/* Right Card: Live Interactive Preview */}
+                <div className="mp-preview-card">
+                    <div className="mp-preview-badge-row">
+                        <span className="mp-preview-tag">
+                            <span className="mp-live-status-dot" />
+                            Live Typing Simulator
+                        </span>
+                        <button
+                            type="button"
+                            className="mp-btn-restart-sim"
+                            onClick={() => setSimKey(k => k + 1)}
+                            title="Replay typing animation"
+                        >
+                            ↺ Replay
+                        </button>
+                    </div>
+
+                    <div className="mp-preview-mockup-window">
+                        <p className="mp-mockup-typing-text">
+                            {renderSimContent()}
+                            <span className="mp-mockup-cursor">|</span>
+                        </p>
+                    </div>
+
+                    <div className="mp-preview-meta">
+                        <div className="mp-speed-control-group">
+                            <div className="mp-speed-label-wrap">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span className="mp-speed-label">Speed:</span>
+                            </div>
+
+                            <div className="mp-speed-stepper">
+                                <button
+                                    type="button"
+                                    className="mp-speed-btn"
+                                    onClick={() => handleSpeedChange(typingSpeed - 10)}
+                                    disabled={typingSpeed <= 10}
+                                    title="Faster (−10ms)"
+                                >
+                                    −
+                                </button>
+
+                                <div className="mp-speed-display">
+                                    <input
+                                        type="number"
+                                        className="mp-speed-input"
+                                        value={typingSpeed}
+                                        step={10}
+                                        min={10}
+                                        max={300}
+                                        onChange={(e) => {
+                                            const val = parseInt(e.target.value, 10);
+                                            if (!isNaN(val)) {
+                                                handleSpeedChange(val);
+                                            }
+                                        }}
+                                    />
+                                    <span className="mp-speed-unit">ms / char</span>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    className="mp-speed-btn"
+                                    onClick={() => handleSpeedChange(typingSpeed + 10)}
+                                    disabled={typingSpeed >= 300}
+                                    title="Slower (+10ms)"
+                                >
+                                    +
+                                </button>
+                            </div>
+                        </div>
+
+                        <button
+                            type="button"
+                            className="mp-speed-reset-btn"
+                            onClick={() => handleSpeedChange(40)}
+                            title="Reset to default 40ms speed"
+                            style={{ visibility: typingSpeed === 40 ? 'hidden' : 'visible' }}
+                        >
+                            Default (40ms)
+                        </button>
+                    </div>
+                </div>
             </div>
+            </>
+            )}
+
+            {/* ========================================================= */}
+            {/* SECTION 2: CLOUDINARY 3D SHOWCASE VIDEO                   */}
+            {/* ========================================================= */}
+            {showVideoSection && (
+                <>
+                    <div className="mp-section-divider">
+                        <div className="mp-section-title-wrap">
+                            <span className="mp-section-badge">Cloudinary Media</span>
+                            <h3 className="mp-section-heading">Hero 3D Showcase Video</h3>
+                        </div>
+                        <p className="mp-section-subheading">
+                            Upload and manage the video featured inside the interactive 3D card display on the landing page.
+                        </p>
+                    </div>
 
             <div className="mp-hero-editor-grid mp-video-management-grid">
                 {/* Left Card: Video Upload Zone & Controls */}
@@ -803,189 +1042,8 @@ export default function HeroEdit({ onHeroTextChange }) {
                     </div>
                 </div>
             </div>
-
-            {/* ========================================================= */}
-            {/* SECTION 2: HERO TYPING STATEMENT                          */}
-            {/* ========================================================= */}
-            <div className="mp-section-divider">
-                <div className="mp-section-title-wrap">
-                    <span className="mp-section-badge">Hero Typography</span>
-                    <h3 className="mp-section-heading">Hero Section Statement</h3>
-                </div>
-                <p className="mp-section-subheading">
-                    Edit the animated typing sentence rendered dynamically on the Hero section.
-                </p>
-            </div>
-
-            <div className="mp-hero-editor-grid">
-                {/* Left Card: Text Editor */}
-                <div className="mp-card">
-                    <div className="mp-card-header">
-                        <div className="mp-card-title-group">
-                            <span className="mp-card-title">Typing Statement</span>
-                        </div>
-                    </div>
-
-                    <div className="mp-field-group">
-                        <div className="mp-field-label-row">
-                            <label htmlFor="hero-text-input" className="mp-field-label">
-                                Statement Content
-                            </label>
-                            <span className="mp-char-count">{heroText.length} characters (10 fixed)</span>
-                        </div>
-
-                        <div
-                            className="mp-prefixed-editor"
-                            onClick={() => textareaRef.current?.focus()}
-                        >
-                            <div className="mp-prefix-header">
-                                <div className="mp-prefix-pill" title="Brand prefix is fixed and cannot be edited">
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                                    </svg>
-                                    <span>Motion Pub</span>
-                                </div>
-                            </div>
-
-                            <textarea
-                                ref={textareaRef}
-                                id="hero-text-input"
-                                className="mp-prefixed-textarea"
-                                value={statementBody}
-                                onChange={handleBodyChange}
-                                placeholder="transforms your ideas into powerful visual experiences through creative editing, motion, and storytelling."
-                                rows={4}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="mp-editor-actions">
-                        <button
-                            type="button"
-                            className="mp-btn-save"
-                            onClick={handleSaveHero}
-                            disabled={isSaveDisabled}
-                            title={
-                                isSavingText
-                                    ? 'Saving...'
-                                    : !hasTextChanges
-                                        ? 'No changes to save'
-                                        : 'Save changes to hero section'
-                            }
-                        >
-                            {isSavingText ? (
-                                <span>Saving to Database...</span>
-                            ) : (
-                                <>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                                        <polyline points="7 3 7 8 15 8"></polyline>
-                                    </svg>
-                                    <span>Save Changes to Hero</span>
-                                </>
-                            )}
-                        </button>
-
-                        <button
-                            type="button"
-                            className="mp-btn-reset"
-                            onClick={handleResetDefault}
-                        >
-                            Reset Default
-                        </button>
-                    </div>
-                </div>
-
-                {/* Right Card: Live Interactive Preview */}
-                <div className="mp-preview-card">
-                    <div className="mp-preview-badge-row">
-                        <span className="mp-preview-tag">
-                            <span className="mp-live-status-dot" />
-                            Live Typing Simulator
-                        </span>
-                        <button
-                            type="button"
-                            className="mp-btn-restart-sim"
-                            onClick={() => setSimKey(k => k + 1)}
-                            title="Replay typing animation"
-                        >
-                            ↺ Replay
-                        </button>
-                    </div>
-
-                    <div className="mp-preview-mockup-window">
-                        <p className="mp-mockup-typing-text">
-                            {renderSimContent()}
-                            <span className="mp-mockup-cursor">|</span>
-                        </p>
-                    </div>
-
-                    <div className="mp-preview-meta">
-                        <div className="mp-speed-control-group">
-                            <div className="mp-speed-label-wrap">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                    <circle cx="12" cy="12" r="10"></circle>
-                                    <polyline points="12 6 12 12 16 14"></polyline>
-                                </svg>
-                                <span className="mp-speed-label">Speed:</span>
-                            </div>
-
-                            <div className="mp-speed-stepper">
-                                <button
-                                    type="button"
-                                    className="mp-speed-btn"
-                                    onClick={() => handleSpeedChange(typingSpeed - 10)}
-                                    disabled={typingSpeed <= 10}
-                                    title="Faster (−10ms)"
-                                >
-                                    −
-                                </button>
-
-                                <div className="mp-speed-display">
-                                    <input
-                                        type="number"
-                                        className="mp-speed-input"
-                                        value={typingSpeed}
-                                        step={10}
-                                        min={10}
-                                        max={300}
-                                        onChange={(e) => {
-                                            const val = parseInt(e.target.value, 10);
-                                            if (!isNaN(val)) {
-                                                handleSpeedChange(val);
-                                            }
-                                        }}
-                                    />
-                                    <span className="mp-speed-unit">ms / char</span>
-                                </div>
-
-                                <button
-                                    type="button"
-                                    className="mp-speed-btn"
-                                    onClick={() => handleSpeedChange(typingSpeed + 10)}
-                                    disabled={typingSpeed >= 300}
-                                    title="Slower (+10ms)"
-                                >
-                                    +
-                                </button>
-                            </div>
-                        </div>
-
-                        <button
-                            type="button"
-                            className="mp-speed-reset-btn"
-                            onClick={() => handleSpeedChange(40)}
-                            title="Reset to default 40ms speed"
-                            style={{ visibility: typingSpeed === 40 ? 'hidden' : 'visible' }}
-                        >
-                            Default (40ms)
-                        </button>
-                    </div>
-                </div>
-            </div>
+            </>
+            )}
         </div>
     );
 }

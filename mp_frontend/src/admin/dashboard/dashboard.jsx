@@ -1,8 +1,11 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import HeroEdit from './hero/heroedit';
 import './dashboard.css';
 
 export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
+  const [isHeroOpen, setIsHeroOpen] = useState(true);
+  const [activeHeroSection, setActiveHeroSection] = useState('all');
+
   const handleOpenLiveWebsite = () => {
     if (onBackToSite) {
       onBackToSite();
@@ -41,19 +44,73 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
           <nav className="mp-sidebar-nav">
             <span className="mp-nav-section-label">Pages</span>
 
-            {/* Hero Page Navigation Link */}
-            <button
-              type="button"
-              className="mp-nav-item active-hero"
-            >
-              <div className="mp-nav-item-left">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            {/* Hero Page Group with Sub-menus */}
+            <div className="mp-nav-group">
+              <button
+                type="button"
+                className={`mp-nav-item active-hero ${activeHeroSection === 'all' ? 'current-item' : ''}`}
+                onClick={() => {
+                  setIsHeroOpen(prev => !prev);
+                  setActiveHeroSection('all');
+                }}
+                title="Manage entire Hero Page"
+              >
+                <div className="mp-nav-item-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                  </svg>
+                  <span>Hero Page</span>
+                </div>
+                <svg
+                  className={`mp-nav-chevron ${isHeroOpen ? 'rotated' : ''}`}
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
-                <span>Hero Page</span>
-              </div>
-            </button>
+              </button>
+
+              {/* Sub-menus for Text and Video Sections */}
+              {isHeroOpen && (
+                <div className="mp-sub-nav">
+                  <button
+                    type="button"
+                    className={`mp-sub-nav-item ${activeHeroSection === 'text' ? 'active' : ''}`}
+                    onClick={() => setActiveHeroSection('text')}
+                    title="Edit Text Statement"
+                  >
+                    <div className="mp-sub-nav-left">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                        <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                        <line x1="9" y1="20" x2="15" y2="20"></line>
+                        <line x1="12" y1="4" x2="12" y2="20"></line>
+                      </svg>
+                      <span>Text Section</span>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`mp-sub-nav-item ${activeHeroSection === 'video' ? 'active' : ''}`}
+                    onClick={() => setActiveHeroSection('video')}
+                    title="Manage 3D Showcase Video"
+                  >
+                    <div className="mp-sub-nav-left">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                        <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                      </svg>
+                      <span>Video Section</span>
+                    </div>
+                  </button>
+                </div>
+              )}
+            </div>
 
             <span className="mp-nav-section-label">Sections (CMS)</span>
 
@@ -132,7 +189,21 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
           <div className="mp-topbar-breadcrumb">
             <span>Dashboard</span>
             <span>/</span>
-            <span className="current">Hero Page Configuration</span>
+            <span
+              style={{ cursor: 'pointer' }}
+              onClick={() => setActiveHeroSection('all')}
+              title="View all Hero sections"
+            >
+              Hero Page
+            </span>
+            <span>/</span>
+            <span className="current">
+              {activeHeroSection === 'text'
+                ? 'Text Section'
+                : activeHeroSection === 'video'
+                ? 'Video Section'
+                : 'All Sections'}
+            </span>
           </div>
 
           <div className="mp-topbar-actions">
@@ -158,7 +229,10 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
 
         {/* Page Content */}
         <div className="mp-page-container">
-          <HeroEdit />
+          <HeroEdit
+            activeSection={activeHeroSection}
+            onSelectSection={setActiveHeroSection}
+          />
         </div>
       </main>
     </div>
