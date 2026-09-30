@@ -4,6 +4,12 @@ import cloudinary from '../config/cloudinary.js';
 // Memory storage keeps the uploaded file buffer in RAM without leaving orphaned temp files on disk
 const storage = multer.memoryStorage();
 
+// General multer upload middleware (10 MB limit)
+export const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB limit
+});
+
 // File filter to restrict uploads to valid video formats
 const videoFileFilter = (req, file, cb) => {
   const allowedMimeTypes = [
@@ -29,6 +35,25 @@ export const uploadVideoMiddleware = multer({
   },
   fileFilter: videoFileFilter,
 });
+
+/**
+ * General helper to upload a buffer stream directly to Cloudinary
+ * @param {Buffer} fileBuffer
+ * @param {string} folder
+ * @returns {Promise<Object>}
+ */
+export const uploadToCloudinary = (fileBuffer, folder = 'motion_pub') => {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder, resource_type: 'auto' },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
+    uploadStream.end(fileBuffer);
+  });
+};
 
 /**
  * Upload a video buffer stream directly to Cloudinary

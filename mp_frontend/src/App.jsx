@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Navbar from './components/navbar/navbar'
 import Hero from './components/hero/hero'
+import About from './pages/about/about'
 import MongoStatus from './components/MongoStatus/MongoStatus'
 import AdminLogin from './admin/adminlogin/adminLogin'
 import AdminDashboard from './admin/dashboard/dashboard'
@@ -116,41 +117,8 @@ function App() {
         {/* Hero Section */}
         <Hero />
 
-        {/* About Us Section */}
-        <section className="section" id="about">
-          <div className="container">
-            <div className="section-header">
-              <span className="section-tag">About Us</span>
-              <h2 className="section-title">Driven by Innovation & Creativity</h2>
-              <p className="section-description">
-                Motion Pub is a forward-thinking digital production studio blending art, engineering, and motion design to elevate modern digital products.
-              </p>
-            </div>
-            <div className="cards-grid">
-              <div className="feature-card">
-                <div className="card-icon">🎯</div>
-                <h3 className="card-title">Strategic Vision</h3>
-                <p className="card-text">
-                  Every frame, interaction, and line of code is tailored to meet real business outcomes.
-                </p>
-              </div>
-              <div className="feature-card">
-                <div className="card-icon">🚀</div>
-                <h3 className="card-title">High Performance</h3>
-                <p className="card-text">
-                  Lightning-fast web experiences engineered for maximum user engagement and conversion.
-                </p>
-              </div>
-              <div className="feature-card">
-                <div className="card-icon">🎨</div>
-                <h3 className="card-title">Precision Design</h3>
-                <p className="card-text">
-                  Pixel-perfect interfaces infused with fluid motion and memorable brand aesthetics.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* About Section */}
+        <About />
 
         {/* Services Section */}
         <section className="section" id="services">
