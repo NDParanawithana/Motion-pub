@@ -8,6 +8,9 @@
   --text-primary: #ffffff;
   --text-secondary: #a0a0a0;
   --text-muted: #666666;
+  --page-title-color: #78b700;
+  --section-tag-color: #78b700;
+  --tag-glow: rgba(120, 183, 0, 0.35);
   
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   line-height: 1.5;

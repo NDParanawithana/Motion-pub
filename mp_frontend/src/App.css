@@ -11,7 +11,7 @@
 .container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 1rem;
 }
 
 /* Hero Section */
@@ -142,7 +142,7 @@
 }
 
 .section-tag {
-  color: var(--primary-color);
+  color: var(--section-tag-color, #78b700);
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 1px;
