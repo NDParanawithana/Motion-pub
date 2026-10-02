@@ -1,0 +1,924 @@
+/* ==========================================================================
+   Motion Pub - About Page Admin Editor Styling (Word-Style Rich Text Editor)
+   ========================================================================== */
+
+.mp-about-edit-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  width: 100%;
+  animation: fadeInAbout 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInAbout {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Sticky Top Bar for View Mode Tabs, Saved Badge, and Title */
+.mp-about-sticky-bar {
+  position: sticky;
+  top: 78px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Glassmorphism */
+  background: rgba(16, 18, 23, 0.8);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  padding: 0.65rem 1.25rem;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+
+.mp-about-sticky-title h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.mp-about-sticky-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Save alert badge */
+.mp-about-saved-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  background: rgba(148, 224, 0, 0.12);
+  border: 1px solid rgba(148, 224, 0, 0.3);
+  color: #94e000;
+  font-size: 0.82rem;
+  font-weight: 600;
+  animation: savedBadgeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  white-space: nowrap;
+}
+
+@keyframes savedBadgeIn {
+  from {
+    opacity: 0;
+    transform: translateX(8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Tabs switcher (Edit vs Live Preview) - Floating Pill */
+.mp-about-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(10, 12, 16, 0.85);
+  padding: 0.3rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  width: fit-content;
+  transition: all 0.25s ease;
+}
+
+.mp-about-tabs:hover {
+  border-color: rgba(148, 224, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45), 0 0 12px rgba(148, 224, 0, 0.12);
+}
+
+.mp-about-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  color: #9ca3af;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.mp-about-tab-btn:hover {
+  color: #e5e7eb;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mp-about-tab-btn.active {
+  background: rgba(148, 224, 0, 0.15);
+  color: #94e000;
+  box-shadow: 0 0 10px rgba(148, 224, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .mp-about-sticky-bar {
+    top: 68px;
+    margin-bottom: 0.5rem;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.6rem 0.85rem;
+    gap: 0.6rem;
+  }
+
+  .mp-about-sticky-actions {
+    justify-content: flex-end;
+  }
+
+  .mp-about-sticky-title h2 {
+    font-size: 1.15rem;
+  }
+}
+
+/* Card Container */
+.mp-about-edit-card {
+  background: rgba(22, 24, 29, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 1.75rem;
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+  animation: cardSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cardSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mp-about-edit-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.mp-about-card-title-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.mp-about-card-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: rgba(148, 224, 0, 0.1);
+  border: 1px solid rgba(148, 224, 0, 0.22);
+  color: #94e000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mp-about-card-title {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.mp-about-form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.mp-about-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mp-about-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #d1d5db;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mp-about-label-badge {
+  font-size: 0.68rem;
+  text-transform: none;
+  font-weight: 500;
+  color: #94e000;
+  background: rgba(148, 224, 0, 0.08);
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  letter-spacing: 0;
+}
+
+.mp-about-input {
+  background: rgba(12, 13, 16, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.92rem;
+  padding: 0.75rem 1rem;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.mp-about-input:focus {
+  border-color: rgba(148, 224, 0, 0.6);
+  box-shadow: 0 0 0 3px rgba(148, 224, 0, 0.12);
+  background: rgba(12, 13, 16, 0.9);
+}
+
+.mp-about-input::placeholder {
+  color: #6b7280;
+}
+
+/* ==========================================================================
+   Word-Style Rich Text Editor Component
+   ========================================================================== */
+
+.mp-word-editor {
+  display: flex;
+  flex-direction: column;
+  background: rgba(12, 13, 16, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.mp-word-editor:focus-within {
+  border-color: rgba(148, 224, 0, 0.55);
+  box-shadow: 0 0 0 3px rgba(148, 224, 0, 0.1), 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Word-Style Toolbar Ribbon */
+.mp-word-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(22, 24, 29, 0.92);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  user-select: none;
+}
+
+.mp-word-btn-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.mp-word-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 0.45rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #d1d5db;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mp-word-tool-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.mp-word-tool-btn:active {
+  transform: scale(0.95);
+}
+
+.mp-word-tool-btn.bold {
+  font-weight: 800;
+}
+
+.mp-word-tool-btn.italic {
+  font-style: italic;
+  font-family: Georgia, serif;
+}
+
+.mp-word-tool-btn.underline {
+  text-decoration: underline;
+}
+
+.mp-word-tool-btn.strike {
+  text-decoration: line-through;
+}
+
+.mp-word-separator {
+  width: 1px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0 0.25rem;
+}
+
+/* Color Swatches in Ribbon */
+.mp-word-colors {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: 0.2rem;
+}
+
+.mp-color-swatch-btn {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+}
+
+.mp-color-swatch-btn:hover {
+  transform: scale(1.3);
+  box-shadow: 0 0 8px currentColor;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Quick Insertion Chip */
+.mp-word-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 5px;
+  background: rgba(148, 224, 0, 0.1);
+  border: 1px solid rgba(148, 224, 0, 0.25);
+  color: #94e000;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mp-word-chip-btn:hover {
+  background: rgba(148, 224, 0, 0.2);
+  color: #ffffff;
+  border-color: #94e000;
+  transform: translateY(-1px);
+}
+
+/* Change Case Dropdown in Word Toolbar */
+.mp-word-case-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.mp-case-trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 0.5rem;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.mp-case-trigger-btn.active,
+.mp-case-trigger-btn:hover {
+  background: rgba(148, 224, 0, 0.12);
+  color: #94e000;
+  border-color: rgba(148, 224, 0, 0.3);
+}
+
+.mp-case-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 50;
+  min-width: 195px;
+  background: #181b22;
+  border: 1px solid rgba(148, 224, 0, 0.25);
+  border-radius: 10px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 16px rgba(148, 224, 0, 0.1);
+  padding: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  animation: mpCaseMenuFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes mpCaseMenuFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.mp-case-menu-header {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94e000;
+  padding: 0.35rem 0.6rem 0.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 0.15rem;
+}
+
+.mp-case-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.45rem 0.65rem;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  color: #e5e7eb;
+}
+
+.mp-case-menu-item:hover {
+  background: rgba(148, 224, 0, 0.12);
+  color: #ffffff;
+}
+
+.mp-case-item-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.mp-case-item-hint {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.mp-case-menu-item:hover .mp-case-item-hint {
+  color: #d0ffa6;
+}
+
+/* Quick Case Toggles for Labels */
+.mp-input-case-toggles {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.15rem 0.3rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mp-input-case-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #9ca3af;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.15rem 0.42rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.2;
+}
+
+.mp-input-case-btn:hover {
+  background: rgba(148, 224, 0, 0.12);
+  color: #94e000;
+  border-color: rgba(148, 224, 0, 0.25);
+}
+
+/* Editor Document Surface */
+.mp-word-canvas {
+  min-height: 125px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 1.1rem 1.25rem;
+  color: #d0ffa6;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  outline: none;
+  font-family: inherit;
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for editor */
+.mp-word-canvas::-webkit-scrollbar {
+  width: 5px;
+}
+
+.mp-word-canvas::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mp-word-canvas::-webkit-scrollbar-thumb {
+  background: rgba(148, 224, 0, 0.2);
+  border-radius: 10px;
+}
+
+.mp-word-canvas::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 224, 0, 0.35);
+}
+
+.mp-word-canvas strong,
+.mp-word-canvas b {
+  color: #ffffff;
+  font-weight: 750;
+  letter-spacing: -0.2px;
+}
+
+.mp-word-canvas em,
+.mp-word-canvas i {
+  font-style: italic;
+}
+
+.mp-word-canvas u {
+  text-decoration: underline;
+}
+
+.mp-word-canvas:empty::before {
+  content: attr(data-placeholder);
+  color: #6b7280;
+  pointer-events: none;
+}
+
+/* Status Bar at Bottom of Editor */
+.mp-word-statusbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 1rem;
+  background: rgba(15, 17, 21, 0.9);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.72rem;
+  color: #6b7280;
+}
+
+.mp-word-status-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mp-word-status-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mp-word-status-btn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 0.72rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  transition: color 0.15s ease;
+}
+
+.mp-word-status-btn:hover {
+  color: #f87171;
+}
+
+/* ==========================================================================
+   Live Preview Box (Simulation)
+   ========================================================================== */
+
+.mp-about-preview-box {
+  background: #141414;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  animation: cardSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.mp-about-preview-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #94e000;
+  background: rgba(148, 224, 0, 0.1);
+  padding: 0.22rem 0.6rem;
+  border-radius: 5px;
+}
+
+.mp-about-preview-corner {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #78b700;
+  text-shadow: 0 0 16px rgba(120, 183, 0, 0.35);
+  margin-bottom: 1rem;
+}
+
+.mp-about-preview-title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin-bottom: 1.75rem;
+}
+
+.mp-about-preview-title .highlight {
+  background: linear-gradient(90deg, #dfff32 0%, #94e000 24%, #4ade80 48%, #2dd4bf 72%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.mp-about-preview-lead {
+  font-size: 1.15rem;
+  line-height: 1.85;
+  color: #d0ffa6;
+  margin-bottom: 1.5rem;
+}
+
+.mp-about-preview-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.75rem 0;
+}
+
+.mp-about-preview-line {
+  flex: 1;
+  max-width: 120px;
+  height: 1px;
+}
+
+.mp-about-preview-line.left {
+  background: linear-gradient(90deg, transparent, rgba(208, 255, 166, 0.65));
+}
+
+.mp-about-preview-line.right {
+  background: linear-gradient(90deg, rgba(208, 255, 166, 0.65), transparent);
+}
+
+.mp-about-preview-camera {
+  color: #d0ffa6;
+  filter: drop-shadow(0 0 8px rgba(208, 255, 166, 0.7));
+  display: flex;
+}
+
+.mp-about-preview-subtext {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: #d0ffa6;
+  opacity: 0.9;
+}
+
+/* Actions Footer */
+.mp-about-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.mp-btn-reset-default {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #9ca3af;
+  padding: 0.7rem 1.15rem;
+  border-radius: 9px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mp-btn-reset-default:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.mp-btn-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.7rem 1.5rem;
+  background: linear-gradient(135deg, #94e000 0%, #76b500 100%);
+  color: #0d1203;
+  font-weight: 700;
+  font-size: 0.88rem;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+  box-shadow: 0 0 16px rgba(148, 224, 0, 0.2);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mp-btn-save:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 24px rgba(148, 224, 0, 0.35);
+}
+
+.mp-btn-save:not(:disabled):active {
+  transform: translateY(0);
+}
+
+.mp-btn-save:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+  filter: grayscale(0.6);
+}
+
+/* ==========================================================================
+   Dynamic Paragraphs & Dividers
+   ========================================================================== */
+
+.mp-about-dynamic-editor {
+  position: relative;
+  margin-top: 0;
+  padding-top: 1.5rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  animation: dynamicEditorIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes dynamicEditorIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mp-about-divider-placeholder {
+  padding: 0.5rem 0;
+}
+
+.mp-about-add-paragraph-wrapper {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 1.75rem 0 0.5rem;
+}
+
+.mp-btn-add-paragraph {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 1.15rem;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  color: #9ca3af;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mp-btn-add-paragraph:hover {
+  background: rgba(148, 224, 0, 0.06);
+  border-color: rgba(148, 224, 0, 0.35);
+  color: #94e000;
+  transform: translateY(-1px);
+}
+
+.mp-btn-add-paragraph:active {
+  transform: translateY(0);
+}
+
+.mp-btn-add-paragraph svg {
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
+}
+
+.mp-btn-add-paragraph:hover svg {
+  opacity: 1;
+}
+
+.mp-btn-delete-paragraph {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.65rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+  opacity: 0.7;
+}
+
+.mp-about-dynamic-editor:hover .mp-btn-delete-paragraph {
+  opacity: 1;
+}
+
+.mp-btn-delete-paragraph:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.35);
+  opacity: 1;
+}
+
+.mp-about-preview-additional {
+  margin-top: 2rem;
+}
+
+/* ==========================================================================
+   Responsive Refinements
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .mp-about-edit-card {
+    padding: 1.15rem;
+    border-radius: 12px;
+  }
+
+  .mp-about-form-grid {
+    gap: 1.25rem;
+  }
+
+  .mp-about-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .mp-about-actions .mp-btn-save,
+  .mp-about-actions .mp-btn-reset-default {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .mp-about-preview-box {
+    padding: 1.5rem;
+  }
+
+  .mp-about-preview-title {
+    font-size: 1.6rem;
+  }
+
+  .mp-about-add-paragraph-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mp-btn-add-paragraph {
+    justify-content: center;
+  }
+}

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import HeroEdit from './hero/heroedit';
+import AboutEdit from './about/aboutedit';
 import './dashboard.css';
 
 export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
+  const [activePage, setActivePage] = useState('hero'); // 'hero' | 'about'
   const [isHeroOpen, setIsHeroOpen] = useState(true);
   const [activeHeroSection, setActiveHeroSection] = useState('all');
 
@@ -48,8 +50,9 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
             <div className="mp-nav-group">
               <button
                 type="button"
-                className={`mp-nav-item active-hero ${activeHeroSection === 'all' ? 'current-item' : ''}`}
+                className={`mp-nav-item active-hero ${activePage === 'hero' && activeHeroSection === 'all' ? 'current-item' : ''}`}
                 onClick={() => {
+                  setActivePage('hero');
                   setIsHeroOpen(prev => !prev);
                   setActiveHeroSection('all');
                 }}
@@ -80,8 +83,11 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
                 <div className="mp-sub-nav">
                   <button
                     type="button"
-                    className={`mp-sub-nav-item ${activeHeroSection === 'text' ? 'active' : ''}`}
-                    onClick={() => setActiveHeroSection('text')}
+                    className={`mp-sub-nav-item ${activePage === 'hero' && activeHeroSection === 'text' ? 'active' : ''}`}
+                    onClick={() => {
+                      setActivePage('hero');
+                      setActiveHeroSection('text');
+                    }}
                     title="Edit Text Statement"
                   >
                     <div className="mp-sub-nav-left">
@@ -96,8 +102,11 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
 
                   <button
                     type="button"
-                    className={`mp-sub-nav-item ${activeHeroSection === 'video' ? 'active' : ''}`}
-                    onClick={() => setActiveHeroSection('video')}
+                    className={`mp-sub-nav-item ${activePage === 'hero' && activeHeroSection === 'video' ? 'active' : ''}`}
+                    onClick={() => {
+                      setActivePage('hero');
+                      setActiveHeroSection('video');
+                    }}
                     title="Manage 3D Showcase Video"
                   >
                     <div className="mp-sub-nav-left">
@@ -110,6 +119,25 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
                   </button>
                 </div>
               )}
+            </div>
+
+            {/* About Page Navigation Link */}
+            <div className="mp-nav-group">
+              <button
+                type="button"
+                className={`mp-nav-item ${activePage === 'about' ? 'active current-item' : ''}`}
+                onClick={() => setActivePage('about')}
+                title="Manage About Page"
+              >
+                <div className="mp-nav-item-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                  <span>About Page</span>
+                </div>
+              </button>
             </div>
 
             <span className="mp-nav-section-label">Sections (CMS)</span>
@@ -189,21 +217,30 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
           <div className="mp-topbar-breadcrumb">
             <span>Dashboard</span>
             <span>/</span>
-            <span
-              style={{ cursor: 'pointer' }}
-              onClick={() => setActiveHeroSection('all')}
-              title="View all Hero sections"
-            >
-              Hero Page
-            </span>
-            <span>/</span>
-            <span className="current">
-              {activeHeroSection === 'text'
-                ? 'Text Section'
-                : activeHeroSection === 'video'
-                ? 'Video Section'
-                : 'All Sections'}
-            </span>
+            {activePage === 'about' ? (
+              <span className="current">About Page</span>
+            ) : (
+              <>
+                <span
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    setActivePage('hero');
+                    setActiveHeroSection('all');
+                  }}
+                  title="View all Hero sections"
+                >
+                  Hero Page
+                </span>
+                <span>/</span>
+                <span className="current">
+                  {activeHeroSection === 'text'
+                    ? 'Text Section'
+                    : activeHeroSection === 'video'
+                    ? 'Video Section'
+                    : 'All Sections'}
+                </span>
+              </>
+            )}
           </div>
 
           <div className="mp-topbar-actions">
@@ -229,10 +266,14 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
 
         {/* Page Content */}
         <div className="mp-page-container">
-          <HeroEdit
-            activeSection={activeHeroSection}
-            onSelectSection={setActiveHeroSection}
-          />
+          {activePage === 'about' ? (
+            <AboutEdit />
+          ) : (
+            <HeroEdit
+              activeSection={activeHeroSection}
+              onSelectSection={setActiveHeroSection}
+            />
+          )}
         </div>
       </main>
     </div>

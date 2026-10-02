@@ -14,20 +14,81 @@ function LineByLineText({
   const [lines, setLines] = useState([])
   const prevWidthRef = useRef(0)
 
-  // Split content parts into word objects with formatting flags
+  // Split content parts into word objects with formatting flags (supports HTML string or object parts)
   const words = useMemo(() => {
-    const list = []
-    const rawParts = typeof parts === 'string' ? [{ text: parts, strong: false }] : parts
-
-    rawParts.forEach((part) => {
-      const splitWords = part.text.trim().split(/\s+/)
-      splitWords.forEach((w) => {
-        if (w) {
-          list.push({ word: w, strong: !!part.strong })
-        }
+    if (Array.isArray(parts)) {
+      const list = []
+      parts.forEach((part) => {
+        const splitWords = (part.text || '').trim().split(/\s+/)
+        splitWords.forEach((w) => {
+          if (w) {
+            list.push({
+              word: w,
+              strong: !!part.strong,
+              em: !!part.em,
+              underline: !!part.underline,
+              color: part.color || null,
+            })
+          }
+        })
       })
-    })
-    return list
+      return list
+    }
+
+    if (typeof parts === 'string') {
+      if (typeof document === 'undefined') return []
+      const div = document.createElement('div')
+      div.innerHTML = parts
+
+      const list = []
+      function traverse(node, formatting) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const splitWords = (node.textContent || '').split(/\s+/)
+          splitWords.forEach((w) => {
+            if (w) {
+              list.push({
+                word: w,
+                strong: formatting.strong,
+                em: formatting.em,
+                underline: formatting.underline,
+                color: formatting.color,
+              })
+            }
+          })
+          return
+        }
+
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const tag = node.tagName.toLowerCase()
+          const nextFormatting = { ...formatting }
+
+          if (
+            tag === 'strong' ||
+            tag === 'b' ||
+            node.style.fontWeight === 'bold' ||
+            parseInt(node.style.fontWeight, 10) >= 600
+          ) {
+            nextFormatting.strong = true
+          }
+          if (tag === 'em' || tag === 'i' || node.style.fontStyle === 'italic') {
+            nextFormatting.em = true
+          }
+          if (tag === 'u' || (node.style.textDecoration && node.style.textDecoration.includes('underline'))) {
+            nextFormatting.underline = true
+          }
+          if (node.style.color || (node.getAttribute && node.getAttribute('color'))) {
+            nextFormatting.color = node.style.color || node.getAttribute('color')
+          }
+
+          node.childNodes.forEach((child) => traverse(child, nextFormatting))
+        }
+      }
+
+      traverse(div, { strong: false, em: false, underline: false, color: null })
+      return list
+    }
+
+    return []
   }, [parts])
 
   // Measure word offsetTop to group them into actual visual lines based on container width
@@ -92,7 +153,11 @@ function LineByLineText({
           <span
             key={idx}
             className="mp-measure-word"
-            style={{ fontWeight: item.strong ? 750 : 400 }}
+            style={{
+              fontWeight: item.strong ? 750 : 400,
+              fontStyle: item.em ? 'italic' : 'normal',
+              textDecoration: item.underline ? 'underline' : 'none',
+            }}
           >
             {item.word}{' '}
           </span>
@@ -117,11 +182,17 @@ function LineByLineText({
                   style={{ animationDelay: `${delay}s` }}
                 >
                   {lineWords.map((item, wIdx) => {
-                    const content = item.strong ? (
-                      <strong key={wIdx}>{item.word}</strong>
-                    ) : (
-                      <span key={wIdx}>{item.word}</span>
-                    )
+                    const style = item.color ? { color: item.color } : {}
+                    let content = <span key={wIdx} style={style}>{item.word}</span>
+
+                    if (item.strong) {
+                      content = <strong key={wIdx} style={style}>{item.word}</strong>
+                    } else if (item.em) {
+                      content = <em key={wIdx} style={style}>{item.word}</em>
+                    } else if (item.underline) {
+                      content = <u key={wIdx} style={style}>{item.word}</u>
+                    }
+
                     return (
                       <React.Fragment key={wIdx}>
                         {content}
@@ -137,12 +208,23 @@ function LineByLineText({
           /* Fallback before first layout measurement */
           <span className="mp-line-row">
             <span className="mp-line-anim" style={{ animationDelay: `${baseDelay}s` }}>
-              {words.map((item, idx) => (
-                <React.Fragment key={idx}>
-                  {item.strong ? <strong>{item.word}</strong> : item.word}
-                  {idx < words.length - 1 ? ' ' : ''}
-                </React.Fragment>
-              ))}
+              {words.map((item, idx) => {
+                const style = item.color ? { color: item.color } : {}
+                let content = <span key={idx} style={style}>{item.word}</span>
+                if (item.strong) {
+                  content = <strong key={idx} style={style}>{item.word}</strong>
+                } else if (item.em) {
+                  content = <em key={idx} style={style}>{item.word}</em>
+                } else if (item.underline) {
+                  content = <u key={idx} style={style}>{item.word}</u>
+                }
+                return (
+                  <React.Fragment key={idx}>
+                    {content}
+                    {idx < words.length - 1 ? ' ' : ''}
+                  </React.Fragment>
+                )
+              })}
             </span>
           </span>
         )}
@@ -155,7 +237,54 @@ export default function About() {
   const [animateKey, setAnimateKey] = useState(0)
   const sectionRef = useRef(null)
 
-  const leadParagraphParts = [
+  const [cornerTitle, setCornerTitle] = useState(() => {
+    return localStorage.getItem('mp_about_corner_title') || 'ABOUT MOTION PUB'
+  })
+  const [headingLine1, setHeadingLine1] = useState(() => {
+    return localStorage.getItem('mp_about_heading_line1') || 'We Turn Ideas Into'
+  })
+  const [headingLine2, setHeadingLine2] = useState(() => {
+    return localStorage.getItem('mp_about_heading_line2') || 'Visual Stories.'
+  })
+  const [leadHtml, setLeadHtml] = useState(() => {
+    return localStorage.getItem('mp_about_lead') || null
+  })
+  const [subtextHtml, setSubtextHtml] = useState(() => {
+    return localStorage.getItem('mp_about_subtext') || null
+  })
+  const [additionalParagraphsHtml, setAdditionalParagraphsHtml] = useState(() => {
+    return JSON.parse(localStorage.getItem('mp_about_additional_paragraphs') || '[]')
+  })
+
+  // Sync real-time updates from AboutEdit Studio
+  useEffect(() => {
+    const handleAboutUpdate = (e) => {
+      if (e?.detail) {
+        if (e.detail.cornerTitle !== undefined) setCornerTitle(e.detail.cornerTitle)
+        if (e.detail.headingLine1 !== undefined) setHeadingLine1(e.detail.headingLine1)
+        if (e.detail.headingLine2 !== undefined) setHeadingLine2(e.detail.headingLine2)
+        if (e.detail.leadHtml !== undefined) setLeadHtml(e.detail.leadHtml)
+        if (e.detail.subtextHtml !== undefined) setSubtextHtml(e.detail.subtextHtml)
+        if (e.detail.additionalParagraphsHtml !== undefined) setAdditionalParagraphsHtml(e.detail.additionalParagraphsHtml)
+      }
+    }
+    const handleStorage = (e) => {
+      if (e.key === 'mp_about_lead') setLeadHtml(e.newValue)
+      if (e.key === 'mp_about_subtext') setSubtextHtml(e.newValue)
+      if (e.key === 'mp_about_corner_title') setCornerTitle(e.newValue || 'ABOUT MOTION PUB')
+      if (e.key === 'mp_about_heading_line1') setHeadingLine1(e.newValue || 'We Turn Ideas Into')
+      if (e.key === 'mp_about_heading_line2') setHeadingLine2(e.newValue || 'Visual Stories.')
+      if (e.key === 'mp_about_additional_paragraphs') setAdditionalParagraphsHtml(JSON.parse(e.newValue || '[]'))
+    }
+    window.addEventListener('mp-about-update', handleAboutUpdate)
+    window.addEventListener('storage', handleStorage)
+    return () => {
+      window.removeEventListener('mp-about-update', handleAboutUpdate)
+      window.removeEventListener('storage', handleStorage)
+    }
+  }, [])
+
+  const defaultLeadParts = [
     {
       text: 'MOTION PUB is a Sri Lankan video production and post-production agency',
       strong: true,
@@ -166,7 +295,7 @@ export default function About() {
     },
   ]
 
-  const subtextParts = [
+  const defaultSubtextParts = [
     {
       text: "Whether it's bringing a concept to life or shaping existing footage into a compelling story, we focus on creating visuals that communicate your brand's identity and leave a lasting impression.",
       strong: false,
@@ -297,24 +426,24 @@ export default function About() {
       <div className="mp-about-container">
         {/* Top-Left Corner Title (Replacing Badge) */}
         <div className="mp-about-corner-title">
-          ABOUT MOTION PUB
+          {cornerTitle}
         </div>
 
         {/* Main Section Title with Bouncing Letters */}
         <h2 className="mp-about-title">
           <span className="mp-title-line">
-            {renderBouncingLetters('We Turn Ideas Into', 0)}
+            {renderBouncingLetters(headingLine1, 0)}
           </span>
           <br />
           <span className="highlight mp-title-line">
-            {renderBouncingLetters('Visual Stories.', 19, true)}
+            {renderBouncingLetters(headingLine2, headingLine1.length + 1, true)}
           </span>
         </h2>
 
         {/* Narrative Text (Line by Line Right-to-Left Entrance) */}
         <div className="mp-about-content" key={animateKey}>
           <LineByLineText
-            parts={leadParagraphParts}
+            parts={leadHtml || defaultLeadParts}
             baseDelay={1.5}
             stagger={0.32}
             animateKey={animateKey}
@@ -344,13 +473,51 @@ export default function About() {
           </div>
 
           <LineByLineText
-            parts={subtextParts}
+            parts={subtextHtml || defaultSubtextParts}
             baseDelay={2.8}
             stagger={0.32}
             animateKey={animateKey}
             className="mp-about-subtext"
             tag="p"
           />
+
+          {additionalParagraphsHtml.map((htmlStr, idx) => {
+            if (htmlStr === '[DIVIDER]') {
+              return (
+                <div key={idx} className="mp-about-divider mp-divider-zoom-in" style={{ animationDelay: `${2.8 + (idx + 1) * 0.4}s`, margin: '4rem auto' }}>
+                  <span className="mp-about-divider-line left" />
+                  <span className="mp-about-divider-camera" title="Motion Pub Studio">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+                      <circle cx="12" cy="13" r="3" />
+                    </svg>
+                  </span>
+                  <span className="mp-about-divider-line right" />
+                </div>
+              );
+            }
+            return (
+              <LineByLineText
+                key={idx}
+                parts={htmlStr}
+                baseDelay={2.8 + (idx + 1) * 0.4}
+                stagger={0.32}
+                animateKey={animateKey}
+                className="mp-about-subtext mp-about-additional-p"
+                tag="p"
+              />
+            );
+          })}
         </div>
       </div>
     </section>
