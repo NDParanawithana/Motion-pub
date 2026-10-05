@@ -148,42 +148,61 @@
   gap: 0.75rem;
 }
 
+.mp-nav-item .mp-nav-item-left svg {
+  color: #6b7280;
+  transition: color 0.2s ease, filter 0.2s ease;
+  flex-shrink: 0;
+}
+
 .mp-nav-item:hover {
   background: rgba(255, 255, 255, 0.04);
   color: #ffffff;
 }
 
-/* Overview nav active – uses primary green */
+.mp-nav-item:hover .mp-nav-item-left svg {
+  color: #9ca3af;
+}
+
+/* Selected menu item - only the menu icon is highlighted in blue */
 .mp-nav-item.active {
-  background: rgba(148, 224, 0, 0.12);
-  border-color: rgba(148, 224, 0, 0.3);
-  color: var(--mp-primary);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(0, 180, 216, 0.22);
+  color: #ffffff;
   font-weight: 600;
 }
 
-/* Hero Page nav active – uses cyan for differentiation */
-.mp-nav-item.active-hero {
-  background: rgba(0, 180, 216, 0.1);
-  border-color: rgba(0, 180, 216, 0.3);
+.mp-nav-item.active .mp-nav-item-left svg {
   color: var(--mp-cyan);
-  font-weight: 600;
+  filter: drop-shadow(0 0 8px rgba(0, 180, 216, 0.55));
 }
 
-.mp-nav-item.active-hero:hover {
-  background: rgba(0, 180, 216, 0.15);
-  border-color: rgba(0, 180, 216, 0.45);
+.mp-nav-item.active:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(0, 180, 216, 0.35);
+  color: #ffffff;
+}
+
+.mp-nav-item.active:hover .mp-nav-item-left svg {
   color: #38bdf8;
+  filter: drop-shadow(0 0 10px rgba(0, 180, 216, 0.7));
 }
 
 .mp-nav-chevron {
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  color: rgba(0, 180, 216, 0.6);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+  color: #6b7280;
   flex-shrink: 0;
+}
+
+.mp-nav-item:hover .mp-nav-chevron {
+  color: #9ca3af;
+}
+
+.mp-nav-item.active .mp-nav-chevron {
+  color: rgba(0, 180, 216, 0.75);
 }
 
 .mp-nav-chevron.rotated {
   transform: rotate(180deg);
-  color: var(--mp-cyan);
 }
 
 /* Sub-Navigation Menu */
@@ -240,7 +259,7 @@
 
 .mp-sub-nav-item svg {
   color: #6b7280;
-  transition: color 0.15s ease;
+  transition: color 0.15s ease, filter 0.15s ease;
 }
 
 .mp-sub-nav-item:hover {
@@ -249,18 +268,19 @@
 }
 
 .mp-sub-nav-item:hover svg {
-  color: #38bdf8;
+  color: #9ca3af;
 }
 
 .mp-sub-nav-item.active {
-  background: rgba(0, 180, 216, 0.15);
-  border-color: rgba(0, 180, 216, 0.4);
-  color: #38bdf8;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(0, 180, 216, 0.22);
+  color: #ffffff;
   font-weight: 600;
 }
 
 .mp-sub-nav-item.active svg {
-  color: #38bdf8;
+  color: var(--mp-cyan);
+  filter: drop-shadow(0 0 6px rgba(0, 180, 216, 0.5));
 }
 
 .mp-nav-badge {
@@ -273,12 +293,7 @@
 }
 
 .mp-nav-item.active .mp-nav-badge {
-  background: rgba(148, 224, 0, 0.2);
-  color: var(--mp-primary);
-}
-
-.mp-nav-item.active-hero .mp-nav-badge {
-  background: rgba(0, 180, 216, 0.2);
+  background: rgba(0, 180, 216, 0.15);
   color: var(--mp-cyan);
 }
 

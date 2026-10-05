@@ -4,10 +4,18 @@
 
 .mp-about-section {
   position: relative;
-  padding: 6.5rem 0;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  min-height: calc(100dvh - 80px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1.5rem, 3.5vh, 3.25rem) 0;
   background-color: var(--bg-color, #141414);
   border-top: 1px solid var(--surface-border, rgba(255, 255, 255, 0.08));
   overflow: hidden;
+  box-sizing: border-box;
+  scroll-margin-top: 80px;
 }
 
 /* Background Ambient Glow */
@@ -28,34 +36,38 @@
   position: relative;
   z-index: 1;
   max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 clamp(1rem, 2.5vw, 2rem);
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 /* Top-Left Corner Title (Replaced Badge) */
 .mp-about-corner-title {
   text-align: left;
-  font-size: 20px;
+  font-size: clamp(0.95rem, 1.25vw, 1.2rem);
   font-weight: 600;
   letter-spacing: 0.35em;
   text-transform: uppercase;
   color: var(--section-tag-color, #78b700);
   text-shadow: 0 0 16px rgba(120, 183, 0, 0.35);
-  margin-bottom: 1.25rem;
+  margin-bottom: clamp(0.6rem, 1.2vh, 1rem);
   display: block;
 }
 
 /* Main Section Heading ("GET CREATIVE. GET LISTED." Style) */
 .mp-about-title {
   text-align: left;
-  font-size: clamp(2.4rem, 5.6vw, 4.8rem);
+  font-size: clamp(2rem, 4.4vw, 4rem);
   font-weight: 900;
-  line-height: 1.05;
+  line-height: 1.06;
   letter-spacing: -0.035em;
   text-transform: uppercase;
   color: #ffffff;
-  margin-bottom: 2.75rem;
+  margin-bottom: clamp(1.25rem, 2.5vh, 2rem);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
@@ -200,8 +212,8 @@
 
 /* Lead Paragraph */
 .mp-about-lead {
-  font-size: clamp(1.18rem, 2.1vw, 1.35rem);
-  line-height: 1.85;
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  line-height: 1.75;
   color: #d0ffa6;
   margin: 0;
   font-weight: 400;
@@ -219,7 +231,7 @@
   align-items: center;
   justify-content: flex-start;
   gap: 1.15rem;
-  margin: 2.5rem 0;
+  margin: clamp(1.25rem, 2.2vh, 2rem) 0;
 }
 
 .mp-about-divider-line {
@@ -352,11 +364,15 @@
 
 /* Secondary Paragraph */
 .mp-about-subtext {
-  font-size: clamp(1.08rem, 1.8vw, 1.22rem);
-  line-height: 1.85;
+  font-size: clamp(0.96rem, 1.35vw, 1.15rem);
+  line-height: 1.75;
   color: #d0ffa6;
   opacity: 0.9;
   margin: 0;
+}
+
+.mp-about-additional-p {
+  margin-top: clamp(0.75rem, 1.5vh, 1.25rem);
 }
 
 /* ==========================================================================
@@ -365,29 +381,31 @@
 
 @media (max-width: 768px) {
   .mp-about-section {
-    padding: 4.5rem 0;
+    min-height: auto;
+    padding: 3.5rem 0;
+    scroll-margin-top: 70px;
   }
 
   .mp-about-container {
-    padding: 0 0.85rem;
+    padding: 0 1rem;
   }
 
   .mp-about-title {
-    margin-bottom: 2rem;
-    font-size: clamp(2.1rem, 7.5vw, 3.4rem);
+    margin-bottom: 1.5rem;
+    font-size: clamp(1.9rem, 7vw, 2.8rem);
   }
 
   .mp-about-divider {
-    margin: 2rem 0;
+    margin: 1.5rem 0;
   }
 
   .mp-about-lead {
-    font-size: 1.1rem;
-    line-height: 1.75;
+    font-size: 1.05rem;
+    line-height: 1.65;
   }
 
   .mp-about-subtext {
-    font-size: 1rem;
-    line-height: 1.7;
+    font-size: 0.95rem;
+    line-height: 1.65;
   }
 }

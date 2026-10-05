@@ -50,7 +50,7 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
             <div className="mp-nav-group">
               <button
                 type="button"
-                className={`mp-nav-item active-hero ${activePage === 'hero' && activeHeroSection === 'all' ? 'current-item' : ''}`}
+                className={`mp-nav-item ${activePage === 'hero' ? 'active' : ''}`}
                 onClick={() => {
                   setActivePage('hero');
                   setIsHeroOpen(prev => !prev);
@@ -125,7 +125,7 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
             <div className="mp-nav-group">
               <button
                 type="button"
-                className={`mp-nav-item ${activePage === 'about' ? 'active current-item' : ''}`}
+                className={`mp-nav-item ${activePage === 'about' ? 'active' : ''}`}
                 onClick={() => setActivePage('about')}
                 title="Manage About Page"
               >

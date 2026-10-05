@@ -312,16 +312,28 @@ export default function About() {
       setTimeout(() => { cooldown = false }, 3000)
     }
 
-    // Re-trigger on hash navigation to #about
+    // Re-trigger and scroll on hash navigation to #about
     const handleHashChange = () => {
-      if (window.location.hash === '#about') trigger()
+      if (window.location.hash === '#about') {
+        trigger()
+        const el = sectionRef.current || document.getElementById('about')
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      }
     }
     window.addEventListener('hashchange', handleHashChange)
 
-    // Re-trigger on click of any link pointing to #about
+    // Re-trigger and scroll on click of any link pointing to #about
     const handleLinkClick = (e) => {
       const link = e.target.closest('a')
-      if (link && link.getAttribute('href') === '#about') trigger()
+      if (link && link.getAttribute('href') === '#about') {
+        trigger()
+        const el = sectionRef.current || document.getElementById('about')
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      }
     }
     document.addEventListener('click', handleLinkClick)
 

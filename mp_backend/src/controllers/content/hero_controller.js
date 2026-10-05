@@ -113,8 +113,8 @@ export async function handleUploadHeroVideo(req, res) {
 
     const freedMB = (cleanupStats.freedBytes / (1024 * 1024)).toFixed(1);
     const feedbackMessage = cleanupStats.deletedCount > 0
-      ? `New video uploaded and ${cleanupStats.deletedCount} previous video(s) deleted from Cloudinary (freed ~${freedMB} MB)!`
-      : 'New hero video uploaded to Cloudinary successfully!';
+      ? `New video uploaded successfully and ${cleanupStats.deletedCount} previous video(s) removed (freed ~${freedMB} MB)!`
+      : 'New hero video uploaded successfully!';
 
     res.status(200).json({
       success: true,
@@ -132,7 +132,7 @@ export async function handleUploadHeroVideo(req, res) {
     console.error('Error uploading hero video:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Failed to upload hero video to Cloudinary.',
+      message: error.message || 'Failed to upload hero video.',
       error: error.message
     });
   }
@@ -140,7 +140,7 @@ export async function handleUploadHeroVideo(req, res) {
 
 /**
  * DELETE /api/content/hero/video
- * Permanently delete hero video from Cloudinary and reset database back to default template video
+ * Permanently delete hero video and reset database back to default template video
  */
 export async function handleResetHeroVideo(req, res) {
   try {
@@ -151,7 +151,7 @@ export async function handleResetHeroVideo(req, res) {
       deleteStatus = await deleteFromCloudinary(result.previousPublicId, 'video');
     }
 
-    // Also purge any lingering orphan hero videos from Cloudinary folder to ensure 0 waste
+    // Also purge any lingering orphan hero videos from folder to ensure 0 waste
     let cleanupStats = { deletedCount: 0, freedBytes: 0 };
     try {
       cleanupStats = await cleanupOrphanHeroVideos(null);
@@ -164,8 +164,8 @@ export async function handleResetHeroVideo(req, res) {
     res.status(200).json({
       success: true,
       message: totalDeleted > 0
-        ? `Hero video permanently deleted from Cloudinary and restored to default template video.`
-        : 'Hero video restored to default template video.',
+        ? 'Hero video removed and restored to default showcase video.'
+        : 'Hero video restored to default showcase video.',
       videoUrl: null,
       videoPublicId: null,
       deletedCount: totalDeleted
@@ -174,7 +174,7 @@ export async function handleResetHeroVideo(req, res) {
     console.error('Error deleting hero video:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to delete hero video from Cloudinary.',
+      message: 'Failed to remove hero video.',
       error: error.message
     });
   }
@@ -182,7 +182,7 @@ export async function handleResetHeroVideo(req, res) {
 
 /**
  * POST /api/content/hero/video/cleanup
- * Clean up all older/unused videos from Cloudinary to free storage quota
+ * Clean up all older/unused videos to free storage space
  */
 export async function handleCleanupHeroVideos(req, res) {
   try {
@@ -196,17 +196,17 @@ export async function handleCleanupHeroVideos(req, res) {
     res.status(200).json({
       success: true,
       message: cleanupStats.deletedCount > 0
-        ? `Cleaned up ${cleanupStats.deletedCount} unused video(s) and freed ~${freedMB} MB from Cloudinary storage!`
-        : 'Cloudinary storage is completely clean. No unused hero videos found.',
+        ? `Cleaned up ${cleanupStats.deletedCount} unused video(s) and freed ~${freedMB} MB of storage space!`
+        : 'Storage is clean. No unused hero videos found.',
       deletedCount: cleanupStats.deletedCount,
       freedBytes: cleanupStats.freedBytes,
       deletedIds: cleanupStats.deletedIds
     });
   } catch (error) {
-    console.error('Error cleaning up Cloudinary hero videos:', error);
+    console.error('Error cleaning up hero videos:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Failed to clean up Cloudinary storage.',
+      message: error.message || 'Failed to clean up storage space.',
       error: error.message
     });
   }

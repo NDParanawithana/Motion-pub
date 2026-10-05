@@ -51,7 +51,7 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
         return saved ? parseInt(saved, 10) : 40;
     });
 
-    // Cloudinary Hero Video State
+    // Hero Video State
     const [videoUrl, setVideoUrl] = useState(() => {
         return localStorage.getItem('mp_hero_video') || null;
     });
@@ -160,7 +160,7 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
             const data = await res.json();
 
             if (!res.ok || !data.success) {
-                throw new Error(data.message || 'Failed to save to database');
+                throw new Error(data.message || 'Failed to save changes');
             }
 
             localStorage.setItem('mp_hero_text', trimmed);
@@ -194,7 +194,7 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
 
             setAlert({
                 type: 'success',
-                message: 'Saved locally! (Backend notice: ' + err.message + ')'
+                message: 'Saved locally! (' + err.message + ')'
             });
         } finally {
             setIsSavingText(false);
@@ -211,12 +211,12 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
         }
         setAlert({
             type: 'success',
-            message: 'Reset to default template text. Click "Save Changes to Hero" to persist.'
+            message: 'Reset to default text. Click "Save Changes" to apply.'
         });
     };
 
     // ==========================================
-    // Cloudinary Hero Video Handlers
+    // Hero Video Handlers
     // ==========================================
 
     const validateAndProcessFile = (file) => {
@@ -296,7 +296,7 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
         }
     };
 
-    // Upload Selected Video to Cloudinary (with automatic deletion of previous video to eliminate storage waste)
+    // Upload Selected Video
     const handleUploadVideo = async () => {
         if (!selectedFile) return;
 
@@ -316,7 +316,7 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
             const data = await res.json();
 
             if (!res.ok || !data.success) {
-                throw new Error(data.message || 'Failed to upload video to Cloudinary.');
+                throw new Error(data.message || 'Failed to upload video.');
             }
 
             // Successfully uploaded and saved in DB
@@ -332,25 +332,29 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
             // Clear temporary preview
             handleClearSelection();
 
+            const cleanMsg = data.message
+                ? data.message.replace(/to Cloudinary/gi, '').replace(/from Cloudinary/gi, '').replace(/Cloudinary/gi, 'cloud storage').replace(/\s{2,}/g, ' ').trim()
+                : 'Showcase video successfully uploaded and live on your Hero section!';
+
             setAlert({
                 type: 'success',
-                message: data.message || 'Showcase video successfully uploaded to Cloudinary and live on your Hero section!'
+                message: cleanMsg || 'Showcase video successfully uploaded and live on your Hero section!'
             });
         } catch (err) {
-            console.error('Cloudinary upload error:', err);
+            console.error('Video upload error:', err);
             setAlert({
                 type: 'error',
-                message: err.message || 'Error uploading video to Cloudinary.'
+                message: err.message?.replace(/Cloudinary/gi, 'storage') || 'Error uploading video. Please try again.'
             });
         } finally {
             setIsUploadingVideo(false);
         }
     };
 
-    // Permanently Delete Video from Cloudinary (Frees Cloudinary Storage Quota)
+    // Remove Custom Video and restore default
     const handleDeleteVideo = async () => {
         const confirmDelete = window.confirm(
-            'Are you sure you want to delete this video from Cloudinary? This will permanently remove the asset from Cloudinary storage to free your quota and restore the default template video.'
+            'Are you sure you want to remove this video? This will delete the uploaded file and restore the default showcase video.'
         );
         if (!confirmDelete) return;
 
@@ -364,7 +368,7 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
 
             const data = await res.json();
             if (!res.ok || !data.success) {
-                throw new Error(data.message || 'Failed to delete video from Cloudinary.');
+                throw new Error(data.message || 'Failed to remove video.');
             }
 
             setVideoUrl(null);
@@ -379,19 +383,19 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
 
             setAlert({
                 type: 'success',
-                message: data.message || 'Hero video permanently deleted from Cloudinary and reset to default template video.'
+                message: 'Custom video removed and restored to default showcase video.'
             });
         } catch (err) {
             setAlert({
                 type: 'error',
-                message: err.message || 'Failed to delete hero video from Cloudinary.'
+                message: err.message?.replace(/Cloudinary/gi, 'storage') || 'Failed to remove showcase video.'
             });
         } finally {
             setIsResettingVideo(false);
         }
     };
 
-    // Clean Up All Orphaned / Unused Videos from Cloudinary Storage
+    // Clean Up Unused Video Files from Storage
     const handleCleanupStorage = async () => {
         setIsCleaningStorage(true);
         setAlert(null);
@@ -403,17 +407,21 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
 
             const data = await res.json();
             if (!res.ok || !data.success) {
-                throw new Error(data.message || 'Failed to clean up Cloudinary storage.');
+                throw new Error(data.message || 'Failed to clean up storage.');
             }
+
+            const cleanMsg = data.message
+                ? data.message.replace(/from Cloudinary storage/gi, '').replace(/from Cloudinary/gi, '').replace(/Cloudinary storage is/gi, 'Storage is').replace(/Cloudinary/gi, 'storage').replace(/\s{2,}/g, ' ').trim()
+                : 'Storage cleanup completed successfully.';
 
             setAlert({
                 type: 'success',
-                message: data.message
+                message: cleanMsg || 'Storage cleanup completed successfully.'
             });
         } catch (err) {
             setAlert({
                 type: 'error',
-                message: err.message || 'Error cleaning up Cloudinary storage.'
+                message: err.message?.replace(/Cloudinary/gi, 'storage') || 'Error cleaning up storage space.'
             });
         } finally {
             setIsCleaningStorage(false);
@@ -506,14 +514,14 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
                             ? 'Hero Text Statement'
                             : activeSection === 'video'
                                 ? 'Hero 3D Showcase Video'
-                                : 'Hero Section CMS'}
+                                : 'Hero Section'}
                     </h2>
                     <p className="mp-page-desc">
                         {activeSection === 'text'
-                            ? 'Configure the real-time typing statement rendered on the landing page.'
+                            ? 'Configure the animated typing statement displayed on your landing page.'
                             : activeSection === 'video'
-                                ? 'Upload and manage high-definition 3D showcase video hosted on Cloudinary.'
-                                : 'Customize the live typing statement and manage the 3D showcase video streamed via Cloudinary.'}
+                                ? 'Upload and manage the 3D showcase video featured on your landing page.'
+                                : 'Customize the animated typing statement and manage the 3D showcase video.'}
                     </p>
                 </div>
 
@@ -583,7 +591,7 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
                                     <label htmlFor="hero-text-input" className="mp-field-label">
                                         Statement Content
                                     </label>
-                                    <span className="mp-char-count">{heroText.length} characters (10 fixed)</span>
+                                    <span className="mp-char-count">{heroText.length} characters</span>
                                 </div>
 
                                 <div
@@ -591,7 +599,7 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
                                     onClick={() => textareaRef.current?.focus()}
                                 >
                                     <div className="mp-prefix-header">
-                                        <div className="mp-prefix-pill" title="Brand prefix is fixed and cannot be edited">
+                                        <div className="mp-prefix-pill" title="Brand prefix is always included at the start">
                                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                                                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                                                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -624,11 +632,11 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
                                             ? 'Saving...'
                                             : !hasTextChanges
                                                 ? 'No changes to save'
-                                                : 'Save changes to hero section'
+                                                : 'Save changes'
                                     }
                                 >
                                     {isSavingText ? (
-                                        <span>Saving to Database...</span>
+                                        <span>Saving Changes...</span>
                                     ) : (
                                         <>
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -636,7 +644,7 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
                                                 <polyline points="17 21 17 13 7 13 7 21"></polyline>
                                                 <polyline points="7 3 7 8 15 8"></polyline>
                                             </svg>
-                                            <span>Save Changes to Hero</span>
+                                            <span>Save Changes</span>
                                         </>
                                     )}
                                 </button>
@@ -742,7 +750,7 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
             )}
 
             {/* ========================================================= */}
-            {/* SECTION 2: CLOUDINARY 3D SHOWCASE VIDEO                   */}
+            {/* SECTION 2: HERO 3D SHOWCASE VIDEO                         */}
             {/* ========================================================= */}
             {showVideoSection && (
                 <>
@@ -767,14 +775,14 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
                                 {/* Active Video Status Badge */}
                                 <div className="mp-active-status-wrap">
                                     {videoUrl ? (
-                                        <span className="mp-status-pill online" title="Video is live via Cloudinary CDN">
+                                        <span className="mp-status-pill online" title="Video is published and active on the website">
                                             <span className="mp-status-pulse" />
                                             Active
                                         </span>
                                     ) : (
-                                        <span className="mp-status-pill default" title="Using built-in local default video">
+                                        <span className="mp-status-pill default" title="Using default showcase video">
                                             <span className="mp-status-dot-blue" />
-                                            Default Template
+                                            Default Video
                                         </span>
                                     )}
                                 </div>
@@ -812,7 +820,7 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
                                             {selectedFile ? 'Change Selected Video' : 'Drag & drop video here, or Browse'}
                                         </p>
                                         <span className="mp-dropzone-sub">
-                                            Supports MP4, WebM, MOV up to 100MB (High Definition)
+                                            Supports MP4, WebM, MOV up to 100MB
                                         </span>
                                     </div>
                                 </div>
@@ -847,16 +855,16 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
                                 </div>
                             )}
 
-                            {/* Storage Waste Prevention Option when a file is selected */}
+                            {/* Storage Management Option when a file is selected */}
                             {selectedFile && (
                                 <div className="mp-storage-options-wrap">
-                                    <label className="mp-auto-delete-checkbox-label" title="When enabled, previous hero videos are permanently removed from Cloudinary">
+                                    <label className="mp-auto-delete-checkbox-label" title="When enabled, previously uploaded video files will be removed to free up storage space">
                                         <input
                                             type="checkbox"
                                             checked={autoDeletePrevious}
                                             onChange={(e) => setAutoDeletePrevious(e.target.checked)}
                                         />
-                                        <span>Delete previously uploaded video from Cloudinary upon save (Saves storage quota)</span>
+                                        <span>Replace and remove previously uploaded video (frees up storage space)</span>
                                     </label>
                                 </div>
                             )}
@@ -872,7 +880,7 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
                                     {isUploadingVideo ? (
                                         <>
                                             <span className="mp-spinner" />
-                                            <span>Uploading & Cleaning Storage...</span>
+                                            <span>Uploading Video...</span>
                                         </>
                                     ) : (
                                         <>
@@ -883,24 +891,24 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
                                                 <path d="M6 18h.01"></path>
                                                 <path d="M10 18h.01"></path>
                                             </svg>
-                                            <span>Upload Video to Cloudinary</span>
+                                            <span>Upload & Publish Video</span>
                                         </>
                                     )}
                                 </button>
 
-                                {/* Explicit button to delete previously uploaded video from Cloudinary */}
+                                {/* Button to remove custom video and restore default */}
                                 {videoUrl && (
                                     <button
                                         type="button"
                                         className="mp-btn-delete-previous-video"
                                         onClick={handleDeleteVideo}
                                         disabled={isResettingVideo || isUploadingVideo}
-                                        title="Permanently delete this video from Cloudinary to free storage and reset to default video"
+                                        title="Remove this video and restore the default showcase video"
                                     >
                                         {isResettingVideo ? (
                                             <>
                                                 <span className="mp-spinner red" />
-                                                <span>Deleting from Cloudinary...</span>
+                                                <span>Removing Video...</span>
                                             </>
                                         ) : (
                                             <>
@@ -910,43 +918,43 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
                                                     <line x1="10" y1="11" x2="10" y2="17"></line>
                                                     <line x1="14" y1="11" x2="14" y2="17"></line>
                                                 </svg>
-                                                <span>Delete Previously Uploaded Video</span>
+                                                <span>Remove Custom Video</span>
                                             </>
                                         )}
                                     </button>
                                 )}
 
-                                {/* Clean up orphaned / older videos from Cloudinary */}
+                                {/* Clean up unused storage */}
                                 <button
                                     type="button"
                                     className="mp-btn-cleanup-storage"
                                     onClick={handleCleanupStorage}
                                     disabled={isCleaningStorage || isUploadingVideo}
-                                    title="Scan Cloudinary and purge any unused older videos in the hero folder"
+                                    title="Clean up unused video files to free up storage space"
                                 >
                                     {isCleaningStorage ? (
                                         <>
                                             <span className="mp-spinner subtle" />
-                                            <span>Cleaning Storage...</span>
+                                            <span>Freeing Storage...</span>
                                         </>
                                     ) : (
-                                        <span>🧹 Clean Up Cloudinary Storage</span>
+                                        <span>🧹 Free Up Storage Space</span>
                                     )}
                                 </button>
                             </div>
 
-                            {/* CDN & Live Status Details */}
+                            {/* Direct Link & Status Details */}
                             {videoUrl && (
                                 <div className="mp-cloudinary-info-box">
                                     <div className="mp-cloudinary-meta-row">
-                                        <span className="mp-meta-label">Open in Full size:</span>
+                                        <span className="mp-meta-label">Direct Video Link:</span>
                                         <a
                                             href={videoUrl}
                                             target="_blank"
                                             rel="noreferrer"
                                             className="mp-cloudinary-link"
                                         >
-                                            Open Asset in New Tab ↗
+                                            View Video in New Tab ↗
                                         </a>
                                     </div>
                                     {videoUpdatedAt && (
@@ -973,7 +981,7 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
                                     ) : videoUrl ? (
                                         <span className="mp-tag-live">Live</span>
                                     ) : (
-                                        <span className="mp-tag-default">Motion Pub Default</span>
+                                        <span className="mp-tag-default">Default Video</span>
                                     )}
                                 </div>
                             </div>
