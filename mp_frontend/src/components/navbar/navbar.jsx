@@ -23,20 +23,30 @@ export default function Navbar() {
 
   // Track active section on scroll and hashchange
   useEffect(() => {
-    const sections = [
-      { id: 'about', name: 'About' },
+    const scrollSections = [
       { id: 'team', name: 'Team' },
       { id: 'services', name: 'Services' },
       { id: 'works', name: 'Our Works' },
       { id: 'testimonials', name: 'Testimonials' },
-      { id: 'partners', name: 'Partners' },
-      { id: 'contact', name: 'Contact Us' }
+      { id: 'partners', name: 'Partners' }
     ]
 
     const updateActiveSection = () => {
+      const hash = window.location.hash
+
+      // Lock active state when on dedicated page views
+      if (hash === '#about') {
+        setActiveLink('About')
+        return
+      }
+      if (hash === '#contact') {
+        setActiveLink('Contact Us')
+        return
+      }
+
       const scrollY = window.scrollY || document.documentElement.scrollTop || 0
 
-      // When near the very top of the page (Hero section), no nav link should be active
+      // When near top of page (Hero section), clear active link
       if (scrollY < 100) {
         setActiveLink('')
         return
@@ -46,11 +56,10 @@ export default function Navbar() {
       const windowHeight = window.innerHeight
       const docHeight = document.documentElement.scrollHeight
       if (windowHeight + scrollY >= docHeight - 50) {
-        // Highlight the last available section in the DOM
-        for (let i = sections.length - 1; i >= 0; i--) {
-          const el = document.getElementById(sections[i].id)
+        for (let i = scrollSections.length - 1; i >= 0; i--) {
+          const el = document.getElementById(scrollSections[i].id)
           if (el) {
-            setActiveLink(sections[i].name)
+            setActiveLink(scrollSections[i].name)
             return
           }
         }
@@ -59,9 +68,8 @@ export default function Navbar() {
       // Activation line offset below the sticky navbar (~160px from viewport top)
       const activationOffset = 160
 
-      // Find which section currently encompasses the activation line
       let matchedSection = ''
-      for (const section of sections) {
+      for (const section of scrollSections) {
         const el = document.getElementById(section.id)
         if (el) {
           const rect = el.getBoundingClientRect()
@@ -72,10 +80,9 @@ export default function Navbar() {
         }
       }
 
-      // Fallback: Pick the section closest to the top if between sections
       if (!matchedSection) {
         let closestDist = Infinity
-        for (const section of sections) {
+        for (const section of scrollSections) {
           const el = document.getElementById(section.id)
           if (el) {
             const rect = el.getBoundingClientRect()
@@ -95,14 +102,16 @@ export default function Navbar() {
 
     const handleHash = () => {
       const hash = window.location.hash
-      if (!hash || hash === '#' || hash === '#home') {
+      if (!hash || hash === '#' || hash === '#home' || hash === '#site') {
         setActiveLink('')
+      } else if (hash === '#about') {
+        setActiveLink('About')
+      } else if (hash === '#contact') {
+        setActiveLink('Contact Us')
       } else {
         const match = navLinks.find(l => l.href === hash)
         if (match) {
           setActiveLink(match.name)
-        } else if (hash === '#contact') {
-          setActiveLink('Contact Us')
         }
       }
     }

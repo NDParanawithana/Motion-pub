@@ -1,0 +1,935 @@
+/* ==========================================================================
+   Motion Pub - Contact Section (Sleek Dark Theme with Indigo/Purple Accents)
+   ========================================================================== */
+
+.mp-contact-section {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  min-height: calc(100dvh - 80px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 0;
+  background-color: var(--bg-color, #141414);
+  border-top: 1px solid var(--surface-border, rgba(255, 255, 255, 0.08));
+  overflow-x: clip;
+  overflow-y: visible;
+  box-sizing: border-box;
+  scroll-margin-top: 80px;
+}
+
+/* Ambient glow orbs in indigo/purple */
+.mp-contact-glow-orb {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: 0;
+}
+
+.mp-contact-glow-orb.top-left {
+  top: 10%;
+  left: 5%;
+  width: 500px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+}
+
+.mp-contact-glow-orb.bottom-right {
+  bottom: 5%;
+  right: 5%;
+  width: 550px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+}
+
+.mp-contact-container {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.18fr;
+  gap: clamp(2.5rem, 5vw, 5.5rem);
+  align-items: center;
+  box-sizing: border-box;
+  flex: 1;
+  padding: clamp(0.75rem, 2vh, 1.75rem) 1.5rem clamp(2.5rem, 5vh, 4rem);
+}
+
+/* ==========================================================================
+   Left Column: Information & Details
+   ========================================================================== */
+
+.mp-contact-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* Headline */
+.mp-contact-headline {
+  font-size: clamp(2.4rem, 4.4vw, 3.8rem);
+  font-weight: 850;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  margin-top: 0;
+  margin-bottom: clamp(1rem, 2vh, 1.35rem);
+  font-family: inherit;
+  opacity: 0;
+  animation: contactHeadlineFadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.3s;
+}
+
+@keyframes contactHeadlineFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Subtext */
+.mp-contact-subtext {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: #94a3b8;
+  margin-top: 0;
+  margin-bottom: clamp(2rem, 3.8vh, 2.75rem);
+  max-width: 440px;
+  opacity: 0;
+  animation: contactHeadlineFadeUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.45s;
+}
+
+/* Contact Details List */
+.mp-contact-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+  width: 100%;
+}
+
+.mp-contact-info-item {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+}
+
+.mp-info-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(99, 102, 241, 0.14);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: #818cf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.12);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, border-color 0.2s ease;
+}
+
+.mp-contact-info-item:hover .mp-info-icon-box {
+  transform: translateY(-2px) scale(1.05);
+  background: rgba(99, 102, 241, 0.22);
+  border-color: rgba(99, 102, 241, 0.45);
+  color: #a5b4fc;
+}
+
+.mp-info-text-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.mp-info-label {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.mp-info-val {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a.mp-info-val:hover {
+  color: #a5b4fc;
+}
+
+/* ==========================================================================
+   Business Hours & Availability Card
+   ========================================================================== */
+
+.mp-hours-card {
+  width: 100%;
+  background: rgba(24, 27, 34, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.15rem 1.25rem;
+  margin-top: 1.75rem;
+  box-sizing: border-box;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.25s ease;
+}
+
+.mp-hours-card:hover {
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), 0 0 24px rgba(99, 102, 241, 0.1);
+}
+
+.mp-hours-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.9rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.mp-hours-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: #f1f5f9;
+}
+
+.mp-hours-icon {
+  color: #818cf8;
+}
+
+.mp-hours-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  letter-spacing: -0.01em;
+}
+
+/* Live Status Pill (Open / Closed) */
+.mp-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  letter-spacing: 0.02em;
+}
+
+.mp-status-pill.open {
+  background: rgba(34, 197, 94, 0.14);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.mp-status-pill.closed {
+  background: rgba(245, 158, 11, 0.14);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.mp-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.mp-status-pill.open .mp-status-dot {
+  background: #4ade80;
+  box-shadow: 0 0 8px #4ade80;
+  animation: mpPulseDot 2s infinite ease-in-out;
+}
+
+.mp-status-pill.closed .mp-status-dot {
+  background: #fbbf24;
+  box-shadow: 0 0 6px #fbbf24;
+}
+
+@keyframes mpPulseDot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.6;
+  }
+}
+
+/* Hours Grid */
+.mp-hours-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.mp-hours-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.88rem;
+}
+
+.mp-days-tag {
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.mp-time-tag {
+  color: #a5b4fc;
+  font-weight: 600;
+  background: rgba(99, 102, 241, 0.12);
+  padding: 0.22rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  font-size: 0.84rem;
+}
+
+.mp-time-tag.closed {
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+/* Social Media Links */
+.mp-contact-socials-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.mp-socials-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.mp-social-links-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.mp-social-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: #a5b4fc;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.mp-social-link-btn:hover {
+  transform: translateY(-3px) scale(1.06);
+  background: rgba(99, 102, 241, 0.24);
+  border-color: #818cf8;
+  color: #ffffff;
+  box-shadow: 0 8px 22px rgba(99, 102, 241, 0.45);
+}
+
+/* Individual Brand Hover Accents */
+.mp-social-link-btn.facebook:hover {
+  border-color: #1877f2;
+  box-shadow: 0 8px 22px rgba(24, 119, 242, 0.45);
+  color: #1877f2;
+  background: rgba(24, 119, 242, 0.15);
+}
+
+.mp-social-link-btn.youtube:hover {
+  border-color: #ff0000;
+  box-shadow: 0 8px 22px rgba(255, 0, 0, 0.45);
+  color: #ff0000;
+  background: rgba(255, 0, 0, 0.15);
+}
+
+.mp-social-link-btn.instagram:hover {
+  border-color: #e4405f;
+  box-shadow: 0 8px 22px rgba(228, 64, 95, 0.45);
+  color: #e4405f;
+  background: rgba(228, 64, 95, 0.15);
+}
+
+.mp-social-link-btn.linkedin:hover {
+  border-color: #0a66c2;
+  box-shadow: 0 8px 22px rgba(10, 102, 194, 0.45);
+  color: #0a66c2;
+  background: rgba(10, 102, 194, 0.15);
+}
+
+/* ==========================================================================
+   Right Column: Form Card Container
+   ========================================================================== */
+
+.mp-contact-card-wrap {
+  width: 100%;
+}
+
+.mp-contact-card {
+  background: rgba(24, 27, 34, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 22px;
+  padding: clamp(1.75rem, 3.5vw, 2.75rem);
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6), 0 0 35px rgba(99, 102, 241, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-sizing: border-box;
+}
+
+/* Form Layout */
+.mp-contact-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.mp-form-row.two-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.15rem;
+}
+
+.mp-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 1.25rem;
+  text-align: left;
+}
+
+.mp-form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  letter-spacing: -0.01em;
+}
+
+/* Base Input & Textarea */
+.mp-form-input,
+.mp-form-textarea {
+  background: rgba(12, 14, 18, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 9px;
+  color: #ffffff;
+  font-size: 0.92rem;
+  padding: 0.75rem 1rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.mp-form-input::placeholder,
+.mp-form-textarea::placeholder,
+.mp-phone-text-input::placeholder {
+  color: #64748b;
+  font-size: 0.88rem;
+}
+
+/* Focus States matching purple focus from screenshot */
+.mp-form-input:focus,
+.mp-form-textarea:focus {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+  background: rgba(15, 17, 23, 0.95);
+}
+
+.mp-form-textarea {
+  resize: vertical;
+  min-height: 110px;
+  line-height: 1.5;
+}
+
+/* Phone Input with Country Code Selector */
+.mp-phone-input-wrap {
+  display: flex;
+  align-items: stretch;
+  background: rgba(12, 14, 18, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 9px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-sizing: border-box;
+}
+
+.mp-phone-input-wrap:focus-within {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+  background: rgba(15, 17, 23, 0.95);
+}
+
+.mp-country-select-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mp-country-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0 0.85rem;
+  height: 100%;
+  background: transparent;
+  border: none;
+  color: #e2e8f0;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.mp-country-btn:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.mp-country-flag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.mp-country-flag-img {
+  width: 22px;
+  height: 15px;
+  object-fit: cover;
+  border-radius: 3px;
+  display: inline-block;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.mp-option-flag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+}
+
+.mp-country-code {
+  font-size: 0.88rem;
+  color: #e2e8f0;
+}
+
+.mp-country-chevron {
+  color: #94a3b8;
+  transition: transform 0.2s ease;
+}
+
+.mp-country-chevron.open {
+  transform: rotate(180deg);
+}
+
+/* Country Dropdown Menu */
+.mp-country-dropdown-list {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 260px;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #1b1e26;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65), 0 0 12px rgba(99, 102, 241, 0.1);
+  padding: 0.35rem;
+  margin: 0;
+  list-style: none;
+  z-index: 50;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.mp-country-option {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  transition: all 0.15s ease;
+}
+
+.mp-country-option:hover {
+  background: rgba(99, 102, 241, 0.15);
+  color: #ffffff;
+}
+
+.mp-country-option.selected {
+  background: rgba(99, 102, 241, 0.25);
+  color: #a5b4fc;
+  font-weight: 600;
+}
+
+.mp-option-flag {
+  font-size: 1.05rem;
+}
+
+.mp-option-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mp-option-code {
+  color: #94a3b8;
+  font-size: 0.82rem;
+}
+
+.mp-phone-text-input {
+  flex: 1;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none;
+  color: #ffffff;
+  font-size: 0.92rem;
+  padding: 0.75rem 1rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+/* Status Alert */
+.mp-form-status-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  margin-bottom: 1.25rem;
+  animation: mpAlertFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes mpAlertFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mp-form-status-alert.success {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #4ade80;
+}
+
+.mp-form-status-alert.error {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+/* Submit Button Row */
+.mp-form-action-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 0.5rem;
+}
+
+.mp-contact-submit-btn {
+  background: #6366f1;
+  color: #ffffff;
+  font-size: 0.94rem;
+  font-weight: 600;
+  padding: 0.75rem 1.9rem;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.45);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+}
+
+.mp-contact-submit-btn:hover:not(:disabled) {
+  background: #5558e6;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(99, 102, 241, 0.6);
+}
+
+.mp-contact-submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
+}
+
+.mp-contact-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.mp-btn-loading-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mp-btn-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: mpBtnSpin 0.7s linear infinite;
+}
+
+@keyframes mpBtnSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+@media (max-width: 992px) {
+  .mp-contact-container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .mp-contact-left {
+    align-items: center;
+    text-align: center;
+  }
+
+  .mp-contact-corner-title {
+    text-align: center;
+    letter-spacing: 0.28em;
+  }
+
+  .mp-contact-subtext {
+    max-width: 550px;
+  }
+
+  .mp-contact-info-list {
+    align-items: center;
+  }
+
+  .mp-contact-socials-wrap {
+    align-items: center;
+    text-align: center;
+  }
+
+  .mp-social-links-row {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .mp-contact-section {
+    padding: 3rem 1rem;
+  }
+
+  .mp-form-row.two-cols {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .mp-contact-card {
+    padding: 1.5rem 1.15rem;
+    border-radius: 18px;
+  }
+
+  .mp-contact-headline {
+    font-size: 2.1rem;
+  }
+
+  .mp-contact-submit-btn {
+    width: 100%;
+  }
+
+  .mp-form-action-row {
+    justify-content: stretch;
+  }
+}
+
+/* ==========================================================================
+   Success Popup Modal
+   ========================================================================== */
+
+.mp-contact-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(8, 10, 15, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  animation: mpPopupFadeIn 0.25s ease-out forwards;
+}
+
+.mp-contact-popup-card {
+  position: relative;
+  background: #181a24;
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  border-radius: 24px;
+  padding: 2.75rem 2.25rem 2.25rem;
+  max-width: 460px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85), 0 0 40px rgba(99, 102, 241, 0.2);
+  box-sizing: border-box;
+  animation: mpPopupScaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.mp-popup-close-btn {
+  position: absolute;
+  top: 1.15rem;
+  right: 1.15rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mp-popup-close-btn:hover {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #f87171;
+  transform: rotate(90deg);
+}
+
+.mp-popup-icon-ring {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.15);
+  border: 2px solid #818cf8;
+  color: #818cf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.4rem;
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.4);
+  animation: mpIconPulse 2s infinite ease-in-out;
+}
+
+.mp-popup-check-icon {
+  stroke: #a5b4fc;
+}
+
+.mp-popup-title {
+  color: #ffffff;
+  font-size: 1.45rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.75rem;
+}
+
+.mp-popup-message {
+  color: #cbd5e1;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin: 0 0 2rem;
+  font-weight: 500;
+}
+
+.mp-popup-confirm-btn {
+  background: #6366f1;
+  color: #ffffff;
+  font-size: 0.96rem;
+  font-weight: 600;
+  padding: 0.75rem 2.8rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.5);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: inherit;
+}
+
+.mp-popup-confirm-btn:hover {
+  background: #5558e6;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.7);
+}
+
+.mp-popup-confirm-btn:active {
+  transform: translateY(0);
+}
+
+@keyframes mpPopupFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mpPopupScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes mpIconPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 32px rgba(99, 102, 241, 0.65);
+  }
+}

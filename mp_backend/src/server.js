@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { connectToMongoDB, checkMongoStatus, disconnectFromMongoDB } from './config/db.js';
 import adminLoginRoutes from './routes/admin/admin_login_routes.js';
 import heroRoutes from './routes/content/hero_routes.js';
+import contactRoutes from './routes/contact/contact_routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -50,12 +51,8 @@ app.get('/api/services', (req, res) => {
   ]);
 });
 
-// Sample Contact Endpoint
-app.post('/api/contact', (req, res) => {
-  const { name, email, message } = req.body;
-  console.log('Received submission:', { name, email, message });
-  res.status(201).json({ success: true, message: 'Message received!' });
-});
+// Contact Messages Endpoint (MongoDB)
+app.use('/api/contact', contactRoutes);
 
 const server = app.listen(PORT, () => {
   console.log(`🚀 Backend running at http://localhost:${PORT}`);

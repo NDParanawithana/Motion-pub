@@ -1,0 +1,347 @@
+/* ==========================================================================
+   Motion Pub - Reusable Page Header Component (Pin / Key Shape Container)
+   ========================================================================== */
+
+/* Sticky Header Bar across all pages */
+.mp-pageheader-sticky,
+.mp-sticky-page-header {
+  position: sticky;
+  top: 68px; /* Sticks right beneath the 68px sticky navbar */
+  left: 0;
+  z-index: 95;
+  width: 100%;
+  pointer-events: none; /* Allows scrolling and clicks to pass through except on the badge */
+  padding-top: var(--pageheader-top-padding, 18px); /* Fixed padding between navbar and header on every page */
+  padding-bottom: 10px;
+  padding-left: 0;
+  padding-right: 0;
+  box-sizing: border-box;
+}
+
+.mp-pageheader-sticky-inner,
+.mp-sticky-page-header-inner {
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 2.5vw, 2rem);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Static wrapper when sticky is false */
+.mp-pageheader-static-wrap {
+  display: inline-block;
+  padding: 0.5rem 0;
+}
+
+/* ==========================================================================
+   Pin / Key Shape Container (Circle Bulb on Left + Horizontal Bar on Right)
+   ========================================================================== */
+
+.mp-pageheader-pin-container {
+  display: inline-flex;
+  position: relative;
+  align-items: center;
+  flex-shrink: 0;
+  height: 44px;
+  overflow: hidden; /* width is tweened in JS; clips the bar while it retracts into the circle */
+  pointer-events: auto;
+  margin-left: var(--pageheader-offset, -38px); /* Aligns circular head to marked area */
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 14px var(--pageheader-glow-color, rgba(120, 183, 0, 0.25)));
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: mpHeaderEnter 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  box-sizing: border-box;
+  will-change: width;
+}
+
+@keyframes mpHeaderEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.mp-pageheader-pin-container:hover {
+  transform: translateY(-1px);
+  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 20px var(--pageheader-glow-hover, rgba(148, 224, 0, 0.45)));
+}
+
+.mp-pageheader-pin-container.is-collapsed {
+  cursor: pointer;
+}
+
+/* SVG silhouette background (single path morphing between pin and circle) */
+.mp-pageheader-pin-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+}
+
+/* Content layout on top of SVG */
+.mp-pageheader-pin-body {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* Circular slot for icon / dot */
+.mp-pageheader-circle-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* Icon inside circular head. Centering + collapse scale are inline (JS-tweened);
+   hover scale uses the independent `scale` property so the two compose. */
+.mp-pageheader-circle-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: var(--pageheader-text-color, var(--section-tag-color, #78b700));
+  filter: drop-shadow(0 0 8px var(--pageheader-text-glow, rgba(120, 183, 0, 0.45)));
+  transition: scale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+}
+
+.mp-pageheader-pin-container:hover .mp-pageheader-circle-icon-wrap {
+  scale: 1.1;
+  filter: drop-shadow(0 0 12px var(--pageheader-text-glow, rgba(120, 183, 0, 0.7)));
+}
+
+.mp-pageheader-icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+}
+
+/* Pulsing accent dot inside circle node (when no icon is used) */
+.mp-pageheader-circle-dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pageheader-text-color, #78b700);
+  box-shadow: 0 0 10px var(--pageheader-text-color, #78b700), 0 0 20px var(--pageheader-text-color, #78b700);
+  animation: mpHeaderDotPulse 2.4s ease-in-out infinite;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+  pointer-events: none;
+}
+
+@keyframes mpHeaderDotPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.3);
+    opacity: 1;
+    box-shadow: 0 0 14px var(--pageheader-text-color, #78b700), 0 0 24px var(--pageheader-text-color, #78b700);
+  }
+}
+
+/* Horizontal bar slot containing the title.
+   Keeps its natural width; opacity/shift are tweened inline and the
+   container clips it while the badge collapses. */
+.mp-pageheader-bar-slot {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding-right: 1.55rem;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+/* Title typography inside the container */
+.mp-pageheader-title,
+.mp-trapezium-title {
+  font-family: var(--pageheader-font, 'Chakra Petch'), 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: clamp(0.84rem, 1.05vw, 0.98rem);
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  color: var(--pageheader-text-color, var(--section-tag-color, #78b700));
+  text-shadow: 0 0 14px var(--pageheader-text-glow, rgba(120, 183, 0, 0.4));
+  line-height: 1.2;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  user-select: none;
+  transition: color 0.25s ease,
+              text-shadow 0.25s ease;
+}
+
+/* Letter Pop-Up Animation */
+.mp-pageheader-pop-word,
+.mp-corner-pop-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.mp-pageheader-pop-space,
+.mp-corner-pop-space {
+  display: inline-block;
+}
+
+.mp-pageheader-pop-letter,
+.mp-corner-pop-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: scale(0.2) translateY(8px);
+  filter: blur(3px);
+  animation: mpHeaderLetterPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes mpHeaderLetterPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.2) translateY(8px);
+    filter: blur(3px);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(1.2) translateY(-2px);
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mp-pageheader-pop-letter,
+  .mp-corner-pop-letter {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    animation: none !important;
+  }
+
+  .mp-pageheader-circle-dot {
+    animation: none !important;
+  }
+
+  .mp-pageheader-pin-container,
+  .mp-pageheader-bar-slot,
+  .mp-pageheader-path-pin,
+  .mp-pageheader-path-circle,
+  .mp-pageheader-circle-icon-wrap {
+    transition: none !important;
+  }
+}
+
+/* ==========================================================================
+   Alternative Shapes Support (Trapezium / Pill)
+   ========================================================================== */
+
+.mp-pageheader-frame,
+.mp-trapezium-frame {
+  display: inline-flex;
+  position: relative;
+  padding: 1px;
+  background: var(--pageheader-border-gradient, linear-gradient(135deg, rgba(148, 224, 0, 0.75) 0%, rgba(255, 255, 255, 0.25) 45%, rgba(148, 224, 0, 0.5) 100%));
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 14px var(--pageheader-glow-color, rgba(120, 183, 0, 0.25)));
+  pointer-events: auto;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mp-pageheader-frame:hover,
+.mp-trapezium-frame:hover {
+  transform: translateY(-1px);
+  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 20px var(--pageheader-glow-hover, rgba(148, 224, 0, 0.45)));
+}
+
+.mp-pageheader-frame.is-trapezium,
+.mp-trapezium-frame {
+  clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 100%, 0 100%);
+}
+
+.mp-pageheader-frame.is-pill {
+  border-radius: 9999px;
+  clip-path: none;
+}
+
+.mp-pageheader-content,
+.mp-trapezium-content {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem clamp(1.4rem, 2vw, 1.85rem);
+  background: var(--pageheader-container-bg, #000000);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-sizing: border-box;
+  transition: background 0.25s ease, background-color 0.25s ease;
+}
+
+.mp-pageheader-content.is-trapezium,
+.mp-trapezium-content {
+  clip-path: polygon(14px 0, calc(100% - 14px) 0, 100% 100%, 0 100%);
+}
+
+.mp-pageheader-content.is-pill {
+  border-radius: 9999px;
+  clip-path: none;
+}
+
+/* ==========================================================================
+   Mobile Responsive Adjustments
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .mp-pageheader-sticky,
+  .mp-sticky-page-header {
+    top: 60px; /* Mobile navbar height */
+    padding-top: var(--pageheader-top-padding-mobile, 14px);
+    padding-bottom: 8px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .mp-pageheader-sticky-inner,
+  .mp-sticky-page-header-inner {
+    padding: 0 1rem;
+  }
+
+  .mp-pageheader-pin-container {
+    height: 38px;
+    --pageheader-size: 38px;
+    margin-left: 0 !important;
+  }
+
+  .mp-pageheader-bar-slot {
+    padding-left: 0.3rem;
+    padding-right: 1.15rem;
+  }
+
+  .mp-pageheader-title,
+  .mp-trapezium-title {
+    font-size: 0.76rem;
+    letter-spacing: 0.22em;
+  }
+
+  .mp-pageheader-circle-dot {
+    width: 6.5px;
+    height: 6.5px;
+  }
+}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useLayoutEffect, useMemo, useCallback } from 'react'
+import PageHeader from '../../components/pageHeader/pageHeader'
 import './about.css'
 
 function LineByLineText({
@@ -237,6 +238,14 @@ export default function About() {
   const [animateKey, setAnimateKey] = useState(0)
   const sectionRef = useRef(null)
 
+  // Ensure About page stays strictly in the top position when loading/mounting
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual'
+    }
+  }, [])
+
   const [cornerTitle, setCornerTitle] = useState(() => {
     return localStorage.getItem('mp_about_corner_title') || 'ABOUT MOTION PUB'
   })
@@ -312,52 +321,28 @@ export default function About() {
       setTimeout(() => { cooldown = false }, 3000)
     }
 
-    // Re-trigger and scroll on hash navigation to #about
+    // Re-trigger and keep at top on hash navigation to #about
     const handleHashChange = () => {
       if (window.location.hash === '#about') {
         trigger()
-        const el = sectionRef.current || document.getElementById('about')
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
       }
     }
     window.addEventListener('hashchange', handleHashChange)
 
-    // Re-trigger and scroll on click of any link pointing to #about
+    // Re-trigger and keep at top on click of any link pointing to #about
     const handleLinkClick = (e) => {
       const link = e.target.closest('a')
       if (link && link.getAttribute('href') === '#about') {
         trigger()
-        const el = sectionRef.current || document.getElementById('about')
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
       }
     }
     document.addEventListener('click', handleLinkClick)
 
-    // Trigger once when section scrolls into viewport
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            trigger()
-            observer.unobserve(entry.target)
-          }
-        })
-      },
-      { threshold: 0.25 }
-    )
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
-    }
-
     return () => {
       window.removeEventListener('hashchange', handleHashChange)
       document.removeEventListener('click', handleLinkClick)
-      observer.disconnect()
     }
   }, [])
 
@@ -431,16 +416,20 @@ export default function About() {
   }
 
   return (
-    <section className="mp-about-section section" id="about" ref={sectionRef}>
+    <section className="mp-about-section" id="about" ref={sectionRef}>
       {/* Ambient background glow */}
       <div className="mp-about-bg-glow" />
 
-      <div className="mp-about-container">
-        {/* Top-Left Corner Title (Replacing Badge) */}
-        <div className="mp-about-corner-title">
-          {cornerTitle}
-        </div>
+      {/* Top-Left Page Header with matching icon and changeable props */}
+      <PageHeader
+        text={cornerTitle}
+        animateKey={animateKey}
+        textColor="#78b700"
+        containerColor="#8888881f"
+        icon="about"
+      />
 
+      <div className="mp-about-container">
         {/* Main Section Title with Bouncing Letters */}
         <h2 className="mp-about-title">
           <span className="mp-title-line">
