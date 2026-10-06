@@ -1,5 +1,11 @@
 import { Router } from 'express';
-import { saveContactMessage, getAllContactMessages } from '../../models/contact/contact_model.js';
+import {
+  saveContactMessage,
+  getAllContactMessages,
+  markMessageRead,
+  markAllMessagesRead,
+  deleteContactMessage
+} from '../../models/contact/contact_model.js';
 
 const router = Router();
 
@@ -105,4 +111,68 @@ router.get('/messages', async (req, res) => {
   }
 });
 
+/**
+ * PATCH /api/contact/messages/read-all
+ * Mark all messages as read
+ */
+router.patch('/messages/read-all', async (req, res) => {
+  try {
+    await markAllMessagesRead();
+    return res.status(200).json({
+      success: true,
+      message: 'All messages marked as read.'
+    });
+  } catch (err) {
+    console.error('❌ Error marking all messages read:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to mark all messages as read.'
+    });
+  }
+});
+
+/**
+ * PATCH /api/contact/messages/:id/read
+ * Mark a message as read or unread
+ */
+router.patch('/messages/:id/read', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const isRead = req.body.read !== undefined ? req.body.read : true;
+    await markMessageRead(id, isRead);
+    return res.status(200).json({
+      success: true,
+      message: `Message marked as ${isRead ? 'read' : 'unread'}.`
+    });
+  } catch (err) {
+    console.error('❌ Error updating message read status:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to update message status.'
+    });
+  }
+});
+
+/**
+ * DELETE /api/contact/messages/:id
+ * Delete a single message
+ */
+router.delete('/messages/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await deleteContactMessage(id);
+    return res.status(200).json({
+      success: true,
+      message: 'Message deleted successfully.'
+    });
+  } catch (err) {
+    console.error('❌ Error deleting message:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to delete message.'
+    });
+  }
+});
+
 export default router;
+

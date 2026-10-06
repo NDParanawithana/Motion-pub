@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react';
 import HeroEdit from './hero/heroedit';
 import AboutEdit from './about/aboutedit';
+import ContactEdit from './contact/contactEdit';
+import MessagesDrawer from './messages/messagesDrawer';
 import './dashboard.css';
 
 export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
-  const [activePage, setActivePage] = useState('hero'); // 'hero' | 'about'
+  const [activePage, setActivePage] = useState('hero'); // 'hero' | 'about' | 'contact'
   const [isHeroOpen, setIsHeroOpen] = useState(true);
   const [activeHeroSection, setActiveHeroSection] = useState('all');
+  const [isMessagesOpen, setIsMessagesOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const handleOpenLiveWebsite = () => {
     if (onBackToSite) {
@@ -15,6 +19,28 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
       window.open(`${window.location.origin}${window.location.pathname}`, '_blank');
     }
   };
+
+  // Fetch unread count for badge
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const res = await fetch('/api/contact/messages');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && Array.isArray(data.data)) {
+            const count = data.data.filter(m => !m.read && m.status !== 'read').length;
+            setUnreadCount(count);
+          }
+        }
+      } catch (err) {
+        console.warn('Could not fetch message count:', err.message);
+      }
+    };
+
+    fetchUnreadCount();
+    const timer = setInterval(fetchUnreadCount, 30000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Set document title for Admin Dashboard
   useEffect(() => {
@@ -27,6 +53,13 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
   return (
     <div className="mp-dashboard-root">
       <div className="mp-dashboard-glow" />
+
+      {/* Messages Side Drawer */}
+      <MessagesDrawer
+        isOpen={isMessagesOpen}
+        onClose={() => setIsMessagesOpen(false)}
+        onUnreadCountChange={setUnreadCount}
+      />
 
       {/* Sidebar Navigation */}
       <aside className="mp-dashboard-sidebar">
@@ -140,6 +173,23 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
               </button>
             </div>
 
+            {/* Contact Page Navigation Link */}
+            <div className="mp-nav-group">
+              <button
+                type="button"
+                className={`mp-nav-item ${activePage === 'contact' ? 'active' : ''}`}
+                onClick={() => setActivePage('contact')}
+                title="Manage Contact Page"
+              >
+                <div className="mp-nav-item-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                  </svg>
+                  <span>Contact Page</span>
+                </div>
+              </button>
+            </div>
+
             <span className="mp-nav-section-label">Sections (CMS)</span>
 
             <div className="mp-nav-item" style={{ opacity: 0.5, cursor: 'default' }}>
@@ -219,6 +269,8 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
             <span>/</span>
             {activePage === 'about' ? (
               <span className="current">About Page</span>
+            ) : activePage === 'contact' ? (
+              <span className="current">Contact Page</span>
             ) : (
               <>
                 <span
@@ -244,11 +296,28 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
           </div>
 
           <div className="mp-topbar-actions">
-            <div className="mp-live-status-pill">
-              <span className="mp-live-status-dot" />
-              <span>MongoDB Atlas Connected</span>
-            </div>
+            {/* Messages Icon Button */}
+            <button
+              type="button"
+              className={`mp-topbar-msg-btn ${unreadCount > 0 ? 'has-unread' : ''}`}
+              onClick={() => setIsMessagesOpen(true)}
+              title={unreadCount > 0 ? `${unreadCount} unread customer inquiries` : 'Customer inquiries & messages'}
+              aria-label="View user contact messages"
+            >
+              <div className="mp-msg-btn-icon-wrap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                {unreadCount > 0 && (
+                  <span className="mp-topbar-msg-badge">
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
+              </div>
+              <span className="mp-topbar-msg-label">Messages</span>
+            </button>
 
+            {/* View Live Website Button */}
             <button
               type="button"
               className="mp-btn-site-preview"
@@ -268,6 +337,8 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
         <div className="mp-page-container">
           {activePage === 'about' ? (
             <AboutEdit />
+          ) : activePage === 'contact' ? (
+            <ContactEdit onOpenMessages={() => setIsMessagesOpen(true)} unreadCount={unreadCount} />
           ) : (
             <HeroEdit
               activeSection={activeHeroSection}
@@ -279,3 +350,4 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
     </div>
   );
 }
+
