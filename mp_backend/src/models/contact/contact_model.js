@@ -36,6 +36,7 @@ export async function saveContactMessage(messageData) {
     lastName: (messageData.lastName || '').trim(),
     email: (messageData.email || '').trim().toLowerCase(),
     phone: (messageData.phone || '').trim(),
+    serviceType: (messageData.serviceType || '').trim(),
     message: (messageData.message || '').trim(),
     status: 'unread',
     read: false,

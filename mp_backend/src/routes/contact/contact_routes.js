@@ -6,10 +6,162 @@ import {
   markAllMessagesRead,
   deleteContactMessage
 } from '../../models/contact/contact_model.js';
+import {
+  getAllServiceOptions,
+  createServiceOption,
+  updateServiceOption,
+  deleteServiceOption,
+  resetServiceOptionsToDefault
+} from '../../models/contact/service_option_model.js';
 
 const router = Router();
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+/**
+ * =========================================================================
+ * Service Options Endpoints (Dropdown options: Edit Video, Video Production, Reel)
+ * =========================================================================
+ */
+
+/**
+ * GET /api/contact/services
+ * Get all available service dropdown options
+ */
+router.get('/services', async (req, res) => {
+  try {
+    const services = await getAllServiceOptions();
+    return res.status(200).json({
+      success: true,
+      data: services
+    });
+  } catch (err) {
+    console.error('❌ Error fetching service options:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to fetch service options.'
+    });
+  }
+});
+
+/**
+ * POST /api/contact/services
+ * Add a new service option to the dropdown
+ */
+router.post('/services', async (req, res) => {
+  try {
+    const { name, order } = req.body;
+    if (!name || !name.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Service option name is required.'
+      });
+    }
+
+    const newOption = await createServiceOption({ name, order });
+    return res.status(201).json({
+      success: true,
+      message: 'Service option added successfully.',
+      data: newOption
+    });
+  } catch (err) {
+    console.error('❌ Error creating service option:', err);
+    return res.status(400).json({
+      success: false,
+      message: err.message || 'Failed to create service option.'
+    });
+  }
+});
+
+/**
+ * PUT /api/contact/services/:id
+ * Edit an existing service option
+ */
+router.put('/services/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, order, isActive } = req.body;
+
+    const updated = await updateServiceOption(id, { name, order, isActive });
+    return res.status(200).json({
+      success: true,
+      message: 'Service option updated successfully.',
+      data: updated
+    });
+  } catch (err) {
+    console.error('❌ Error updating service option:', err);
+    return res.status(400).json({
+      success: false,
+      message: err.message || 'Failed to update service option.'
+    });
+  }
+});
+
+/**
+ * PATCH /api/contact/services/:id
+ * Partial update for service option
+ */
+router.patch('/services/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, order, isActive } = req.body;
+
+    const updated = await updateServiceOption(id, { name, order, isActive });
+    return res.status(200).json({
+      success: true,
+      message: 'Service option updated successfully.',
+      data: updated
+    });
+  } catch (err) {
+    console.error('❌ Error updating service option:', err);
+    return res.status(400).json({
+      success: false,
+      message: err.message || 'Failed to update service option.'
+    });
+  }
+});
+
+/**
+ * DELETE /api/contact/services/:id
+ * Delete a service option from the dropdown
+ */
+router.delete('/services/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await deleteServiceOption(id);
+    return res.status(200).json({
+      success: true,
+      message: 'Service option deleted successfully.'
+    });
+  } catch (err) {
+    console.error('❌ Error deleting service option:', err);
+    return res.status(400).json({
+      success: false,
+      message: err.message || 'Failed to delete service option.'
+    });
+  }
+});
+
+/**
+ * POST /api/contact/services/reset
+ * Reset service options back to default: Edit Video, Video Production, Reel
+ */
+router.post('/services/reset', async (req, res) => {
+  try {
+    const defaults = await resetServiceOptionsToDefault();
+    return res.status(200).json({
+      success: true,
+      message: 'Service options reset to defaults successfully.',
+      data: defaults
+    });
+  } catch (err) {
+    console.error('❌ Error resetting service options:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to reset service options.'
+    });
+  }
+});
 
 /**
  * POST /api/contact
@@ -17,7 +169,7 @@ const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
  */
 router.post('/', async (req, res) => {
   try {
-    const { name, firstName, lastName, email, phone, message } = req.body;
+    const { name, firstName, lastName, email, phone, message, serviceType } = req.body;
 
     const trimmedEmail = (email || '').trim().toLowerCase();
     if (!trimmedEmail || !EMAIL_REGEX.test(trimmedEmail)) {
@@ -66,6 +218,7 @@ router.post('/', async (req, res) => {
       lastName,
       email,
       phone: formattedPhone,
+      serviceType: (serviceType || '').trim(),
       message
     });
 

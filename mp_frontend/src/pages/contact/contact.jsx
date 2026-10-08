@@ -49,12 +49,23 @@ const DEFAULT_CONTACT_SETTINGS = {
     linkedinUrl: 'https://linkedin.com',
 };
 
+const DEFAULT_SERVICE_OPTIONS = [
+    { _id: '1', name: 'Edit Video' },
+    { _id: '2', name: 'Video Production' },
+    { _id: '3', name: 'Reel' },
+];
+
 export default function Contact() {
+    const [serviceOptions, setServiceOptions] = useState(DEFAULT_SERVICE_OPTIONS);
+    const [isServiceDropdownOpen, setIsServiceDropdownOpen] = useState(false);
+    const serviceDropdownRef = useRef(null);
+
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
         email: '',
         phone: '',
+        serviceType: 'Edit Video',
         message: '',
     });
 
@@ -74,6 +85,53 @@ export default function Contact() {
     const [isOpenNow, setIsOpenNow] = useState(getIsOpenNow);
 
     const dropdownRef = useRef(null);
+
+    // Fetch dynamic service options from backend (with live updates listener)
+    useEffect(() => {
+        let isMounted = true;
+        const fetchServices = async () => {
+            try {
+                const res = await fetch('/api/contact/services');
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+                        if (isMounted) {
+                            setServiceOptions(json.data);
+                            setFormData((prev) => ({
+                                ...prev,
+                                serviceType: prev.serviceType || json.data[0].name
+                            }));
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn('Could not load service options from backend, using defaults:', err.message);
+            }
+        };
+
+        fetchServices();
+
+        const handleServiceUpdate = () => {
+            fetchServices();
+        };
+        window.addEventListener('mp_services_updated', handleServiceUpdate);
+
+        return () => {
+            isMounted = false;
+            window.removeEventListener('mp_services_updated', handleServiceUpdate);
+        };
+    }, []);
+
+    // Close service dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (serviceDropdownRef.current && !serviceDropdownRef.current.contains(e.target)) {
+                setIsServiceDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     // Sync contact settings when updated from Admin Dashboard
     useEffect(() => {
@@ -163,6 +221,14 @@ export default function Contact() {
             return;
         }
 
+        if (!formData.serviceType || !formData.serviceType.trim()) {
+            setStatus({
+                state: 'error',
+                message: 'Please select a service type.',
+            });
+            return;
+        }
+
         const trimmedEmail = formData.email.trim();
         if (!EMAIL_REGEX.test(trimmedEmail)) {
             setStatus({
@@ -199,6 +265,7 @@ export default function Contact() {
             countryCode: selectedCountry.code,
             rawPhone: phoneDigits,
             phone: `${selectedCountry.code} ${phoneDigits}`,
+            serviceType: formData.serviceType.trim(),
             message: formData.message.trim(),
         };
 
@@ -231,6 +298,7 @@ export default function Contact() {
                 lastName: '',
                 email: '',
                 phone: '',
+                serviceType: serviceOptions[0]?.name || 'Edit Video',
                 message: '',
             });
         } catch (err) {
@@ -610,7 +678,88 @@ export default function Contact() {
                                 </div>
                             </div>
 
-                            {/* Row 4: Message */}
+                            {/* Row 4: Service Type Dropdown */}
+                            <div className="mp-form-group">
+                                <label htmlFor="serviceTypeBtn" className="mp-form-label">
+                                    Service Type*
+                                </label>
+                                <div className="mp-service-select-wrap" ref={serviceDropdownRef}>
+                                    <button
+                                        type="button"
+                                        id="serviceTypeBtn"
+                                        className={`mp-service-select-btn ${isServiceDropdownOpen ? 'active' : ''}`}
+                                        onClick={() => setIsServiceDropdownOpen((prev) => !prev)}
+                                        aria-haspopup="listbox"
+                                        aria-expanded={isServiceDropdownOpen}
+                                    >
+                                        <div className="mp-service-select-val">
+                                            <svg
+                                                width="16"
+                                                height="16"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                className="mp-service-icon"
+                                            >
+                                                <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                                                <polyline points="2 17 12 22 22 17" />
+                                                <polyline points="2 12 12 17 22 12" />
+                                            </svg>
+                                            <span className="mp-service-name-text">
+                                                {formData.serviceType || 'Select a service'}
+                                            </span>
+                                        </div>
+                                        <svg
+                                            width="14"
+                                            height="14"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2.5"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            className={`mp-service-chevron ${isServiceDropdownOpen ? 'open' : ''}`}
+                                        >
+                                            <path d="m6 9 6 6 6-6" />
+                                        </svg>
+                                    </button>
+
+                                    {isServiceDropdownOpen && (
+                                        <ul className="mp-service-dropdown-list" role="listbox">
+                                            {serviceOptions.map((svc) => {
+                                                const isSelected = formData.serviceType === svc.name;
+                                                return (
+                                                    <li
+                                                        key={svc._id || svc.name}
+                                                        role="option"
+                                                        aria-selected={isSelected}
+                                                        className={`mp-service-option ${isSelected ? 'selected' : ''}`}
+                                                        onClick={() => {
+                                                            setFormData((prev) => ({ ...prev, serviceType: svc.name }));
+                                                            setIsServiceDropdownOpen(false);
+                                                            if (status.state === 'error') {
+                                                                setStatus({ state: 'idle', message: '' });
+                                                            }
+                                                        }}
+                                                    >
+                                                        <span className="mp-service-option-name">{svc.name}</span>
+                                                        {isSelected && (
+                                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="mp-service-check-icon">
+                                                                <polyline points="20 6 9 17 4 12" />
+                                                            </svg>
+                                                        )}
+                                                    </li>
+                                                );
+                                            })}
+                                        </ul>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Row 5: Message */}
                             <div className="mp-form-group">
                                 <label htmlFor="message" className="mp-form-label">
                                     Message*

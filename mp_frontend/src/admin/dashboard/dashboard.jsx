@@ -9,6 +9,8 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
   const [activePage, setActivePage] = useState('hero'); // 'hero' | 'about' | 'contact'
   const [isHeroOpen, setIsHeroOpen] = useState(true);
   const [activeHeroSection, setActiveHeroSection] = useState('all');
+  const [isContactOpen, setIsContactOpen] = useState(true);
+  const [activeContactSection, setActiveContactSection] = useState('all');
   const [isMessagesOpen, setIsMessagesOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -173,13 +175,17 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
               </button>
             </div>
 
-            {/* Contact Page Navigation Link */}
+            {/* Contact Page Group with Sub-menus */}
             <div className="mp-nav-group">
               <button
                 type="button"
                 className={`mp-nav-item ${activePage === 'contact' ? 'active' : ''}`}
-                onClick={() => setActivePage('contact')}
-                title="Manage Contact Page"
+                onClick={() => {
+                  setActivePage('contact');
+                  setIsContactOpen(prev => (activePage === 'contact' ? !prev : true));
+                  setActiveContactSection('all');
+                }}
+                title="Manage entire Contact Page"
               >
                 <div className="mp-nav-item-left">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -187,7 +193,99 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
                   </svg>
                   <span>Contact Page</span>
                 </div>
+                <svg
+                  className={`mp-nav-chevron ${isContactOpen ? 'rotated' : ''}`}
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
               </button>
+
+              {/* Sub-menus for Contact Sections */}
+              {isContactOpen && (
+                <div className="mp-sub-nav">
+                  <button
+                    type="button"
+                    className={`mp-sub-nav-item ${activePage === 'contact' && activeContactSection === 'channels' ? 'active' : ''}`}
+                    onClick={() => {
+                      setActivePage('contact');
+                      setIsContactOpen(true);
+                      setActiveContactSection('channels');
+                    }}
+                    title="Edit Contact Channels (Email, Phone, Location)"
+                  >
+                    <div className="mp-sub-nav-left">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                      </svg>
+                      <span>Contact Channels</span>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`mp-sub-nav-item ${activePage === 'contact' && activeContactSection === 'hours' ? 'active' : ''}`}
+                    onClick={() => {
+                      setActivePage('contact');
+                      setIsContactOpen(true);
+                      setActiveContactSection('hours');
+                    }}
+                    title="Edit Working Hours & Availability"
+                  >
+                    <div className="mp-sub-nav-left">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                      </svg>
+                      <span>Working Hours</span>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`mp-sub-nav-item ${activePage === 'contact' && activeContactSection === 'socials' ? 'active' : ''}`}
+                    onClick={() => {
+                      setActivePage('contact');
+                      setIsContactOpen(true);
+                      setActiveContactSection('socials');
+                    }}
+                    title="Manage Social Media Profiles"
+                  >
+                    <div className="mp-sub-nav-left">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                      </svg>
+                      <span>Social Profiles</span>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    className={`mp-sub-nav-item ${activePage === 'contact' && activeContactSection === 'services' ? 'active' : ''}`}
+                    onClick={() => {
+                      setActivePage('contact');
+                      setIsContactOpen(true);
+                      setActiveContactSection('services');
+                    }}
+                    title="Manage Contact Form Service Options"
+                  >
+                    <div className="mp-sub-nav-left">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                        <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                        <polyline points="2 17 12 22 22 17" />
+                        <polyline points="2 12 12 17 22 12" />
+                      </svg>
+                      <span>Service Options</span>
+                    </div>
+                  </button>
+                </div>
+              )}
             </div>
 
             <span className="mp-nav-section-label">Sections (CMS)</span>
@@ -270,7 +368,30 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
             {activePage === 'about' ? (
               <span className="current">About Page</span>
             ) : activePage === 'contact' ? (
-              <span className="current">Contact Page</span>
+              <>
+                <span
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    setActivePage('contact');
+                    setActiveContactSection('all');
+                  }}
+                  title="View all Contact sections"
+                >
+                  Contact Page
+                </span>
+                <span>/</span>
+                <span className="current">
+                  {activeContactSection === 'channels'
+                    ? 'Contact Channels'
+                    : activeContactSection === 'hours'
+                    ? 'Working Hours'
+                    : activeContactSection === 'socials'
+                    ? 'Social Profiles'
+                    : activeContactSection === 'services'
+                    ? 'Service Options'
+                    : 'All Sections'}
+                </span>
+              </>
             ) : (
               <>
                 <span
@@ -338,7 +459,12 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
           {activePage === 'about' ? (
             <AboutEdit />
           ) : activePage === 'contact' ? (
-            <ContactEdit onOpenMessages={() => setIsMessagesOpen(true)} unreadCount={unreadCount} />
+            <ContactEdit
+              onOpenMessages={() => setIsMessagesOpen(true)}
+              unreadCount={unreadCount}
+              activeSection={activeContactSection}
+              onSelectSection={setActiveContactSection}
+            />
           ) : (
             <HeroEdit
               activeSection={activeHeroSection}
