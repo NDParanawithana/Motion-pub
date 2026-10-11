@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import PageHeader from '../../components/pageHeader/pageHeader';
 import './contact.css';
+import { detectPlatform, PLATFORM_META, renderSocialIcon } from '../../utils/socialIcons';
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -18,8 +19,11 @@ const COUNTRIES = [
     { code: '+81', flag: '🇯🇵', name: 'Japan', country: 'JP' },
 ];
 
-// Determine if currently within working hours (Mon–Sat, 10:00 AM – 10:00 PM in Sri Lanka time)
-function getIsOpenNow() {
+// Determine if currently within working hours (Sri Lanka time) or manually closed
+function getIsOpenNow(settings) {
+    if (settings?.isForceClosed) {
+        return false;
+    }
     try {
         const now = new Date();
         const slDateStr = now.toLocaleString('en-US', { timeZone: 'Asia/Colombo' });
@@ -28,6 +32,29 @@ function getIsOpenNow() {
         const hours = slDate.getHours();
         const minutes = slDate.getMinutes();
         const totalMinutes = hours * 60 + minutes;
+
+        // Custom hours parsing if defined
+        if (settings?.workingHours && settings.workingHours.includes('–')) {
+            const [startStr, endStr] = settings.workingHours.split('–').map((s) => s.trim());
+            const parseTimeStr = (tStr) => {
+                const match = tStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+                if (!match) return null;
+                let h = parseInt(match[1], 10);
+                const m = parseInt(match[2], 10);
+                const isPM = match[3].toUpperCase() === 'PM';
+                if (isPM && h < 12) h += 12;
+                if (!isPM && h === 12) h = 0;
+                return h * 60 + m;
+            };
+            const startMins = parseTimeStr(startStr);
+            const endMins = parseTimeStr(endStr);
+            if (startMins !== null && endMins !== null) {
+                const isSunday = day === 0;
+                const isOffSunday = (settings.offDays || '').toLowerCase().includes('sunday');
+                if (isSunday && isOffSunday) return false;
+                return totalMinutes >= startMins && totalMinutes < endMins;
+            }
+        }
 
         // Mon–Sat (1–6) between 10:00 AM (600 mins) and 10:00 PM (1320 mins)
         return day >= 1 && day <= 6 && totalMinutes >= 600 && totalMinutes < 1320;
@@ -43,10 +70,13 @@ const DEFAULT_CONTACT_SETTINGS = {
     workingDays: 'Monday – Saturday',
     workingHours: '10:00 AM – 10:00 PM',
     offDays: 'Sunday',
+    isForceClosed: false,
+    closedNotice: '',
     facebookUrl: 'https://facebook.com',
     youtubeUrl: 'https://youtube.com',
     instagramUrl: 'https://instagram.com',
     linkedinUrl: 'https://linkedin.com',
+    customSocials: [],
 };
 
 const DEFAULT_SERVICE_OPTIONS = [
@@ -72,7 +102,15 @@ export default function Contact() {
     const [contactSettings, setContactSettings] = useState(() => {
         try {
             const saved = localStorage.getItem('mp_contact_settings');
-            return saved ? { ...DEFAULT_CONTACT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_CONTACT_SETTINGS;
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                return {
+                    ...DEFAULT_CONTACT_SETTINGS,
+                    ...parsed,
+                    customSocials: Array.isArray(parsed.customSocials) ? parsed.customSocials : []
+                };
+            }
+            return DEFAULT_CONTACT_SETTINGS;
         } catch {
             return DEFAULT_CONTACT_SETTINGS;
         }
@@ -82,7 +120,7 @@ export default function Contact() {
     const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
     const [status, setStatus] = useState({ state: 'idle', message: '' }); // 'idle' | 'loading' | 'success' | 'error'
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-    const [isOpenNow, setIsOpenNow] = useState(getIsOpenNow);
+    const [isOpenNow, setIsOpenNow] = useState(() => getIsOpenNow(contactSettings));
 
     const dropdownRef = useRef(null);
 
@@ -139,7 +177,14 @@ export default function Contact() {
             try {
                 const saved = localStorage.getItem('mp_contact_settings');
                 if (saved) {
-                    setContactSettings({ ...DEFAULT_CONTACT_SETTINGS, ...JSON.parse(saved) });
+                    const parsed = JSON.parse(saved);
+                    const merged = {
+                        ...DEFAULT_CONTACT_SETTINGS,
+                        ...parsed,
+                        customSocials: Array.isArray(parsed.customSocials) ? parsed.customSocials : []
+                    };
+                    setContactSettings(merged);
+                    setIsOpenNow(getIsOpenNow(merged));
                 }
             } catch {}
         };
@@ -147,13 +192,14 @@ export default function Contact() {
         return () => window.removeEventListener('storage', handleStorage);
     }, []);
 
-    // Update open status periodically
+    // Update open status periodically and on settings change
     useEffect(() => {
+        setIsOpenNow(getIsOpenNow(contactSettings));
         const timer = setInterval(() => {
-            setIsOpenNow(getIsOpenNow());
+            setIsOpenNow(getIsOpenNow(contactSettings));
         }, 60000);
         return () => clearInterval(timer);
-    }, []);
+    }, [contactSettings]);
 
     // Close country dropdown when clicking outside
     useEffect(() => {
@@ -434,10 +480,17 @@ export default function Contact() {
                                 </svg>
                                 <span className="mp-hours-title">Working Hours</span>
                             </div>
-                            <span className={`mp-status-pill ${isOpenNow ? 'open' : 'closed'}`}>
-                                <span className="mp-status-dot" />
-                                {isOpenNow ? 'Open Now' : 'Closed Now'}
-                            </span>
+                            <div className="mp-hours-status-wrap">
+                                <span className={`mp-status-pill ${isOpenNow ? 'open' : 'closed'}`}>
+                                    <span className="mp-status-dot" />
+                                    {isOpenNow ? 'Open Now' : 'Closed Now'}
+                                </span>
+                                {!isOpenNow && contactSettings.closedNotice && (
+                                    <span className="mp-status-notice-tag">
+                                        {contactSettings.closedNotice}
+                                    </span>
+                                )}
+                            </div>
                         </div>
 
                         <div className="mp-hours-grid">
@@ -521,6 +574,26 @@ export default function Contact() {
                                     </svg>
                                 </a>
                             )}
+
+                            {/* Additional Custom Social Links */}
+                            {(contactSettings.customSocials || []).map((link) => {
+                                if (!link.url) return null;
+                                const platform = detectPlatform(link.title, link.url);
+                                const meta = PLATFORM_META[platform] || PLATFORM_META.generic;
+                                return (
+                                    <a
+                                        key={link.id}
+                                        href={link.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={`mp-social-link-btn ${meta.cssClass}`}
+                                        aria-label={link.title || `Motion Pub on ${meta.name}`}
+                                        title={link.title || meta.name}
+                                    >
+                                        {renderSocialIcon(platform, 19)}
+                                    </a>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>

@@ -272,6 +272,27 @@ a.mp-info-val:hover {
   }
 }
 
+.mp-hours-status-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.mp-status-notice-tag {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #fb7185;
+  background: rgba(244, 63, 94, 0.12);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Hours Grid */
 .mp-hours-grid {
   display: flex;
@@ -383,6 +404,118 @@ a.mp-info-val:hover {
   box-shadow: 0 8px 22px rgba(10, 102, 194, 0.45);
   color: #0a66c2;
   background: rgba(10, 102, 194, 0.15);
+}
+
+.mp-social-link-btn.tiktok:hover {
+  border-color: #00f2fe;
+  box-shadow: 0 8px 22px rgba(0, 242, 254, 0.45), 0 0 14px rgba(255, 0, 80, 0.35);
+  color: #00f2fe;
+  background: rgba(0, 242, 254, 0.14);
+}
+
+.mp-social-link-btn.twitter:hover {
+  border-color: #ffffff;
+  box-shadow: 0 8px 22px rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.mp-social-link-btn.discord:hover {
+  border-color: #5865f2;
+  box-shadow: 0 8px 22px rgba(88, 101, 242, 0.45);
+  color: #5865f2;
+  background: rgba(88, 101, 242, 0.15);
+}
+
+.mp-social-link-btn.whatsapp:hover {
+  border-color: #25d366;
+  box-shadow: 0 8px 22px rgba(37, 211, 102, 0.45);
+  color: #25d366;
+  background: rgba(37, 211, 102, 0.15);
+}
+
+.mp-social-link-btn.threads:hover {
+  border-color: #ffffff;
+  box-shadow: 0 8px 22px rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.mp-social-link-btn.telegram:hover {
+  border-color: #229ed9;
+  box-shadow: 0 8px 22px rgba(34, 158, 217, 0.45);
+  color: #229ed9;
+  background: rgba(34, 158, 217, 0.15);
+}
+
+.mp-social-link-btn.pinterest:hover {
+  border-color: #e60023;
+  box-shadow: 0 8px 22px rgba(230, 0, 35, 0.45);
+  color: #e60023;
+  background: rgba(230, 0, 35, 0.15);
+}
+
+.mp-social-link-btn.github:hover {
+  border-color: #f0f6fc;
+  box-shadow: 0 8px 22px rgba(240, 246, 252, 0.35);
+  color: #f0f6fc;
+  background: rgba(240, 246, 252, 0.14);
+}
+
+.mp-social-link-btn.behance:hover {
+  border-color: #1769ff;
+  box-shadow: 0 8px 22px rgba(23, 105, 255, 0.45);
+  color: #1769ff;
+  background: rgba(23, 105, 255, 0.15);
+}
+
+.mp-social-link-btn.dribbble:hover {
+  border-color: #ea4c89;
+  box-shadow: 0 8px 22px rgba(234, 76, 137, 0.45);
+  color: #ea4c89;
+  background: rgba(234, 76, 137, 0.15);
+}
+
+.mp-social-link-btn.vimeo:hover {
+  border-color: #1ab7ea;
+  box-shadow: 0 8px 22px rgba(26, 183, 234, 0.45);
+  color: #1ab7ea;
+  background: rgba(26, 183, 234, 0.15);
+}
+
+.mp-social-link-btn.twitch:hover {
+  border-color: #9146ff;
+  box-shadow: 0 8px 22px rgba(145, 70, 255, 0.45);
+  color: #9146ff;
+  background: rgba(145, 70, 255, 0.15);
+}
+
+.mp-social-link-btn.spotify:hover {
+  border-color: #1ed760;
+  box-shadow: 0 8px 22px rgba(30, 215, 96, 0.45);
+  color: #1ed760;
+  background: rgba(30, 215, 96, 0.15);
+}
+
+.mp-social-link-btn.snapchat:hover {
+  border-color: #fffc00;
+  box-shadow: 0 8px 22px rgba(255, 252, 0, 0.45);
+  color: #fffc00;
+  background: rgba(255, 252, 0, 0.15);
+}
+
+.mp-social-link-btn.reddit:hover {
+  border-color: #ff4500;
+  box-shadow: 0 8px 22px rgba(255, 69, 0, 0.45);
+  color: #ff4500;
+  background: rgba(255, 69, 0, 0.15);
+}
+
+.mp-social-link-btn.generic:hover {
+  border-color: #38bdf8;
+  box-shadow: 0 8px 22px rgba(56, 189, 248, 0.45);
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
 }
 
 /* ==========================================================================

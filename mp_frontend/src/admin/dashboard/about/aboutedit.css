@@ -681,6 +681,7 @@
   text-transform: uppercase;
   color: #ffffff;
   margin-bottom: 1.75rem;
+  text-align: center;
 }
 
 .mp-about-preview-title .highlight {
@@ -695,13 +696,15 @@
   line-height: 1.85;
   color: #d0ffa6;
   margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 .mp-about-preview-divider {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
-  margin: 1.75rem 0;
+  margin: 1.75rem auto;
 }
 
 .mp-about-preview-line {
@@ -729,6 +732,7 @@
   line-height: 1.85;
   color: #d0ffa6;
   opacity: 0.9;
+  text-align: center;
 }
 
 /* Actions Footer */

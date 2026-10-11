@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import './contactEdit.css';
+import { detectPlatform, PLATFORM_META, renderSocialIcon } from '../../../utils/socialIcons';
 
 const DEFAULT_CONTACT_INFO = {
     email: 'mp.motionpub@gmail.com',
@@ -8,10 +9,13 @@ const DEFAULT_CONTACT_INFO = {
     workingDays: 'Monday – Saturday',
     workingHours: '10:00 AM – 10:00 PM',
     offDays: 'Sunday',
+    isForceClosed: false,
+    closedNotice: '',
     facebookUrl: 'https://facebook.com',
     youtubeUrl: 'https://youtube.com',
     instagramUrl: 'https://instagram.com',
     linkedinUrl: 'https://linkedin.com',
+    customSocials: [],
 };
 
 const COUNTRIES = [
@@ -28,7 +32,76 @@ const COUNTRIES = [
     { code: '+81', flag: '🇯🇵', name: 'Japan', country: 'JP' },
 ];
 
-function getIsOpenNow() {
+const DAYS_OF_WEEK = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+];
+
+const WORKING_DAYS_PRESETS = [
+    'Monday – Saturday',
+    'Monday – Friday',
+    'Monday – Sunday',
+    'Tuesday – Saturday',
+    'Tuesday – Sunday',
+    'Wednesday – Sunday',
+    'Thursday – Sunday',
+    'Friday – Sunday',
+    'Saturday – Sunday',
+];
+
+const OFF_DAYS_PRESETS = [
+    'Sunday',
+    'Saturday – Sunday',
+    'Saturday & Sunday',
+    'Friday – Saturday',
+    'Friday',
+    'Saturday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'None (Open 7 Days)',
+    'Public Holidays Only',
+    'Sunday & Public Holidays',
+];
+
+const TIME_SLOTS = [
+    '06:00 AM', '06:30 AM', '07:00 AM', '07:30 AM',
+    '08:00 AM', '08:30 AM', '09:00 AM', '09:30 AM',
+    '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
+    '12:00 PM', '12:30 PM', '01:00 PM', '01:30 PM',
+    '02:00 PM', '02:30 PM', '03:00 PM', '03:30 PM',
+    '04:00 PM', '04:30 PM', '05:00 PM', '05:30 PM',
+    '06:00 PM', '06:30 PM', '07:00 PM', '07:30 PM',
+    '08:00 PM', '08:30 PM', '09:00 PM', '09:30 PM',
+    '10:00 PM', '10:30 PM', '11:00 PM', '11:30 PM',
+    '12:00 AM',
+];
+
+const HOURS_PRESETS = [
+    '10:00 AM – 10:00 PM',
+    '09:00 AM – 06:00 PM',
+    '09:00 AM – 05:00 PM',
+    '09:00 AM – 08:00 PM',
+    '09:00 AM – 10:00 PM',
+    '08:00 AM – 08:00 PM',
+    '08:00 AM – 05:00 PM',
+    '10:00 AM – 08:00 PM',
+    '10:00 AM – 06:00 PM',
+    '11:00 AM – 11:00 PM',
+    '12:00 PM – 10:00 PM',
+    '24 Hours (Open 24/7)',
+];
+
+function getIsOpenNow(settings) {
+    if (settings?.isForceClosed) {
+        return false;
+    }
     try {
         const now = new Date();
         const slDateStr = now.toLocaleString('en-US', { timeZone: 'Asia/Colombo' });
@@ -37,6 +110,30 @@ function getIsOpenNow() {
         const hours = slDate.getHours();
         const minutes = slDate.getMinutes();
         const totalMinutes = hours * 60 + minutes;
+
+        // Custom hours parsing if defined
+        if (settings?.workingHours && settings.workingHours.includes('–')) {
+            const [startStr, endStr] = settings.workingHours.split('–').map((s) => s.trim());
+            const parseTimeStr = (tStr) => {
+                const match = tStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+                if (!match) return null;
+                let h = parseInt(match[1], 10);
+                const m = parseInt(match[2], 10);
+                const isPM = match[3].toUpperCase() === 'PM';
+                if (isPM && h < 12) h += 12;
+                if (!isPM && h === 12) h = 0;
+                return h * 60 + m;
+            };
+            const startMins = parseTimeStr(startStr);
+            const endMins = parseTimeStr(endStr);
+            if (startMins !== null && endMins !== null) {
+                const isSunday = day === 0;
+                const isOffSunday = (settings.offDays || '').toLowerCase().includes('sunday');
+                if (isSunday && isOffSunday) return false;
+                return totalMinutes >= startMins && totalMinutes < endMins;
+            }
+        }
+
         return day >= 1 && day <= 6 && totalMinutes >= 600 && totalMinutes < 1320;
     } catch {
         return true;
@@ -53,7 +150,15 @@ export default function ContactEdit({
     const [info, setInfo] = useState(() => {
         try {
             const saved = localStorage.getItem('mp_contact_settings');
-            return saved ? { ...DEFAULT_CONTACT_INFO, ...JSON.parse(saved) } : DEFAULT_CONTACT_INFO;
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                return {
+                    ...DEFAULT_CONTACT_INFO,
+                    ...parsed,
+                    customSocials: Array.isArray(parsed.customSocials) ? parsed.customSocials : []
+                };
+            }
+            return DEFAULT_CONTACT_INFO;
         } catch {
             return DEFAULT_CONTACT_INFO;
         }
@@ -75,9 +180,98 @@ export default function ContactEdit({
         message: ''
     });
     const [simSubmitted, setSimSubmitted] = useState(false);
-    const [isOpenNow] = useState(getIsOpenNow);
+    const simIsOpen = getIsOpenNow(info);
     const simCountryRef = useRef(null);
     const simServiceRef = useRef(null);
+
+    // Active Working Days dropdown logic (From Day & To Day side-by-side + Custom Date Text mode)
+    const parseDays = (val) => {
+        const parts = (val || '').split(/\s*[–-]\s*/);
+        const from = DAYS_OF_WEEK.includes(parts[0]) ? parts[0] : 'Monday';
+        const to = DAYS_OF_WEEK.includes(parts[1]) ? parts[1] : 'Saturday';
+        return { from, to };
+    };
+
+    const [isWorkingDaysCustomText, setIsWorkingDaysCustomText] = useState(() => {
+        if (!info.workingDays) return false;
+        const parts = info.workingDays.split(/\s*[–-]\s*/);
+        return !(parts.length === 2 && DAYS_OF_WEEK.includes(parts[0]) && DAYS_OF_WEEK.includes(parts[1]));
+    });
+
+    const [workingDaysFrom, setWorkingDaysFrom] = useState(() => parseDays(info.workingDays).from);
+    const [workingDaysTo, setWorkingDaysTo] = useState(() => parseDays(info.workingDays).to);
+
+    useEffect(() => {
+        const { from, to } = parseDays(info.workingDays);
+        setWorkingDaysFrom(from);
+        setWorkingDaysTo(to);
+    }, [info.workingDays]);
+
+    const handleFromDayChange = (e) => {
+        const newFrom = e.target.value;
+        setWorkingDaysFrom(newFrom);
+        setInfo((prev) => ({ ...prev, workingDays: `${newFrom} – ${workingDaysTo}` }));
+        setIsWorkingDaysCustomText(false);
+    };
+
+    const handleToDayChange = (e) => {
+        const newTo = e.target.value;
+        setWorkingDaysTo(newTo);
+        setInfo((prev) => ({ ...prev, workingDays: `${workingDaysFrom} – ${newTo}` }));
+        setIsWorkingDaysCustomText(false);
+    };
+
+    const handleWorkingDaysPresetChange = (e) => {
+        const preset = e.target.value;
+        if (preset) {
+            const { from, to } = parseDays(preset);
+            setWorkingDaysFrom(from);
+            setWorkingDaysTo(to);
+            setInfo((prev) => ({ ...prev, workingDays: preset }));
+            setIsWorkingDaysCustomText(false);
+        }
+    };
+
+    // Operating Hours dropdown logic
+    const hoursSplit = (info.workingHours || '10:00 AM – 10:00 PM').split(/\s*[–-]\s*/);
+    const currentStartTime = hoursSplit[0] || '10:00 AM';
+    const currentEndTime = hoursSplit[1] || '10:00 PM';
+
+    const handleStartTimeChange = (e) => {
+        const newStart = e.target.value;
+        setInfo((prev) => ({ ...prev, workingHours: `${newStart} – ${currentEndTime}` }));
+    };
+
+    const handleEndTimeChange = (e) => {
+        const newEnd = e.target.value;
+        setInfo((prev) => ({ ...prev, workingHours: `${currentStartTime} – ${newEnd}` }));
+    };
+
+    const handleHoursPresetChange = (e) => {
+        const preset = e.target.value;
+        if (preset) {
+            setInfo((prev) => ({ ...prev, workingHours: preset }));
+        }
+    };
+
+    // Closed / Off Days dropdown logic with persistent custom mode
+    const [isCustomOffDays, setIsCustomOffDays] = useState(() => !OFF_DAYS_PRESETS.includes(info.offDays));
+
+    const handleOffDaysSelect = (e) => {
+        const val = e.target.value;
+        if (val === 'custom') {
+            setIsCustomOffDays(true);
+        } else {
+            setIsCustomOffDays(false);
+            setInfo((prev) => ({ ...prev, offDays: val }));
+        }
+    };
+
+    // Closed Now manual toggle handler
+    const handleToggleForceClosed = (e) => {
+        const isClosed = e.target.checked;
+        setInfo((prev) => ({ ...prev, isForceClosed: isClosed }));
+    };
 
     // Dropdown Service Options State (connected to MongoDB)
     const [serviceOptions, setServiceOptions] = useState([]);
@@ -279,6 +473,36 @@ export default function ContactEdit({
     const handleChange = (e) => {
         const { name, value } = e.target;
         setInfo((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleAddCustomSocial = (presetPlatform = '') => {
+        const meta = presetPlatform ? PLATFORM_META[presetPlatform] : null;
+        const defaultTitle = meta ? meta.name : '';
+        const newLink = {
+            id: `social_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+            title: defaultTitle,
+            url: '',
+        };
+        setInfo((prev) => ({
+            ...prev,
+            customSocials: [...(prev.customSocials || []), newLink],
+        }));
+    };
+
+    const handleUpdateCustomSocial = (id, field, value) => {
+        setInfo((prev) => ({
+            ...prev,
+            customSocials: (prev.customSocials || []).map((item) =>
+                item.id === id ? { ...item, [field]: value } : item
+            ),
+        }));
+    };
+
+    const handleDeleteCustomSocial = (id) => {
+        setInfo((prev) => ({
+            ...prev,
+            customSocials: (prev.customSocials || []).filter((item) => item.id !== id),
+        }));
     };
 
     const handleReset = () => {
@@ -503,42 +727,309 @@ export default function ContactEdit({
                             </div>
 
                             <div className="mp-card-body-fill">
-                                <div className="mp-grid-2cols">
-                                    <div className="mp-input-group">
-                                        <label htmlFor="workingDays">Active Working Days</label>
-                                        <input
-                                            type="text"
-                                            id="workingDays"
-                                            name="workingDays"
-                                            value={info.workingDays}
-                                            onChange={handleChange}
-                                            placeholder="Monday – Saturday"
-                                        />
+                                {/* NEW FEATURE: Say Closed Now Interactive Toggle Switch */}
+                                <div className={`mp-status-toggle-card ${info.isForceClosed ? 'is-closed' : 'is-normal'}`}>
+                                    <div className="mp-status-toggle-left">
+                                        <div className="mp-status-badge-row">
+                                            <span className={`mp-status-indicator-badge ${info.isForceClosed ? 'closed' : (simIsOpen ? 'open' : 'closed')}`}>
+                                                <span className="mp-status-indicator-dot" />
+                                                {info.isForceClosed ? 'Closed Now' : (simIsOpen ? 'Open Now' : 'Closed Now (After Hours)')}
+                                            </span>
+                                            <span className={`mp-status-mode-pill ${info.isForceClosed ? 'override' : 'auto'}`}>
+                                                {info.isForceClosed ? '⚠️ Manual Closed Override Active' : '● Auto Schedule'}
+                                            </span>
+                                        </div>
+                                        <div className="mp-status-toggle-content">
+                                            <h4 className="mp-status-toggle-heading">Say "Closed Now" Status Override</h4>
+                                            <p className="mp-status-toggle-explanation">
+                                                Toggle this switch to immediately display <strong>"Closed Now"</strong> on the website for public holidays, maintenance, breaks, or unexpected closures, overriding the schedule.
+                                            </p>
+                                        </div>
                                     </div>
 
+                                    <div className="mp-status-toggle-right">
+                                        <label className="mp-switch-wrap" htmlFor="isForceClosedToggle">
+                                            <span className={`mp-switch-text-label ${info.isForceClosed ? 'active-closed' : ''}`}>
+                                                {info.isForceClosed ? 'CLOSED NOW' : 'NORMAL SCHEDULE'}
+                                            </span>
+                                            <span className="mp-switch-container">
+                                                <input
+                                                    type="checkbox"
+                                                    id="isForceClosedToggle"
+                                                    name="isForceClosed"
+                                                    checked={Boolean(info.isForceClosed)}
+                                                    onChange={handleToggleForceClosed}
+                                                />
+                                                <span className="mp-switch-slider"></span>
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                    {/* Optional Notice or Date Range when Closed Now is Active */}
+                                    {info.isForceClosed && (
+                                        <div className="mp-status-notice-row">
+                                            <label className="mp-status-notice-label" htmlFor="closedNoticeInput">
+                                                Optional Closure Notice or Date Range (shown to visitors):
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="closedNoticeInput"
+                                                name="closedNotice"
+                                                value={info.closedNotice || ''}
+                                                onChange={handleChange}
+                                                placeholder="e.g. Closed until Monday Oct 15, or Closed for Annual Maintenance"
+                                                className="mp-status-notice-input"
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Working Days & Operating Hours Dropdown Selectors */}
+                                <div className="mp-grid-2cols">
+                                    {/* Active Working Days Selector */}
                                     <div className="mp-input-group">
-                                        <label htmlFor="workingHours">Operating Hours Range</label>
-                                        <input
-                                            type="text"
-                                            id="workingHours"
-                                            name="workingHours"
-                                            value={info.workingHours}
-                                            onChange={handleChange}
-                                            placeholder="10:00 AM – 10:00 PM"
-                                        />
+                                        <div className="mp-label-with-current">
+                                            <label htmlFor="workingDaysFrom">Active Working Days</label>
+                                            <span className="mp-current-preview-pill">{info.workingDays}</span>
+                                        </div>
+
+                                        {!isWorkingDaysCustomText ? (
+                                            /* Side-by-Side Day Dropdowns (From Day to To Day) */
+                                            <div className="mp-time-range-picker">
+                                                <div className="mp-time-col">
+                                                    <span className="mp-time-sublabel">From Day</span>
+                                                    <div className="mp-select-wrapper">
+                                                        <select
+                                                            id="workingDaysFrom"
+                                                            value={workingDaysFrom}
+                                                            onChange={handleFromDayChange}
+                                                            className="mp-custom-select"
+                                                        >
+                                                            {DAYS_OF_WEEK.map((d) => (
+                                                                <option key={`from-${d}`} value={d}>{d}</option>
+                                                            ))}
+                                                        </select>
+                                                        <div className="mp-select-chevron-icon">
+                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                                <polyline points="6 9 12 15 18 9" />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="mp-time-separator-badge">
+                                                    <span>TO</span>
+                                                </div>
+
+                                                <div className="mp-time-col">
+                                                    <span className="mp-time-sublabel">To Day</span>
+                                                    <div className="mp-select-wrapper">
+                                                        <select
+                                                            id="workingDaysTo"
+                                                            value={workingDaysTo}
+                                                            onChange={handleToDayChange}
+                                                            className="mp-custom-select"
+                                                        >
+                                                            {DAYS_OF_WEEK.map((d) => (
+                                                                <option key={`to-${d}`} value={d}>{d}</option>
+                                                            ))}
+                                                        </select>
+                                                        <div className="mp-select-chevron-icon">
+                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                                <polyline points="6 9 12 15 18 9" />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            /* Custom Free-Form Date Range Input Mode */
+                                            <div className="mp-custom-date-mode-wrap">
+                                                <input
+                                                    type="text"
+                                                    id="workingDays"
+                                                    name="workingDays"
+                                                    value={info.workingDays}
+                                                    onChange={handleChange}
+                                                    placeholder="e.g. Oct 10 – Oct 25, or Mon, Wed, Fri"
+                                                    className="mp-custom-text-input"
+                                                    autoFocus
+                                                />
+                                            </div>
+                                        )}
+
+                                        {/* Presets and Custom Mode Switcher */}
+                                        <div className="mp-quick-presets-row">
+                                            <span className="mp-quick-presets-label">⚡ Presets:</span>
+                                            <div className="mp-select-wrapper compact">
+                                                <select
+                                                    value={WORKING_DAYS_PRESETS.includes(info.workingDays) ? info.workingDays : ''}
+                                                    onChange={handleWorkingDaysPresetChange}
+                                                    className="mp-custom-select compact"
+                                                >
+                                                    <option value="">Choose preset schedule...</option>
+                                                    {WORKING_DAYS_PRESETS.map((p) => (
+                                                        <option key={`wd-preset-${p}`} value={p}>{p}</option>
+                                                    ))}
+                                                </select>
+                                                <div className="mp-select-chevron-icon compact">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                        <polyline points="6 9 12 15 18 9" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                className={`mp-btn-mode-toggle ${isWorkingDaysCustomText ? 'active' : ''}`}
+                                                onClick={() => setIsWorkingDaysCustomText(!isWorkingDaysCustomText)}
+                                                title={isWorkingDaysCustomText ? "Switch to Day Dropdowns" : "Switch to Custom Date / Text Range"}
+                                            >
+                                                {isWorkingDaysCustomText ? 'Use Day Dropdowns' : 'Custom Date / Text'}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Operating Hours Range Select */}
+                                    <div className="mp-input-group">
+                                        <div className="mp-label-with-current">
+                                            <label htmlFor="workingHoursStart">Operating Hours Range</label>
+                                            <span className="mp-current-preview-pill">{info.workingHours}</span>
+                                        </div>
+
+                                        {/* Start and End Time Dropdowns */}
+                                        <div className="mp-time-range-picker">
+                                            <div className="mp-time-col">
+                                                <span className="mp-time-sublabel">Opening Time</span>
+                                                <div className="mp-select-wrapper">
+                                                    <select
+                                                        id="workingHoursStart"
+                                                        value={currentStartTime}
+                                                        onChange={handleStartTimeChange}
+                                                        className="mp-custom-select"
+                                                    >
+                                                        {!TIME_SLOTS.includes(currentStartTime) && (
+                                                            <option value={currentStartTime}>{currentStartTime}</option>
+                                                        )}
+                                                        {TIME_SLOTS.map((t) => (
+                                                            <option key={`start-${t}`} value={t}>{t}</option>
+                                                        ))}
+                                                    </select>
+                                                    <div className="mp-select-chevron-icon">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                            <polyline points="6 9 12 15 18 9" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="mp-time-separator-badge">
+                                                <span>TO</span>
+                                            </div>
+
+                                            <div className="mp-time-col">
+                                                <span className="mp-time-sublabel">Closing Time</span>
+                                                <div className="mp-select-wrapper">
+                                                    <select
+                                                        id="workingHoursEnd"
+                                                        value={currentEndTime}
+                                                        onChange={handleEndTimeChange}
+                                                        className="mp-custom-select"
+                                                    >
+                                                        {!TIME_SLOTS.includes(currentEndTime) && (
+                                                            <option value={currentEndTime}>{currentEndTime}</option>
+                                                        )}
+                                                        {TIME_SLOTS.map((t) => (
+                                                            <option key={`end-${t}`} value={t}>{t}</option>
+                                                        ))}
+                                                    </select>
+                                                    <div className="mp-select-chevron-icon">
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                            <polyline points="6 9 12 15 18 9" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Quick Hours Preset Helper Dropdown */}
+                                        <div className="mp-quick-presets-row">
+                                            <span className="mp-quick-presets-label">⚡ Quick Presets:</span>
+                                            <div className="mp-select-wrapper compact">
+                                                <select
+                                                    value={HOURS_PRESETS.includes(info.workingHours) ? info.workingHours : ''}
+                                                    onChange={handleHoursPresetChange}
+                                                    className="mp-custom-select compact"
+                                                >
+                                                    <option value="">Select standard schedule preset...</option>
+                                                    {HOURS_PRESETS.map((p) => (
+                                                        <option key={`preset-${p}`} value={p}>{p}</option>
+                                                    ))}
+                                                </select>
+                                                <div className="mp-select-chevron-icon compact">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                        <polyline points="6 9 12 15 18 9" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div className="mp-input-group" style={{ marginTop: '1rem' }}>
-                                    <label htmlFor="offDays">Closed / Off Days</label>
-                                    <input
-                                        type="text"
-                                        id="offDays"
-                                        name="offDays"
-                                        value={info.offDays}
-                                        onChange={handleChange}
-                                        placeholder="Sunday"
-                                    />
+                                {/* Closed / Off Days Select & Custom Date Range Input */}
+                                <div className="mp-input-group" style={{ marginTop: '1.15rem' }}>
+                                    <div className="mp-label-with-current">
+                                        <label htmlFor="offDaysSelect">Closed / Off Days</label>
+                                        <span className="mp-current-preview-pill">{info.offDays}</span>
+                                    </div>
+                                    <div className="mp-select-wrapper">
+                                        <select
+                                            id="offDaysSelect"
+                                            value={isCustomOffDays ? 'custom' : (OFF_DAYS_PRESETS.includes(info.offDays) ? info.offDays : 'custom')}
+                                            onChange={handleOffDaysSelect}
+                                            className="mp-custom-select"
+                                        >
+                                            <option value="Sunday">Sunday</option>
+                                            <option value="Saturday – Sunday">Saturday – Sunday (Full Weekend)</option>
+                                            <option value="Saturday & Sunday">Saturday & Sunday</option>
+                                            <option value="Friday – Saturday">Friday – Saturday</option>
+                                            <option value="Friday">Friday</option>
+                                            <option value="Saturday">Saturday</option>
+                                            <option value="Monday">Monday</option>
+                                            <option value="Tuesday">Tuesday</option>
+                                            <option value="Wednesday">Wednesday</option>
+                                            <option value="Thursday">Thursday</option>
+                                            <option value="None (Open 7 Days)">None (Open 7 Days)</option>
+                                            <option value="Public Holidays Only">Public Holidays Only</option>
+                                            <option value="Sunday & Public Holidays">Sunday & Public Holidays</option>
+                                            <option value="custom">Custom Date Range / Specific Days...</option>
+                                        </select>
+                                        <div className="mp-select-chevron-icon">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                <polyline points="6 9 12 15 18 9" />
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    {(isCustomOffDays || !OFF_DAYS_PRESETS.includes(info.offDays)) && (
+                                        <div className="mp-custom-offdays-box">
+                                            <label className="mp-custom-sublabel" htmlFor="offDaysInput">
+                                                Custom Closed Days or Date Range:
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="offDaysInput"
+                                                name="offDays"
+                                                value={info.offDays}
+                                                onChange={handleChange}
+                                                placeholder="e.g. Sunday & Poya Days, or Dec 25 – Jan 02"
+                                                className="mp-custom-text-input"
+                                                autoFocus
+                                            />
+                                            <span className="mp-custom-tip">
+                                                💡 Custom date ranges or specific days applied here will display directly to visitors.
+                                            </span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -613,6 +1104,179 @@ export default function ContactEdit({
                                             placeholder="https://linkedin.com/company/motionpub"
                                         />
                                     </div>
+                                </div>
+
+                                {/* Additional Custom Social Links with Live Auto Icon Detection */}
+                                <div className="mp-custom-socials-section">
+                                    <div className="mp-custom-socials-header">
+                                        <div>
+                                            <div className="mp-custom-socials-title-row">
+                                                <h4 className="mp-custom-socials-title">Additional Social Links & Channels</h4>
+                                                <span className="mp-auto-detect-pill">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                                                    </svg>
+                                                    Auto Icon Detection
+                                                </span>
+                                            </div>
+                                            <p className="mp-custom-socials-subtitle">
+                                                Add any channel (TikTok, X / Twitter, Discord, WhatsApp, Threads, Telegram, etc.). Type the platform name in the title and the official icon will load automatically in real-time.
+                                            </p>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            className="mp-add-social-btn"
+                                            onClick={() => handleAddCustomSocial()}
+                                        >
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                <line x1="12" y1="5" x2="12" y2="19" />
+                                                <line x1="5" y1="12" x2="19" y2="12" />
+                                            </svg>
+                                            Add New Link
+                                        </button>
+                                    </div>
+
+                                    {/* Quick Preset Buttons */}
+                                    <div className="mp-quick-social-chips">
+                                        <span className="mp-quick-chips-label">Quick Add:</span>
+                                        <button
+                                            type="button"
+                                            className="mp-quick-chip-btn tiktok"
+                                            onClick={() => handleAddCustomSocial('tiktok')}
+                                            title="Add TikTok Link"
+                                        >
+                                            <span className="mp-chip-icon">{renderSocialIcon('tiktok', 14)}</span>
+                                            + TikTok
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="mp-quick-chip-btn twitter"
+                                            onClick={() => handleAddCustomSocial('twitter')}
+                                            title="Add X (Twitter) Link"
+                                        >
+                                            <span className="mp-chip-icon">{renderSocialIcon('twitter', 13)}</span>
+                                            + X (Twitter)
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="mp-quick-chip-btn discord"
+                                            onClick={() => handleAddCustomSocial('discord')}
+                                            title="Add Discord Link"
+                                        >
+                                            <span className="mp-chip-icon">{renderSocialIcon('discord', 14)}</span>
+                                            + Discord
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="mp-quick-chip-btn whatsapp"
+                                            onClick={() => handleAddCustomSocial('whatsapp')}
+                                            title="Add WhatsApp Link"
+                                        >
+                                            <span className="mp-chip-icon">{renderSocialIcon('whatsapp', 14)}</span>
+                                            + WhatsApp
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="mp-quick-chip-btn threads"
+                                            onClick={() => handleAddCustomSocial('threads')}
+                                            title="Add Threads Link"
+                                        >
+                                            <span className="mp-chip-icon">{renderSocialIcon('threads', 14)}</span>
+                                            + Threads
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="mp-quick-chip-btn telegram"
+                                            onClick={() => handleAddCustomSocial('telegram')}
+                                            title="Add Telegram Link"
+                                        >
+                                            <span className="mp-chip-icon">{renderSocialIcon('telegram', 14)}</span>
+                                            + Telegram
+                                        </button>
+                                    </div>
+
+                                    {/* List of Custom Social Links */}
+                                    {(!info.customSocials || info.customSocials.length === 0) ? (
+                                        <div className="mp-custom-socials-empty">
+                                            <div className="mp-empty-icon-wrap">
+                                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                                                    <circle cx="12" cy="12" r="10" />
+                                                    <line x1="12" y1="8" x2="12" y2="16" />
+                                                    <line x1="8" y1="12" x2="16" y2="12" />
+                                                </svg>
+                                            </div>
+                                            <div className="mp-empty-text-wrap">
+                                                <p className="mp-empty-title">No additional links added yet</p>
+                                                <p className="mp-empty-desc">Click &ldquo;Add New Link&rdquo; or pick a quick preset above (like TikTok) to add your profiles.</p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="mp-custom-social-list">
+                                            {info.customSocials.map((item, idx) => {
+                                                const detectedPlatform = detectPlatform(item.title, item.url);
+                                                const meta = PLATFORM_META[detectedPlatform] || PLATFORM_META.generic;
+                                                return (
+                                                    <div key={item.id || idx} className="mp-custom-social-item">
+                                                        {/* Live Auto Detected Icon Indicator */}
+                                                        <div className={`mp-custom-icon-preview ${meta.cssClass}`} title={`Detected: ${meta.name}`}>
+                                                            <div className="mp-preview-icon-box">
+                                                                {renderSocialIcon(detectedPlatform, 22)}
+                                                            </div>
+                                                            <span className="mp-preview-platform-name">{meta.name}</span>
+                                                        </div>
+
+                                                        {/* Title Input */}
+                                                        <div className="mp-custom-social-field title-field">
+                                                            <label>Title / Platform Name</label>
+                                                            <input
+                                                                type="text"
+                                                                value={item.title}
+                                                                onChange={(e) => handleUpdateCustomSocial(item.id, 'title', e.target.value)}
+                                                                placeholder="e.g. TikTok, Discord..."
+                                                            />
+                                                        </div>
+
+                                                        {/* URL Input */}
+                                                        <div className="mp-custom-social-field url-field">
+                                                            <label>Profile / Channel URL</label>
+                                                            <input
+                                                                type="url"
+                                                                value={item.url}
+                                                                onChange={(e) => handleUpdateCustomSocial(item.id, 'url', e.target.value)}
+                                                                placeholder={
+                                                                    detectedPlatform === 'tiktok'
+                                                                        ? 'https://tiktok.com/@motionpub'
+                                                                        : detectedPlatform === 'discord'
+                                                                        ? 'https://discord.gg/...'
+                                                                        : detectedPlatform === 'twitter'
+                                                                        ? 'https://x.com/motionpub'
+                                                                        : 'https://...'
+                                                                }
+                                                            />
+                                                        </div>
+
+                                                        {/* Remove Button */}
+                                                        <div className="mp-custom-social-actions">
+                                                            <button
+                                                                type="button"
+                                                                className="mp-delete-social-btn"
+                                                                onClick={() => handleDeleteCustomSocial(item.id)}
+                                                                title="Remove this link"
+                                                                aria-label="Remove link"
+                                                            >
+                                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                                                    <polyline points="3 6 5 6 21 6" />
+                                                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                                                    <line x1="10" y1="11" x2="10" y2="17" />
+                                                                    <line x1="14" y1="11" x2="14" y2="17" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -931,10 +1595,15 @@ export default function ContactEdit({
                                         </svg>
                                         <span className="mp-sim-hours-title">Working Hours</span>
                                     </div>
-                                    <span className={`mp-sim-status-pill ${isOpenNow ? 'open' : 'closed'}`}>
-                                        <span className="mp-sim-status-dot" />
-                                        {isOpenNow ? 'Open Now' : 'Closed Now'}
-                                    </span>
+                                    <div className="mp-sim-status-group">
+                                        <span className={`mp-sim-status-pill ${simIsOpen ? 'open' : 'closed'}`}>
+                                            <span className="mp-sim-status-dot" />
+                                            {simIsOpen ? 'Open Now' : 'Closed Now'}
+                                        </span>
+                                        {!simIsOpen && info.closedNotice && (
+                                            <span className="mp-sim-notice-pill">{info.closedNotice}</span>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="mp-sim-hours-grid">
@@ -983,6 +1652,24 @@ export default function ContactEdit({
                                             </svg>
                                         </a>
                                     )}
+                                    {/* Custom Social Media Links in Simulation */}
+                                    {(info.customSocials || []).map((link) => {
+                                        if (!link.url) return null;
+                                        const platform = detectPlatform(link.title, link.url);
+                                        const meta = PLATFORM_META[platform] || PLATFORM_META.generic;
+                                        return (
+                                            <a
+                                                key={link.id}
+                                                href={link.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className={`mp-sim-social-link-btn ${meta.cssClass}`}
+                                                title={link.title || meta.name}
+                                            >
+                                                {renderSocialIcon(platform, 19)}
+                                            </a>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
