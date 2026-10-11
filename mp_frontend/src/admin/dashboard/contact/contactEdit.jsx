@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import './contactEdit.css';
 import { detectPlatform, PLATFORM_META, renderSocialIcon } from '../../../utils/socialIcons';
+import MpCalenderAdmin from './mpCalenderAdmin/mpCalenderAdmin';
 
 const DEFAULT_CONTACT_INFO = {
     email: 'mp.motionpub@gmail.com',
@@ -596,6 +597,20 @@ export default function ContactEdit({
                             </svg>
                             <span>Service Options ({serviceOptions.length})</span>
                         </button>
+                        <button
+                            type="button"
+                            className={`mp-contact-pill-btn ${activeSection === 'calendar' ? 'active' : ''}`}
+                            onClick={() => onSelectSection?.('calendar')}
+                            title="Manage Client Meeting Appointments Calendar"
+                        >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                <line x1="16" y1="2" x2="16" y2="6" />
+                                <line x1="8" y1="2" x2="8" y2="6" />
+                                <line x1="3" y1="10" x2="21" y2="10" />
+                            </svg>
+                            <span>Appointments</span>
+                        </button>
                     </div>
                 )}
 
@@ -638,7 +653,10 @@ export default function ContactEdit({
             )}
 
             {activeTab === 'editor' ? (
-                <form onSubmit={handleSave} className={`mp-contact-form-layout ${isSingleSection ? 'single-section-layout' : ''}`}>
+                activeSection === 'calendar' ? (
+                    <MpCalenderAdmin />
+                ) : (
+                    <form onSubmit={handleSave} className={`mp-contact-form-layout ${isSingleSection ? 'single-section-layout' : ''}`}>
                     {/* Section 1: Direct Contact Information */}
                     {showChannels && (
                         <div id="contact-section-channels" className={`mp-contact-card ${isSingleSection ? 'fit-screen' : ''}`}>
@@ -1505,7 +1523,7 @@ export default function ContactEdit({
                         </div>
                     )}
                 </form>
-            ) : (
+            )) : (
                 /* Live Website Simulation (Exact Frontend Client View) */
                 <div className="mp-contact-sim-container">
                     <div className="mp-sim-badge">Live Website Simulation</div>

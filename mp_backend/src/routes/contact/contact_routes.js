@@ -13,6 +13,12 @@ import {
   deleteServiceOption,
   resetServiceOptionsToDefault
 } from '../../models/contact/service_option_model.js';
+import {
+  getAllAppointments,
+  createAppointment,
+  updateAppointment,
+  deleteAppointment
+} from '../../models/contact/appointment_model.js';
 
 const router = Router();
 
@@ -310,19 +316,202 @@ router.patch('/messages/:id/read', async (req, res) => {
  * DELETE /api/contact/messages/:id
  * Delete a single message
  */
-router.delete('/messages/:id', async (req, res) => {
+/**
+ * =========================================================================
+ * Client Meeting Appointments Endpoints
+ * =========================================================================
+ */
+
+/**
+ * GET /api/contact/appointments
+ * Fetch all booked appointments
+ */
+router.get('/appointments', async (req, res) => {
   try {
-    const { id } = req.params;
-    await deleteContactMessage(id);
+    const appointments = await getAllAppointments();
     return res.status(200).json({
       success: true,
-      message: 'Message deleted successfully.'
+      count: appointments.length,
+      data: appointments
     });
   } catch (err) {
-    console.error('❌ Error deleting message:', err);
+    console.error('❌ Error fetching appointments:', err);
     return res.status(500).json({
       success: false,
-      message: 'Failed to delete message.'
+      message: 'Failed to retrieve appointments.'
+    });
+  }
+});
+
+/**
+ * POST /api/contact/appointments
+ * Book a new appointment (client booking or admin manual entry)
+ */
+router.post('/appointments', async (req, res) => {
+  try {
+    const { clientName, clientEmail, clientPhone, serviceType, date, timeSlot, notes, source, status } = req.body;
+
+    if (!clientName || !clientName.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Client name is required.'
+      });
+    }
+
+    if (!clientEmail || !EMAIL_REGEX.test(clientEmail.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: 'Valid client email address is required.'
+      });
+    }
+
+    if (!date || !date.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Appointment date is required.'
+      });
+    }
+
+    if (!timeSlot || !timeSlot.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Appointment time slot is required.'
+      });
+    }
+
+    // Check if slot on that date is already booked by an active appointment
+    const all = await getAllAppointments();
+    const existing = all.find(
+      (a) => a.date === date.trim() &&
+             a.timeSlot === timeSlot.trim() &&
+             a.status !== 'cancelled'
+    );
+
+    if (existing) {
+      return res.status(409).json({
+        success: false,
+        message: `The date ${date.trim()} at ${timeSlot.trim()} is already booked. Please choose another slot.`
+      });
+    }
+
+    const created = await createAppointment({
+      clientName,
+      clientEmail,
+      clientPhone,
+      serviceType,
+      date,
+      timeSlot,
+      notes,
+      source: source || 'client',
+      status: status || 'confirmed'
+    });
+
+    console.log(`📅 New appointment booked [ID: ${created._id}] for ${created.clientName} on ${created.date} at ${created.timeSlot}`);
+
+    return res.status(201).json({
+      success: true,
+      message: 'Appointment scheduled successfully!',
+      data: created
+    });
+  } catch (err) {
+    console.error('❌ Error creating appointment:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to schedule appointment.'
+    });
+  }
+});
+
+/**
+ * PUT /api/contact/appointments/:id
+ * Full update for an appointment (admin edit)
+ */
+router.put('/appointments/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { clientName, clientEmail, clientPhone, serviceType, date, timeSlot, notes, status } = req.body;
+
+    // Check conflict with other appointments if date/time changed
+    if (date && timeSlot) {
+      const all = await getAllAppointments();
+      const conflict = all.find(
+        (a) => String(a._id) !== String(id) &&
+               a.date === date.trim() &&
+               a.timeSlot === timeSlot.trim() &&
+               a.status !== 'cancelled'
+      );
+      if (conflict) {
+        return res.status(409).json({
+          success: false,
+          message: `The slot on ${date} at ${timeSlot} is already booked by another appointment.`
+        });
+      }
+    }
+
+    const updated = await updateAppointment(id, {
+      clientName,
+      clientEmail,
+      clientPhone,
+      serviceType,
+      date,
+      timeSlot,
+      notes,
+      status
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Appointment updated successfully.',
+      data: updated
+    });
+  } catch (err) {
+    console.error('❌ Error updating appointment:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to update appointment.'
+    });
+  }
+});
+
+/**
+ * PATCH /api/contact/appointments/:id
+ * Partial update for appointment (e.g. quick status update)
+ */
+router.patch('/appointments/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updated = await updateAppointment(id, req.body);
+    return res.status(200).json({
+      success: true,
+      message: 'Appointment updated successfully.',
+      data: updated
+    });
+  } catch (err) {
+    console.error('❌ Error patching appointment:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to update appointment.'
+    });
+  }
+});
+
+/**
+ * DELETE /api/contact/appointments/:id
+ * Cancel / Delete an appointment
+ */
+router.delete('/appointments/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await deleteAppointment(id);
+    return res.status(200).json({
+      success: true,
+      message: 'Appointment deleted successfully.'
+    });
+  } catch (err) {
+    console.error('❌ Error deleting appointment:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to delete appointment.'
     });
   }
 });

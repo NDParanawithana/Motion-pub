@@ -1196,3 +1196,167 @@ a.mp-info-val:hover {
   color: #a78bfa;
 }
 
+/* ==========================================================================
+   Interactive Calendar Meeting Scheduler in Contact Page
+   ========================================================================== */
+
+.mp-contact-container.is-booking-mode {
+  max-width: 1360px;
+  grid-template-columns: 0.88fr 1.32fr;
+}
+
+@media (max-width: 1100px) {
+  .mp-contact-container.is-booking-mode {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mode Switcher Segmented Control */
+.mp-mode-toggle-bar {
+  display: flex;
+  align-items: center;
+  background: rgba(12, 14, 18, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 1.5rem;
+  gap: 4px;
+}
+
+.mp-mode-toggle-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 650;
+  border-radius: 10px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+}
+
+.mp-mode-toggle-btn svg {
+  color: currentColor;
+}
+
+.mp-mode-toggle-btn:hover:not(.active) {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.mp-mode-toggle-btn.active {
+  background: linear-gradient(135deg, rgba(16, 145, 177, 0.35) 0%, rgba(99, 102, 241, 0.35) 100%);
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  color: #00f2fe;
+  box-shadow: 0 4px 14px rgba(0, 242, 254, 0.2);
+}
+
+.mp-mode-toggle-btn.active svg {
+  color: #00f2fe;
+}
+
+/* Calendar Embedding Wrapper */
+.mp-calendar-embed-wrap {
+  margin-bottom: 1.6rem;
+  width: 100%;
+}
+
+.mp-cal-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.9rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.mp-cal-section-title {
+  font-size: 0.96rem;
+  font-weight: 750;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.mp-cal-section-badge {
+  font-size: 0.72rem;
+  font-weight: 650;
+  color: #00f2fe;
+  background: rgba(16, 145, 177, 0.15);
+  border: 1px solid rgba(0, 242, 254, 0.25);
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+}
+
+.mp-booking-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.5rem 0 1.25rem 0;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mp-booking-divider::before,
+.mp-booking-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Appointment Info Box in Success Popup */
+.mp-popup-appt-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(16, 145, 177, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0 1.25rem 0;
+  text-align: left;
+}
+
+.mp-popup-appt-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(0, 242, 254, 0.2);
+  color: #00f2fe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mp-popup-appt-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.mp-popup-appt-label {
+  font-size: 0.7rem;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.mp-popup-appt-val {
+  font-size: 0.92rem;
+  font-weight: 750;
+  color: #ffffff;
+}
+
+

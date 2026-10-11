@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import PageHeader from '../../components/pageHeader/pageHeader';
 import './contact.css';
 import { detectPlatform, PLATFORM_META, renderSocialIcon } from '../../utils/socialIcons';
+import MpCalender from '../../components/mpCalender/mpCalender';
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -121,6 +122,12 @@ export default function Contact() {
     const [status, setStatus] = useState({ state: 'idle', message: '' }); // 'idle' | 'loading' | 'success' | 'error'
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [isOpenNow, setIsOpenNow] = useState(() => getIsOpenNow(contactSettings));
+
+    // Client Meeting Appointment State
+    const [activeMode, setActiveMode] = useState('appointment'); // 'appointment' | 'message'
+    const [selectedMeetingDate, setSelectedMeetingDate] = useState('');
+    const [selectedMeetingTime, setSelectedMeetingTime] = useState('');
+    const [bookedAppointmentInfo, setBookedAppointmentInfo] = useState(null);
 
     const dropdownRef = useRef(null);
 
@@ -259,10 +266,35 @@ export default function Contact() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.firstName.trim() || !formData.email.trim() || !formData.message.trim()) {
+        if (activeMode === 'appointment') {
+            if (!selectedMeetingDate) {
+                setStatus({
+                    state: 'error',
+                    message: 'Please select an available meeting date on the calendar.',
+                });
+                return;
+            }
+            if (!selectedMeetingTime) {
+                setStatus({
+                    state: 'error',
+                    message: 'Please choose an available meeting time slot on the calendar.',
+                });
+                return;
+            }
+        }
+
+        if (!formData.firstName.trim() || !formData.email.trim()) {
             setStatus({
                 state: 'error',
-                message: 'Please fill in all required fields (First name, Email, and Message).',
+                message: 'Please fill in your name and email address.',
+            });
+            return;
+        }
+
+        if (activeMode === 'message' && !formData.message.trim()) {
+            setStatus({
+                state: 'error',
+                message: 'Please provide a message for your inquiry.',
             });
             return;
         }
@@ -303,14 +335,105 @@ export default function Contact() {
 
         setStatus({ state: 'loading', message: '' });
 
+        const fullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
+        const formattedPhone = `${selectedCountry.code} ${phoneDigits}`;
+
+        // 1. Appointment Booking Mode
+        if (activeMode === 'appointment') {
+            const apptPayload = {
+                clientName: fullName,
+                clientEmail: trimmedEmail,
+                clientPhone: formattedPhone,
+                serviceType: formData.serviceType.trim(),
+                date: selectedMeetingDate,
+                timeSlot: selectedMeetingTime,
+                notes: formData.message.trim(),
+                source: 'client',
+                status: 'confirmed',
+            };
+
+            try {
+                const res = await fetch('/api/contact/appointments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(apptPayload),
+                });
+
+                const data = await res.json().catch(() => ({}));
+
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || 'Failed to schedule appointment. Please choose another slot.');
+                }
+
+                // Also optionally record inquiry in messages
+                fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: fullName,
+                        firstName: formData.firstName.trim(),
+                        lastName: formData.lastName.trim(),
+                        email: trimmedEmail,
+                        phone: formattedPhone,
+                        serviceType: formData.serviceType.trim(),
+                        message: `[Scheduled Meeting: ${selectedMeetingDate} at ${selectedMeetingTime}] ${formData.message.trim()}`.trim(),
+                    }),
+                }).catch(() => {});
+
+                // Local storage sync fallback
+                try {
+                    const saved = localStorage.getItem('mp_client_appointments');
+                    const existingList = saved ? JSON.parse(saved) : [];
+                    const updatedList = [data.data || { _id: `local-${Date.now()}`, ...apptPayload }, ...existingList];
+                    localStorage.setItem('mp_client_appointments', JSON.stringify(updatedList));
+                } catch {}
+
+                // Trigger real-time cross-tab sync
+                window.dispatchEvent(new Event('mp_appointments_updated'));
+
+                setBookedAppointmentInfo({
+                    name: fullName,
+                    date: selectedMeetingDate,
+                    time: selectedMeetingTime,
+                    service: formData.serviceType.trim(),
+                });
+
+                setStatus({
+                    state: 'success',
+                    message: `Meeting confirmed for ${selectedMeetingDate} at ${selectedMeetingTime}!`,
+                });
+
+                setShowSuccessPopup(true);
+
+                // Reset form
+                setSelectedMeetingDate('');
+                setSelectedMeetingTime('');
+                setFormData({
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    phone: '',
+                    serviceType: serviceOptions[0]?.name || 'Edit Video',
+                    message: '',
+                });
+            } catch (err) {
+                setStatus({
+                    state: 'error',
+                    message: err.message || 'Something went wrong scheduling your appointment. Please try again.',
+                });
+            }
+            return;
+        }
+
+        // 2. Standard Inquiry Message Mode
         const payload = {
-            name: `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim(),
+            name: fullName,
             firstName: formData.firstName.trim(),
             lastName: formData.lastName.trim(),
-            email: formData.email.trim(),
+            email: trimmedEmail,
             countryCode: selectedCountry.code,
             rawPhone: phoneDigits,
-            phone: `${selectedCountry.code} ${phoneDigits}`,
+            phone: formattedPhone,
             serviceType: formData.serviceType.trim(),
             message: formData.message.trim(),
         };
@@ -330,6 +453,7 @@ export default function Contact() {
 
             const successMessage = data.message || 'your message sent  we will contact you soon';
 
+            setBookedAppointmentInfo(null);
             setStatus({
                 state: 'success',
                 message: successMessage,
@@ -369,7 +493,7 @@ export default function Contact() {
                 icon="contact"
             />
 
-            <div className="mp-contact-container">
+            <div className={`mp-contact-container ${activeMode === 'appointment' ? 'is-booking-mode' : ''}`}>
                 {/* Left Column: Information & Branding */}
                 <div className="mp-contact-left">
                     {/* Headline */}
@@ -601,7 +725,76 @@ export default function Contact() {
                 {/* Right Column: Contact Form Card */}
                 <div className="mp-contact-card-wrap">
                     <div className="mp-contact-card">
+                        {/* Mode Switcher Segmented Control */}
+                        <div className="mp-mode-toggle-bar">
+                            <button
+                                type="button"
+                                className={`mp-mode-toggle-btn ${activeMode === 'appointment' ? 'active' : ''}`}
+                                onClick={() => {
+                                    setActiveMode('appointment');
+                                    setStatus({ state: 'idle', message: '' });
+                                }}
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                    <line x1="16" y1="2" x2="16" y2="6" />
+                                    <line x1="8" y1="2" x2="8" y2="6" />
+                                    <line x1="3" y1="10" x2="21" y2="10" />
+                                </svg>
+                                <span>Schedule Client Meeting</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                className={`mp-mode-toggle-btn ${activeMode === 'message' ? 'active' : ''}`}
+                                onClick={() => {
+                                    setActiveMode('message');
+                                    setStatus({ state: 'idle', message: '' });
+                                }}
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                </svg>
+                                <span>Send Quick Message</span>
+                            </button>
+                        </div>
+
                         <form onSubmit={handleSubmit} className="mp-contact-form" noValidate>
+                            {/* Embedded Calendar for Meeting Scheduling */}
+                            {activeMode === 'appointment' && (
+                                <div className="mp-calendar-embed-wrap">
+                                    <div className="mp-cal-section-header">
+                                        <span className="mp-cal-section-title">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                                <circle cx="12" cy="12" r="10" />
+                                                <polyline points="12 6 12 12 16 14" />
+                                            </svg>
+                                            Pick Meeting Date & Time
+                                        </span>
+                                        <span className="mp-cal-section-badge">
+                                            {selectedMeetingDate && selectedMeetingTime ? 'Slot Picked ✓' : 'Step 1: Choose Slot'}
+                                        </span>
+                                    </div>
+
+                                    <MpCalender
+                                        selectedDate={selectedMeetingDate}
+                                        selectedTime={selectedMeetingTime}
+                                        onSelectDateTime={({ date, timeSlot }) => {
+                                            setSelectedMeetingDate(date);
+                                            setSelectedMeetingTime(timeSlot);
+                                            if (status.state === 'error') {
+                                                setStatus({ state: 'idle', message: '' });
+                                            }
+                                        }}
+                                        offDays={contactSettings.offDays}
+                                    />
+
+                                    <div className="mp-booking-divider">
+                                        <span>Step 2: Client & Project Details</span>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Row 1: First name & Last name */}
                             <div className="mp-form-row two-cols">
                                 <div className="mp-form-group">
@@ -835,7 +1028,7 @@ export default function Contact() {
                             {/* Row 5: Message */}
                             <div className="mp-form-group">
                                 <label htmlFor="message" className="mp-form-label">
-                                    Message*
+                                    {activeMode === 'appointment' ? 'Meeting Agenda / Notes' : 'Message*'}
                                 </label>
                                 <textarea
                                     id="message"
@@ -843,8 +1036,12 @@ export default function Contact() {
                                     rows={4}
                                     value={formData.message}
                                     onChange={handleChange}
-                                    placeholder="Enter a question, feedback, or suggestions..."
-                                    required
+                                    placeholder={
+                                        activeMode === 'appointment'
+                                            ? 'Briefly describe your video editing requirements, footage details, or questions for our consultation...'
+                                            : 'Enter a question, feedback, or suggestions...'
+                                    }
+                                    required={activeMode === 'message'}
                                     className="mp-form-textarea"
                                 />
                             </div>
@@ -877,10 +1074,12 @@ export default function Contact() {
                                     {status.state === 'loading' ? (
                                         <span className="mp-btn-loading-content">
                                             <span className="mp-btn-spinner" />
-                                            <span>Sending...</span>
+                                            <span>{activeMode === 'appointment' ? 'Scheduling...' : 'Sending...'}</span>
                                         </span>
                                     ) : (
-                                        <span>Submit</span>
+                                        <span>
+                                            {activeMode === 'appointment' ? 'Confirm & Schedule Meeting' : 'Submit'}
+                                        </span>
                                     )}
                                 </button>
                             </div>
@@ -893,7 +1092,10 @@ export default function Contact() {
             {showSuccessPopup && (
                 <div
                     className="mp-contact-popup-backdrop"
-                    onClick={() => setShowSuccessPopup(false)}
+                    onClick={() => {
+                        setShowSuccessPopup(false);
+                        setBookedAppointmentInfo(null);
+                    }}
                 >
                     <div
                         className="mp-contact-popup-card"
@@ -904,7 +1106,10 @@ export default function Contact() {
                         <button
                             type="button"
                             className="mp-popup-close-btn"
-                            onClick={() => setShowSuccessPopup(false)}
+                            onClick={() => {
+                                setShowSuccessPopup(false);
+                                setBookedAppointmentInfo(null);
+                            }}
                             aria-label="Close message"
                         >
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -929,15 +1134,45 @@ export default function Contact() {
                             </svg>
                         </div>
 
-                        <h3 className="mp-popup-title">Message Sent!</h3>
-                        <p className="mp-popup-message">
-                            your message sent  we will contact you soon
-                        </p>
+                        {bookedAppointmentInfo ? (
+                            <>
+                                <h3 className="mp-popup-title">Meeting Scheduled!</h3>
+                                <div className="mp-popup-appt-box">
+                                    <div className="mp-popup-appt-icon">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                            <line x1="16" y1="2" x2="16" y2="6" />
+                                            <line x1="8" y1="2" x2="8" y2="6" />
+                                            <line x1="3" y1="10" x2="21" y2="10" />
+                                        </svg>
+                                    </div>
+                                    <div className="mp-popup-appt-details">
+                                        <span className="mp-popup-appt-label">Scheduled Appointment</span>
+                                        <span className="mp-popup-appt-val">
+                                            {bookedAppointmentInfo.date} &bull; {bookedAppointmentInfo.time}
+                                        </span>
+                                    </div>
+                                </div>
+                                <p className="mp-popup-message">
+                                    Thank you {bookedAppointmentInfo.name}! Your consultation has been locked in. We will reach out to you soon with details.
+                                </p>
+                            </>
+                        ) : (
+                            <>
+                                <h3 className="mp-popup-title">Message Sent!</h3>
+                                <p className="mp-popup-message">
+                                    your message sent  we will contact you soon
+                                </p>
+                            </>
+                        )}
 
                         <button
                             type="button"
                             className="mp-popup-confirm-btn"
-                            onClick={() => setShowSuccessPopup(false)}
+                            onClick={() => {
+                                setShowSuccessPopup(false);
+                                setBookedAppointmentInfo(null);
+                            }}
                         >
                             OK
                         </button>
