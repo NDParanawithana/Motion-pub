@@ -50,12 +50,15 @@ export default function MpCalenderAdmin() {
   const [calMonth, setCalMonth] = useState(() => new Date().getMonth());
   const [filterDate, setFilterDate] = useState(''); // filter list to specific date
 
+  const ONLINE_MEETING_OPTIONS = ['Google Meet', 'Zoom Meeting', 'WhatsApp Video', 'Microsoft Teams'];
+
   // Add / Edit Form State
   const [formData, setFormData] = useState({
     clientName: '',
     clientEmail: '',
     clientPhone: '',
     serviceType: 'Edit Video',
+    meetingMethod: 'Google Meet',
     date: new Date().toISOString().slice(0, 10),
     timeSlot: '11:00 AM',
     status: 'confirmed',
@@ -159,6 +162,7 @@ export default function MpCalenderAdmin() {
       clientEmail: '',
       clientPhone: '',
       serviceType: serviceOptions[0] || 'Edit Video',
+      meetingMethod: 'Google Meet',
       date: new Date().toISOString().slice(0, 10),
       timeSlot: DEFAULT_TIME_SLOTS[0],
       status: 'confirmed',
@@ -175,6 +179,7 @@ export default function MpCalenderAdmin() {
       clientEmail: appt.clientEmail || '',
       clientPhone: appt.clientPhone || '',
       serviceType: appt.serviceType || serviceOptions[0] || 'Edit Video',
+      meetingMethod: appt.meetingMethod || 'Google Meet',
       date: appt.date || new Date().toISOString().slice(0, 10),
       timeSlot: appt.timeSlot || DEFAULT_TIME_SLOTS[0],
       status: appt.status || 'confirmed',
@@ -635,7 +640,13 @@ export default function MpCalenderAdmin() {
                           </div>
                         </td>
                         <td>
-                          <span className="mp-service-tag">{appt.serviceType || 'Edit Video'}</span>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-start' }}>
+                            <span className="mp-service-tag">{appt.serviceType || 'Edit Video'}</span>
+                            <span className="mp-method-tag" style={{ fontSize: '0.72rem', padding: '2px 7px', borderRadius: '5px', background: 'rgba(0, 242, 254, 0.12)', border: '1px solid rgba(0, 242, 254, 0.3)', color: '#00f2fe', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#00f2fe' }} />
+                              {appt.meetingMethod || 'Google Meet'}
+                            </span>
+                          </div>
                         </td>
                         <td>
                           <div className="mp-datetime-cell">
@@ -877,6 +888,23 @@ export default function MpCalenderAdmin() {
                     {serviceOptions.map((svc) => (
                       <option key={svc} value={svc}>
                         {svc}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="mp-form-row">
+                <div className="mp-modal-field" style={{ width: '100%' }}>
+                  <label className="mp-modal-label">Online Meeting Method* (Online Only)</label>
+                  <select
+                    value={formData.meetingMethod}
+                    onChange={(e) => setFormData({ ...formData, meetingMethod: e.target.value })}
+                    className="mp-modal-select"
+                  >
+                    {ONLINE_MEETING_OPTIONS.map((m) => (
+                      <option key={m} value={m}>
+                        {m} (Online Video)
                       </option>
                     ))}
                   </select>

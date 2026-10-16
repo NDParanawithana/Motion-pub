@@ -654,7 +654,7 @@ export default function PageHeader({
 
   if (sticky) {
     return (
-      <div className="mp-pageheader-sticky" key={animateKey}>
+      <div className="mp-pageheader-sticky" key={animateKey} style={resolvedTopPaddingStyle}>
         <div className="mp-pageheader-sticky-inner">
           {badgeContent}
         </div>

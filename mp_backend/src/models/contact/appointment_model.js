@@ -85,6 +85,7 @@ export async function createAppointment(data) {
     clientEmail: (data.clientEmail || '').trim().toLowerCase(),
     clientPhone: (data.clientPhone || '').trim(),
     serviceType: (data.serviceType || 'Edit Video').trim(),
+    meetingMethod: (data.meetingMethod || 'Google Meet').trim(),
     date: (data.date || '').trim(), // YYYY-MM-DD
     timeSlot: (data.timeSlot || '').trim(), // e.g. "10:00 AM"
     status: (data.status || 'confirmed').trim(), // 'confirmed' | 'pending' | 'completed' | 'cancelled'
@@ -124,6 +125,7 @@ export async function updateAppointment(id, updateData) {
   if (updateData.clientEmail !== undefined) fieldsToSet.clientEmail = updateData.clientEmail.trim().toLowerCase();
   if (updateData.clientPhone !== undefined) fieldsToSet.clientPhone = updateData.clientPhone.trim();
   if (updateData.serviceType !== undefined) fieldsToSet.serviceType = updateData.serviceType.trim();
+  if (updateData.meetingMethod !== undefined) fieldsToSet.meetingMethod = updateData.meetingMethod.trim();
   if (updateData.date !== undefined) fieldsToSet.date = updateData.date.trim();
   if (updateData.timeSlot !== undefined) fieldsToSet.timeSlot = updateData.timeSlot.trim();
   if (updateData.status !== undefined) fieldsToSet.status = updateData.status.trim();

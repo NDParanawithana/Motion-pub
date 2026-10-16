@@ -349,7 +349,7 @@ router.get('/appointments', async (req, res) => {
  */
 router.post('/appointments', async (req, res) => {
   try {
-    const { clientName, clientEmail, clientPhone, serviceType, date, timeSlot, notes, source, status } = req.body;
+    const { clientName, clientEmail, clientPhone, serviceType, meetingMethod, date, timeSlot, notes, source, status } = req.body;
 
     if (!clientName || !clientName.trim()) {
       return res.status(400).json({
@@ -399,6 +399,7 @@ router.post('/appointments', async (req, res) => {
       clientEmail,
       clientPhone,
       serviceType,
+      meetingMethod: meetingMethod || 'Google Meet',
       date,
       timeSlot,
       notes,
@@ -406,7 +407,7 @@ router.post('/appointments', async (req, res) => {
       status: status || 'confirmed'
     });
 
-    console.log(`📅 New appointment booked [ID: ${created._id}] for ${created.clientName} on ${created.date} at ${created.timeSlot}`);
+    console.log(`📅 New appointment booked [ID: ${created._id}] for ${created.clientName} on ${created.date} at ${created.timeSlot} via ${created.meetingMethod}`);
 
     return res.status(201).json({
       success: true,
@@ -429,7 +430,7 @@ router.post('/appointments', async (req, res) => {
 router.put('/appointments/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { clientName, clientEmail, clientPhone, serviceType, date, timeSlot, notes, status } = req.body;
+    const { clientName, clientEmail, clientPhone, serviceType, meetingMethod, date, timeSlot, notes, status } = req.body;
 
     // Check conflict with other appointments if date/time changed
     if (date && timeSlot) {
@@ -453,6 +454,7 @@ router.put('/appointments/:id', async (req, res) => {
       clientEmail,
       clientPhone,
       serviceType,
+      meetingMethod,
       date,
       timeSlot,
       notes,

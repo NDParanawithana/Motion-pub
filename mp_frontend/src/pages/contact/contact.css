@@ -44,6 +44,29 @@
   background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
 }
 
+/* Align PageHeader perfectly with the Contact container */
+.mp-contact-section .mp-pageheader-sticky {
+  padding-top: 14px;
+  padding-bottom: 0;
+}
+
+.mp-contact-section .mp-pageheader-sticky-inner {
+  max-width: 1240px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+  transition: max-width 0.25s ease;
+}
+
+.mp-contact-section.is-booking-mode .mp-pageheader-sticky-inner {
+  max-width: 1360px;
+}
+
+.mp-contact-section .mp-pageheader-pin-container {
+  margin-left: 0;
+}
+
 .mp-contact-container {
   position: relative;
   z-index: 1;
@@ -53,10 +76,10 @@
   display: grid;
   grid-template-columns: 1fr 1.18fr;
   gap: clamp(2.5rem, 5vw, 5.5rem);
-  align-items: center;
+  align-items: start;
   box-sizing: border-box;
   flex: 1;
-  padding: clamp(0.75rem, 2vh, 1.75rem) 1.5rem clamp(2.5rem, 5vh, 4rem);
+  padding: 0.75rem 1.5rem clamp(2.5rem, 5vh, 4rem);
 }
 
 /* ==========================================================================
@@ -893,7 +916,15 @@ a.mp-info-val:hover {
 
 @media (max-width: 600px) {
   .mp-contact-section {
-    padding: 3rem 1rem;
+    padding: 0;
+  }
+
+  .mp-contact-section .mp-pageheader-sticky-inner {
+    padding: 0 1rem;
+  }
+
+  .mp-contact-container {
+    padding: 0.5rem 1rem 2.5rem 1rem;
   }
 
   .mp-form-row.two-cols {
@@ -1288,11 +1319,18 @@ a.mp-info-val:hover {
 .mp-cal-section-badge {
   font-size: 0.72rem;
   font-weight: 650;
-  color: #00f2fe;
-  background: rgba(16, 145, 177, 0.15);
-  border: 1px solid rgba(0, 242, 254, 0.25);
+  color: #ff4d4f;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
   padding: 0.2rem 0.55rem;
   border-radius: 999px;
+  transition: all 0.25s ease;
+}
+
+.mp-cal-section-badge.active {
+  color: #00e676;
+  background: rgba(0, 230, 118, 0.12);
+  border-color: rgba(0, 230, 118, 0.35);
 }
 
 .mp-booking-divider {
@@ -1358,5 +1396,746 @@ a.mp-info-val:hover {
   font-weight: 750;
   color: #ffffff;
 }
+
+/* ==========================================================================
+   Appointment Hero Card (Displayed in Contact Card on Page)
+   ========================================================================== */
+
+.mp-appointment-hero-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  padding: 0.5rem 0 0;
+  box-sizing: border-box;
+}
+
+.mp-appt-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.mp-appt-icon-box {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(16, 145, 177, 0.25) 0%, rgba(99, 102, 241, 0.2) 100%);
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  color: #00f2fe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(0, 242, 254, 0.15);
+}
+
+.mp-appt-card-tags {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mp-appt-tag {
+  font-size: 0.75rem;
+  font-weight: 650;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  letter-spacing: 0.03em;
+}
+
+.mp-appt-tag.live {
+  background: rgba(16, 145, 177, 0.15);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  color: #00f2fe;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.mp-appt-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #00f2fe;
+  box-shadow: 0 0 8px #00f2fe;
+  animation: mpDotPulse 1.8s infinite ease-in-out;
+}
+
+.mp-appt-tag.duration {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.mp-appt-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.mp-appt-card-title {
+  margin: 0;
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.mp-appt-card-desc {
+  margin: 0;
+  font-size: 0.94rem;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+.mp-appt-highlights-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1.15rem 1.25rem;
+  background: rgba(12, 14, 20, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  margin-top: 0.35rem;
+}
+
+.mp-appt-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.88rem;
+  font-weight: 550;
+  color: #cbd5e1;
+}
+
+.mp-appt-feature-item svg {
+  color: #00f2fe;
+  flex-shrink: 0;
+}
+
+.mp-appt-selected-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1rem;
+  background: rgba(16, 145, 177, 0.16);
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  border-radius: 12px;
+  font-size: 0.88rem;
+  color: #ffffff;
+}
+
+.mp-appt-selected-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #00f2fe;
+  color: #090c12;
+  font-weight: 800;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mp-appt-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.95rem 1.75rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 750;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #6366f1 100%);
+  color: #090c12;
+  box-shadow: 0 6px 20px rgba(0, 242, 254, 0.35), 0 0 25px rgba(79, 172, 254, 0.2);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.mp-appt-primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0, 242, 254, 0.5), 0 0 32px rgba(79, 172, 254, 0.35);
+}
+
+.mp-appt-primary-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.mp-appt-primary-btn:hover svg {
+  transform: translateX(4px);
+}
+
+/* ==========================================================================
+   Appointment Form Modal Popup (With Embedded MpCalender + Form)
+   ========================================================================== */
+
+.mp-booking-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(5, 7, 10, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  animation: mpPopupFadeIn 0.25s ease-out forwards;
+}
+
+.mp-booking-modal-card {
+  position: relative;
+  background: #141722;
+  border: 1px solid rgba(0, 242, 254, 0.25);
+  border-radius: 24px;
+  padding: 2.25rem;
+  max-width: 860px;
+  width: 95vw;
+  max-height: 92vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.9), 0 0 35px rgba(0, 242, 254, 0.12);
+  box-sizing: border-box;
+  animation: mpPopupScaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.mp-booking-modal-header {
+  margin-bottom: 1.5rem;
+  padding-right: 2.5rem;
+}
+
+.mp-booking-modal-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.45rem;
+}
+
+.mp-booking-modal-title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+/* Swapping Menu Segmented Tabs */
+.mp-header-swapping-menu {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 4px;
+  gap: 4px;
+  backdrop-filter: blur(14px);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+.mp-swap-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.42rem 1rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.84rem;
+  font-weight: 650;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.mp-swap-tab-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mp-swap-tab-btn.active {
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.18) 0%, rgba(79, 172, 254, 0.15) 100%);
+  border-color: rgba(0, 242, 254, 0.45);
+  color: #00f2fe;
+  box-shadow: 0 2px 10px rgba(0, 242, 254, 0.2);
+}
+
+.mp-swap-tab-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+.mp-swap-tab-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #00f2fe;
+  box-shadow: 0 0 6px #00f2fe;
+}
+
+.mp-booking-modal-subtext {
+  margin: 0;
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.5;
+}
+
+/* Swapping Horizontal Slider Containers */
+.mp-booking-modal-swap-body.mp-modal-slider-viewport {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.mp-modal-slider-track {
+  display: flex;
+  width: 200%;
+  align-items: flex-start;
+  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.mp-modal-slider-track.slide-left {
+  transform: translateX(0%);
+}
+
+.mp-modal-slider-track.slide-right {
+  transform: translateX(-50%);
+}
+
+.mp-modal-slide {
+  width: 50%;
+  min-width: 50%;
+  max-width: 50%;
+  box-sizing: border-box;
+  padding: 0 4px;
+  vertical-align: top;
+}
+
+.mp-modal-cal-wrap {
+  margin-bottom: 1.25rem;
+  width: 100%;
+}
+
+.mp-modal-slot-chip-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1rem;
+  background: rgba(16, 145, 177, 0.18);
+  border: 1px solid rgba(0, 242, 254, 0.4);
+  border-radius: 12px;
+  font-size: 0.9rem;
+  color: #ffffff;
+  margin-bottom: 1.25rem;
+}
+
+.mp-modal-slot-chip-bar svg {
+  color: #00f2fe;
+  flex-shrink: 0;
+}
+
+.mp-swap-action-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mp-swap-next-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  color: #080c14;
+  font-weight: 750;
+  font-size: 0.95rem;
+  padding: 0.85rem 1.65rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 242, 254, 0.3);
+  transition: all 0.25s ease;
+  font-family: inherit;
+}
+
+.mp-swap-next-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 242, 254, 0.45);
+}
+
+/* Details View Slot Banner */
+.mp-details-slot-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1.15rem;
+  background: rgba(16, 145, 177, 0.14);
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  border-radius: 14px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  margin-bottom: 1.4rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mp-details-slot-bar:hover {
+  background: rgba(16, 145, 177, 0.24);
+  border-color: rgba(0, 242, 254, 0.6);
+  transform: translateY(-1px);
+}
+
+.mp-details-slot-bar.warning {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+
+.mp-details-slot-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.mp-details-slot-left svg {
+  color: #00f2fe;
+  flex-shrink: 0;
+}
+
+.mp-details-slot-change {
+  color: #00f2fe;
+  font-size: 0.84rem;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+
+.mp-booking-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mp-booking-modal-back-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0.75rem 1.4rem;
+  border-radius: 9px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.mp-booking-modal-back-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.mp-contact-submit-btn.modal-submit {
+  padding: 0.75rem 2rem;
+}
+
+/* ==========================================================================
+   Online Meeting Method Platform Selector
+   ========================================================================== */
+
+.mp-meeting-method-section {
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+}
+
+.mp-field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+
+
+.mp-field-helper-hint {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0 0 0.75rem;
+  line-height: 1.4;
+}
+
+.mp-meeting-methods-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.mp-meeting-method-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: inherit;
+  color: #ffffff;
+  position: relative;
+}
+
+.mp-meeting-method-card:hover {
+  transform: translateY(-2px);
+}
+
+.mp-method-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mp-method-radio-ind {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.mp-method-radio-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.4);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mp-meeting-method-card.selected .mp-method-radio-dot {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.mp-method-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mp-meeting-method-card:hover .mp-method-icon-box {
+  transform: scale(1.08);
+}
+
+.mp-method-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.mp-method-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.mp-method-desc {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.35;
+}
+
+/* ==========================================================================
+   Brand-Specific Card Color Customizations
+   ========================================================================== */
+
+/* 1. Google Meet */
+.mp-meeting-method-card.method-google_meet {
+  background: linear-gradient(135deg, rgba(0, 172, 71, 0.05) 0%, rgba(26, 115, 232, 0.04) 100%);
+  border-color: rgba(0, 172, 71, 0.25);
+}
+.mp-meeting-method-card.method-google_meet:hover {
+  background: linear-gradient(135deg, rgba(0, 172, 71, 0.1) 0%, rgba(26, 115, 232, 0.08) 100%);
+  border-color: rgba(0, 172, 71, 0.55);
+  box-shadow: 0 8px 22px rgba(0, 172, 71, 0.18);
+}
+.mp-meeting-method-card.method-google_meet.selected {
+  background: linear-gradient(145deg, rgba(0, 172, 71, 0.2) 0%, rgba(26, 115, 232, 0.14) 100%);
+  border-color: #00ac47;
+  box-shadow: 0 0 22px rgba(0, 172, 71, 0.28), inset 0 1px 0 rgba(0, 172, 71, 0.35);
+}
+.mp-meeting-method-card.method-google_meet.selected .mp-method-radio-ind {
+  border-color: #00ac47;
+  background: rgba(0, 172, 71, 0.15);
+}
+.mp-meeting-method-card.method-google_meet .mp-method-radio-dot {
+  background: #00ac47;
+}
+
+/* 2. Zoom Meeting */
+.mp-meeting-method-card.method-zoom {
+  background: linear-gradient(135deg, rgba(45, 140, 255, 0.05) 0%, rgba(11, 92, 255, 0.03) 100%);
+  border-color: rgba(45, 140, 255, 0.25);
+}
+.mp-meeting-method-card.method-zoom:hover {
+  background: linear-gradient(135deg, rgba(45, 140, 255, 0.1) 0%, rgba(11, 92, 255, 0.07) 100%);
+  border-color: rgba(45, 140, 255, 0.55);
+  box-shadow: 0 8px 22px rgba(45, 140, 255, 0.2);
+}
+.mp-meeting-method-card.method-zoom.selected {
+  background: linear-gradient(145deg, rgba(45, 140, 255, 0.22) 0%, rgba(11, 92, 255, 0.14) 100%);
+  border-color: #2D8CFF;
+  box-shadow: 0 0 22px rgba(45, 140, 255, 0.32), inset 0 1px 0 rgba(45, 140, 255, 0.35);
+}
+.mp-meeting-method-card.method-zoom.selected .mp-method-radio-ind {
+  border-color: #2D8CFF;
+  background: rgba(45, 140, 255, 0.15);
+}
+.mp-meeting-method-card.method-zoom .mp-method-radio-dot {
+  background: #2D8CFF;
+}
+
+/* 3. WhatsApp Video */
+.mp-meeting-method-card.method-whatsapp {
+  background: linear-gradient(135deg, rgba(37, 211, 102, 0.05) 0%, rgba(18, 140, 126, 0.03) 100%);
+  border-color: rgba(37, 211, 102, 0.25);
+}
+.mp-meeting-method-card.method-whatsapp:hover {
+  background: linear-gradient(135deg, rgba(37, 211, 102, 0.1) 0%, rgba(18, 140, 126, 0.07) 100%);
+  border-color: rgba(37, 211, 102, 0.55);
+  box-shadow: 0 8px 22px rgba(37, 211, 102, 0.2);
+}
+.mp-meeting-method-card.method-whatsapp.selected {
+  background: linear-gradient(145deg, rgba(37, 211, 102, 0.22) 0%, rgba(18, 140, 126, 0.14) 100%);
+  border-color: #25D366;
+  box-shadow: 0 0 22px rgba(37, 211, 102, 0.32), inset 0 1px 0 rgba(37, 211, 102, 0.35);
+}
+.mp-meeting-method-card.method-whatsapp.selected .mp-method-radio-ind {
+  border-color: #25D366;
+  background: rgba(37, 211, 102, 0.15);
+}
+.mp-meeting-method-card.method-whatsapp .mp-method-radio-dot {
+  background: #25D366;
+}
+
+/* 4. Microsoft Teams */
+.mp-meeting-method-card.method-teams {
+  background: linear-gradient(135deg, rgba(80, 90, 201, 0.06) 0%, rgba(123, 131, 235, 0.03) 100%);
+  border-color: rgba(123, 131, 235, 0.25);
+}
+.mp-meeting-method-card.method-teams:hover {
+  background: linear-gradient(135deg, rgba(80, 90, 201, 0.12) 0%, rgba(123, 131, 235, 0.08) 100%);
+  border-color: rgba(123, 131, 235, 0.55);
+  box-shadow: 0 8px 22px rgba(123, 131, 235, 0.2);
+}
+.mp-meeting-method-card.method-teams.selected {
+  background: linear-gradient(145deg, rgba(80, 90, 201, 0.24) 0%, rgba(123, 131, 235, 0.16) 100%);
+  border-color: #7B83EB;
+  box-shadow: 0 0 22px rgba(123, 131, 235, 0.34), inset 0 1px 0 rgba(123, 131, 235, 0.35);
+}
+.mp-meeting-method-card.method-teams.selected .mp-method-radio-ind {
+  border-color: #7B83EB;
+  background: rgba(123, 131, 235, 0.15);
+}
+.mp-meeting-method-card.method-teams .mp-method-radio-dot {
+  background: #7B83EB;
+}
+
+.mp-popup-appt-method {
+  display: block;
+  font-size: 0.82rem;
+  color: #00f2fe;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 650px) {
+  .mp-booking-modal-card {
+    padding: 1.5rem 1.15rem;
+    border-radius: 18px;
+  }
+
+  .mp-booking-modal-header-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .mp-header-swapping-menu {
+    width: 100%;
+    display: flex;
+  }
+
+  .mp-swap-tab-btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .mp-meeting-methods-grid {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+
+  .mp-details-slot-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .mp-booking-modal-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .mp-booking-modal-actions button {
+    width: 100%;
+  }
+}
+
+
 
 
