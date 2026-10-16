@@ -149,7 +149,7 @@ export default function Contact() {
         lastName: '',
         email: '',
         phone: '',
-        serviceType: 'Edit Video',
+        serviceType: '',
         meetingMethod: 'Google Meet',
         message: '',
     });
@@ -206,10 +206,6 @@ export default function Contact() {
                     if (json.success && Array.isArray(json.data) && json.data.length > 0) {
                         if (isMounted) {
                             setServiceOptions(json.data);
-                            setFormData((prev) => ({
-                                ...prev,
-                                serviceType: prev.serviceType || json.data[0].name
-                            }));
                         }
                     }
                 }
@@ -385,6 +381,15 @@ export default function Contact() {
             return;
         }
 
+        if (!formData.serviceType || !formData.serviceType.trim()) {
+            setStatus({
+                state: 'error',
+                message: 'Please provide a project brief description.',
+            });
+            handleSectionChange('details');
+            return;
+        }
+
         if (activeMode === 'appointment') {
             if (!selectedMeetingDate) {
                 setStatus({
@@ -487,7 +492,7 @@ export default function Contact() {
                     lastName: '',
                     email: '',
                     phone: '',
-                    serviceType: serviceOptions[0]?.name || 'Edit Video',
+                    serviceType: '',
                     meetingMethod: 'Google Meet',
                     message: '',
                 });
@@ -543,7 +548,7 @@ export default function Contact() {
                 lastName: '',
                 email: '',
                 phone: '',
-                serviceType: serviceOptions[0]?.name || 'Edit Video',
+                serviceType: '',
                 message: '',
             });
         } catch (err) {
@@ -957,8 +962,8 @@ export default function Contact() {
                                                 </svg>
                                                 Step 1: Client &amp; Project Details
                                             </span>
-                                            <span className={`mp-cal-section-badge ${formData.firstName && formData.email && formData.phone ? 'active' : ''}`}>
-                                                {formData.firstName && formData.email && formData.phone ? 'Details Added ✓' : 'Required'}
+                                            <span className={`mp-cal-section-badge ${formData.firstName && formData.email && formData.phone && formData.serviceType ? 'active' : ''}`}>
+                                                {formData.firstName && formData.email && formData.phone && formData.serviceType ? 'Details Added ✓' : 'Required'}
                                             </span>
                                         </div>
 
@@ -1134,85 +1139,21 @@ export default function Contact() {
                                             </div>
                                         </div>
 
-                                        {/* Row 4: Service Type Dropdown */}
+                                        {/* Row 4: Project Brief Field */}
                                         <div className="mp-form-group">
-                                            <label htmlFor="modal_serviceTypeBtn" className="mp-form-label">
-                                                Service Type*
+                                            <label htmlFor="modal_serviceType" className="mp-form-label">
+                                                Project Brief*
                                             </label>
-                                            <div className="mp-service-select-wrap" ref={serviceDropdownRef}>
-                                                <button
-                                                    type="button"
-                                                    id="modal_serviceTypeBtn"
-                                                    className={`mp-service-select-btn ${isServiceDropdownOpen ? 'active' : ''}`}
-                                                    onClick={() => setIsServiceDropdownOpen((prev) => !prev)}
-                                                    aria-haspopup="listbox"
-                                                    aria-expanded={isServiceDropdownOpen}
-                                                >
-                                                    <div className="mp-service-select-val">
-                                                        <svg
-                                                            width="16"
-                                                            height="16"
-                                                            viewBox="0 0 24 24"
-                                                            fill="none"
-                                                            stroke="currentColor"
-                                                            strokeWidth="2"
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            className="mp-service-icon"
-                                                        >
-                                                            <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                                                            <polyline points="2 17 12 22 22 17" />
-                                                            <polyline points="2 12 12 17 22 12" />
-                                                        </svg>
-                                                        <span className="mp-service-name-text">
-                                                            {formData.serviceType || 'Select a service'}
-                                                        </span>
-                                                    </div>
-                                                    <svg
-                                                        width="14"
-                                                        height="14"
-                                                        viewBox="0 0 24 24"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        strokeWidth="2.5"
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        className={`mp-service-chevron ${isServiceDropdownOpen ? 'open' : ''}`}
-                                                    >
-                                                        <path d="m6 9 6 6 6-6" />
-                                                    </svg>
-                                                </button>
-
-                                                {isServiceDropdownOpen && (
-                                                    <ul className="mp-service-dropdown-list" role="listbox">
-                                                        {serviceOptions.map((svc) => {
-                                                            const isSelected = formData.serviceType === svc.name;
-                                                            return (
-                                                                <li
-                                                                    key={`modal-${svc._id || svc.name}`}
-                                                                    role="option"
-                                                                    aria-selected={isSelected}
-                                                                    className={`mp-service-option ${isSelected ? 'selected' : ''}`}
-                                                                    onClick={() => {
-                                                                        setFormData((prev) => ({ ...prev, serviceType: svc.name }));
-                                                                        setIsServiceDropdownOpen(false);
-                                                                        if (status.state === 'error') {
-                                                                            setStatus({ state: 'idle', message: '' });
-                                                                        }
-                                                                    }}
-                                                                >
-                                                                    <span className="mp-service-option-name">{svc.name}</span>
-                                                                    {isSelected && (
-                                                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="mp-service-check-icon">
-                                                                            <polyline points="20 6 9 17 4 12" />
-                                                                        </svg>
-                                                                    )}
-                                                                </li>
-                                                            );
-                                                        })}
-                                                    </ul>
-                                                )}
-                                            </div>
+                                            <input
+                                                type="text"
+                                                id="modal_serviceType"
+                                                name="serviceType"
+                                                value={formData.serviceType}
+                                                onChange={handleChange}
+                                                placeholder="e.g. YouTube Video Editing, Commercial Ad, Brand Story, Reel..."
+                                                required
+                                                className="mp-form-input"
+                                            />
                                         </div>
 
                                         {/* Row 5: Meeting Agenda / Notes */}

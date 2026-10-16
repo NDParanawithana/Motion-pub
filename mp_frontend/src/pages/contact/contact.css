@@ -1601,7 +1601,7 @@ a.mp-info-val:hover {
   background: #141722;
   border: 1px solid rgba(0, 242, 254, 0.25);
   border-radius: 24px;
-  padding: 2.25rem;
+  padding: 2.25rem 2.25rem 1.6rem 2.25rem;
   max-width: 860px;
   width: 95vw;
   max-height: 92vh;
@@ -1708,6 +1708,7 @@ a.mp-info-val:hover {
 }
 
 .mp-modal-slider-track {
+  position: relative;
   display: flex;
   width: 200%;
   align-items: flex-start;
@@ -1730,6 +1731,35 @@ a.mp-info-val:hover {
   box-sizing: border-box;
   padding: 0 4px;
   vertical-align: top;
+}
+
+/* Eliminate bottom gap: when on Step 1 (slide-left), Slide 2 does not stretch the container height */
+.mp-modal-slider-track.slide-left .mp-swap-view-details {
+  position: relative;
+  margin-left: 0;
+}
+
+.mp-modal-slider-track.slide-left .mp-swap-view-calendar {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  pointer-events: none;
+}
+
+/* When on Step 2 (slide-right), Slide 2 sets the container height, and Slide 1 does not stretch it */
+.mp-modal-slider-track.slide-right .mp-swap-view-details {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  pointer-events: none;
+}
+
+.mp-modal-slider-track.slide-right .mp-swap-view-calendar {
+  position: relative;
+  margin-left: 50%;
+  pointer-events: auto;
 }
 
 .mp-modal-cal-wrap {
