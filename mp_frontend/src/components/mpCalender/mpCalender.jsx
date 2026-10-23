@@ -233,7 +233,7 @@ export default function MpCalender({
     if (selectedTime && bookedOnThisDay.has(selectedTime)) {
       nextTime = ''; // Slot occupied on this day
     }
-    onSelectDateTime?.({ date: cell.dateKey, timeSlot: nextTime });
+    onSelectDateTime?.({ date: cell.dateKey, timeSlot: nextTime, source: 'date' });
   };
 
   // Time slots for currently selected date
@@ -245,7 +245,7 @@ export default function MpCalender({
   const handleTimeClick = (slot) => {
     if (!selectedDate) return;
     if (selectedDateBookedSlots.has(slot)) return; // Appointed slot is disabled
-    onSelectDateTime?.({ date: selectedDate, timeSlot: slot });
+    onSelectDateTime?.({ date: selectedDate, timeSlot: slot, source: 'time' });
   };
 
   // Formatted human-readable date display

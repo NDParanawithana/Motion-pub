@@ -15,6 +15,9 @@ import {
 } from '../../models/contact/service_option_model.js';
 import {
   getAllAppointments,
+  findActiveAppointmentBySlot,
+  findActiveAppointmentByUser,
+  findActiveAppointmentsByUser,
   createAppointment,
   updateAppointment,
   deleteAppointment
@@ -379,33 +382,67 @@ router.post('/appointments', async (req, res) => {
       });
     }
 
-    // Check if slot on that date is already booked by an active appointment
-    const all = await getAllAppointments();
-    const existing = all.find(
-      (a) => a.date === date.trim() &&
-             a.timeSlot === timeSlot.trim() &&
-             a.status !== 'cancelled'
-    );
-
-    if (existing) {
+    // 1. One user = One active appointment check (prevent same email from hoarding multiple bookings)
+    const existingUserBooking = await findActiveAppointmentByUser(clientEmail.trim().toLowerCase());
+    if (existingUserBooking) {
       return res.status(409).json({
         success: false,
-        message: `The date ${date.trim()} at ${timeSlot.trim()} is already booked. Please choose another slot.`
+        code: 'USER_ALREADY_HAS_APPOINTMENT',
+        message: `You already have an active appointment scheduled for ${existingUserBooking.date} at ${existingUserBooking.timeSlot}. Each client is allowed only one active appointment at a time. Please reschedule or contact us if you need to change your meeting.`,
+        existingAppointment: {
+          id: existingUserBooking._id,
+          date: existingUserBooking.date,
+          timeSlot: existingUserBooking.timeSlot
+        }
       });
     }
 
-    const created = await createAppointment({
-      clientName,
-      clientEmail,
-      clientPhone,
-      serviceType,
-      meetingMethod: meetingMethod || 'Google Meet',
-      date,
-      timeSlot,
-      notes,
-      source: source || 'client',
-      status: status || 'confirmed'
-    });
+    // 2. Slot availability check: Is this specific date & time slot already taken?
+    const existingSlot = await findActiveAppointmentBySlot(date.trim(), timeSlot.trim());
+    if (existingSlot) {
+      return res.status(409).json({
+        success: false,
+        code: 'SLOT_ALREADY_TAKEN',
+        message: `The slot on ${date.trim()} at ${timeSlot.trim()} has just been booked. Please choose another available slot.`
+      });
+    }
+
+    // 3. Attempt atomic creation and catch race condition (E11000 duplicate key error)
+    let created;
+    try {
+      created = await createAppointment({
+        clientName,
+        clientEmail,
+        clientPhone,
+        serviceType,
+        meetingMethod: meetingMethod || 'Google Meet',
+        date,
+        timeSlot,
+        notes,
+        source: source || 'client',
+        status: status || 'pending'
+      });
+    } catch (err) {
+      if (err.code === 11000 || (err.message && err.message.includes('E11000'))) {
+        const isEmailConflict = err.conflictType === 'EMAIL_COLLISION' ||
+                                (err.keyPattern && err.keyPattern.clientEmail) ||
+                                (err.message && err.message.includes('unique_active_client_email')) ||
+                                (err.message && err.message.includes('clientEmail'));
+        if (isEmailConflict) {
+          return res.status(409).json({
+            success: false,
+            code: 'USER_ALREADY_HAS_APPOINTMENT',
+            message: `You already have an active appointment under ${clientEmail.trim()}. Each client is allowed only one active appointment at a time.`
+          });
+        }
+        return res.status(409).json({
+          success: false,
+          code: 'SLOT_ALREADY_TAKEN',
+          message: `The date ${date.trim()} at ${timeSlot.trim()} was just reserved by another client a moment ago. Please select an alternative slot.`
+        });
+      }
+      throw err;
+    }
 
     console.log(`📅 New appointment booked [ID: ${created._id}] for ${created.clientName} on ${created.date} at ${created.timeSlot} via ${created.meetingMethod}`);
 
@@ -432,34 +469,64 @@ router.put('/appointments/:id', async (req, res) => {
     const { id } = req.params;
     const { clientName, clientEmail, clientPhone, serviceType, meetingMethod, date, timeSlot, notes, status } = req.body;
 
+    // Check if clientEmail already has another active appointment if email or status updated
+    if (clientEmail) {
+      const emailConflict = await findActiveAppointmentByUser(clientEmail.trim().toLowerCase(), id);
+      if (emailConflict && (status === undefined || (status !== 'cancelled' && status !== 'completed'))) {
+        return res.status(409).json({
+          success: false,
+          code: 'USER_ALREADY_HAS_APPOINTMENT',
+          message: `Client ${clientEmail} already has another active appointment on ${emailConflict.date} at ${emailConflict.timeSlot}.`
+        });
+      }
+    }
+
     // Check conflict with other appointments if date/time changed
     if (date && timeSlot) {
-      const all = await getAllAppointments();
-      const conflict = all.find(
-        (a) => String(a._id) !== String(id) &&
-               a.date === date.trim() &&
-               a.timeSlot === timeSlot.trim() &&
-               a.status !== 'cancelled'
-      );
+      const conflict = await findActiveAppointmentBySlot(date.trim(), timeSlot.trim(), id);
       if (conflict) {
         return res.status(409).json({
           success: false,
+          code: 'SLOT_ALREADY_TAKEN',
           message: `The slot on ${date} at ${timeSlot} is already booked by another appointment.`
         });
       }
     }
 
-    const updated = await updateAppointment(id, {
-      clientName,
-      clientEmail,
-      clientPhone,
-      serviceType,
-      meetingMethod,
-      date,
-      timeSlot,
-      notes,
-      status
-    });
+    let updated;
+    try {
+      updated = await updateAppointment(id, {
+        clientName,
+        clientEmail,
+        clientPhone,
+        serviceType,
+        meetingMethod,
+        date,
+        timeSlot,
+        notes,
+        status
+      });
+    } catch (err) {
+      if (err.code === 11000 || (err.message && err.message.includes('E11000'))) {
+        const isEmailConflict = err.conflictType === 'EMAIL_COLLISION' ||
+                                (err.keyPattern && err.keyPattern.clientEmail) ||
+                                (err.message && err.message.includes('unique_active_client_email')) ||
+                                (err.message && err.message.includes('clientEmail'));
+        if (isEmailConflict) {
+          return res.status(409).json({
+            success: false,
+            code: 'USER_ALREADY_HAS_APPOINTMENT',
+            message: `Client already has another active appointment under this email.`
+          });
+        }
+        return res.status(409).json({
+          success: false,
+          code: 'SLOT_ALREADY_TAKEN',
+          message: `The slot on ${date} at ${timeSlot} is already booked by another appointment.`
+        });
+      }
+      throw err;
+    }
 
     return res.status(200).json({
       success: true,
@@ -489,6 +556,13 @@ router.patch('/appointments/:id', async (req, res) => {
       data: updated
     });
   } catch (err) {
+    if (err.code === 11000 || (err.message && err.message.includes('E11000'))) {
+      return res.status(409).json({
+        success: false,
+        code: 'SLOT_ALREADY_TAKEN',
+        message: 'The slot is already booked by another active appointment.'
+      });
+    }
     console.error('❌ Error patching appointment:', err);
     return res.status(500).json({
       success: false,

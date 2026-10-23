@@ -17,8 +17,8 @@ const DEFAULT_TIME_SLOTS = [
 ];
 
 const STATUS_OPTIONS = [
-  { value: 'confirmed', label: 'Confirmed', badgeClass: 'confirmed' },
   { value: 'pending', label: 'Pending', badgeClass: 'pending' },
+  { value: 'confirmed', label: 'Accepted', badgeClass: 'confirmed' },
   { value: 'completed', label: 'Completed', badgeClass: 'completed' },
   { value: 'cancelled', label: 'Cancelled', badgeClass: 'cancelled' },
 ];
@@ -41,6 +41,7 @@ export default function MpCalenderAdmin() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingAppt, setEditingAppt] = useState(null); // appointment object when editing
   const [deletingAppt, setDeletingAppt] = useState(null); // appointment object when deleting
+  const [viewingAppt, setViewingAppt] = useState(null); // appointment object when viewing in large pop up
 
   // Notification Banner
   const [banner, setBanner] = useState(null); // { type: 'success' | 'error', message: string }
@@ -61,7 +62,7 @@ export default function MpCalenderAdmin() {
     meetingMethod: 'Google Meet',
     date: new Date().toISOString().slice(0, 10),
     timeSlot: '11:00 AM',
-    status: 'confirmed',
+    status: 'pending',
     notes: '',
   });
 
@@ -165,7 +166,7 @@ export default function MpCalenderAdmin() {
       meetingMethod: 'Google Meet',
       date: new Date().toISOString().slice(0, 10),
       timeSlot: DEFAULT_TIME_SLOTS[0],
-      status: 'confirmed',
+      status: 'pending',
       notes: '',
     });
     setIsAddModalOpen(true);
@@ -308,6 +309,7 @@ export default function MpCalenderAdmin() {
 
   // Quick Status Change directly from list
   const handleQuickStatusChange = async (apptId, nextStatus) => {
+    const statusLabel = nextStatus === 'confirmed' ? 'Accepted' : nextStatus.charAt(0).toUpperCase() + nextStatus.slice(1);
     try {
       await fetch(`/api/contact/appointments/${apptId}`, {
         method: 'PATCH',
@@ -317,11 +319,12 @@ export default function MpCalenderAdmin() {
     } catch {}
 
     const updatedList = appointments.map((a) =>
-      String(a._id) === String(apptId) ? { ...a, status: nextStatus } : a
+      String(a._id) === String(apptId) ? { ...a, status: nextStatus, isActive: nextStatus !== 'cancelled' && nextStatus !== 'completed' } : a
     );
     setAppointments(updatedList);
     localStorage.setItem('mp_client_appointments', JSON.stringify(updatedList));
     window.dispatchEvent(new Event('mp_appointments_updated'));
+    showBanner('success', `Status updated to "${statusLabel}"!`);
   };
 
   // Calendar Grid Calculation
@@ -447,7 +450,7 @@ export default function MpCalenderAdmin() {
 
         <div className="mp-admin-kpi-card">
           <div className="mp-kpi-info">
-            <span className="mp-kpi-label">Confirmed</span>
+            <span className="mp-kpi-label">Accepted</span>
             <span className="mp-kpi-value">{kpis.confirmed}</span>
           </div>
           <div className="mp-kpi-icon confirmed">
@@ -509,7 +512,11 @@ export default function MpCalenderAdmin() {
               className={`mp-filter-btn ${statusFilter === st ? 'active' : ''}`}
               onClick={() => setStatusFilter(st)}
             >
-              {st.charAt(0).toUpperCase() + st.slice(1)}
+              {st === 'all'
+                ? 'All'
+                : st === 'confirmed'
+                ? 'Accepted'
+                : st.charAt(0).toUpperCase() + st.slice(1)}
             </button>
           ))}
         </div>
@@ -594,17 +601,16 @@ export default function MpCalenderAdmin() {
                   <tr>
                     <th>Client</th>
                     <th>Contact</th>
-                    <th>Service</th>
-                    <th>Date & Time</th>
+                    <th>Schedule</th>
+                    <th>Meeting</th>
+                    <th>Project Brief</th>
                     <th>Status</th>
-                    <th>Notes</th>
-                    <th style={{ textAlign: 'right' }}>Actions</th>
+                    <th className="mp-actions-col" style={{ textAlign: 'right' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredAppointments.map((appt) => {
-                    const statusObj = STATUS_OPTIONS.find((s) => s.value === appt.status) || STATUS_OPTIONS[0];
-
+                    const currentStatus = appt.status === 'accepted' ? 'confirmed' : (appt.status || 'pending');
                     return (
                       <tr key={appt._id}>
                         <td>
@@ -640,41 +646,56 @@ export default function MpCalenderAdmin() {
                           </div>
                         </td>
                         <td>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-start' }}>
-                            <span className="mp-service-tag">{appt.serviceType || 'Edit Video'}</span>
-                            <span className="mp-method-tag" style={{ fontSize: '0.72rem', padding: '2px 7px', borderRadius: '5px', background: 'rgba(0, 242, 254, 0.12)', border: '1px solid rgba(0, 242, 254, 0.3)', color: '#00f2fe', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#00f2fe' }} />
+                          <div className="mp-datetime-cell">
+                            <span className="mp-date-val">{appt.date || '—'}</span>
+                            <span className="mp-time-val">{appt.timeSlot || '—'}</span>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="mp-meeting-type-cell">
+                            <span className="mp-method-tag">
+                              <span className="mp-method-tag-dot" />
                               {appt.meetingMethod || 'Google Meet'}
                             </span>
                           </div>
                         </td>
                         <td>
-                          <div className="mp-datetime-cell">
-                            <span className="mp-date-val">{appt.date}</span>
-                            <span className="mp-time-val">{appt.timeSlot}</span>
+                          <div className="mp-project-brief-cell">
+                            <span className="mp-service-tag">{appt.serviceType || 'Edit Video'}</span>
+                            <div className="mp-notes-cell" title={appt.notes || 'No extra notes'}>
+                              {appt.notes ? appt.notes : <span className="mp-dim-text">—</span>}
+                            </div>
                           </div>
                         </td>
                         <td>
-                          <select
-                            className={`mp-status-select ${statusObj.badgeClass}`}
-                            value={appt.status}
-                            onChange={(e) => handleQuickStatusChange(appt._id, e.target.value)}
-                            title="Change appointment status"
-                          >
-                            {STATUS_OPTIONS.map((opt) => (
-                              <option key={opt.value} value={opt.value}>
-                                {opt.label}
-                              </option>
-                            ))}
-                          </select>
-                        </td>
-                        <td>
-                          <div className="mp-notes-cell" title={appt.notes || 'No extra notes'}>
-                            {appt.notes ? appt.notes : <span className="mp-dim-text">—</span>}
+                          <div className="mp-status-select-wrap">
+                            <select
+                              className={`mp-status-select ${currentStatus}`}
+                              value={currentStatus}
+                              onChange={(e) => handleQuickStatusChange(appt._id, e.target.value)}
+                              onClick={(e) => e.stopPropagation()}
+                              title="Click to change appointment status"
+                            >
+                              <option value="pending">⏳ Pending</option>
+                              <option value="confirmed">✓ Accepted</option>
+                              <option value="completed">✔ Completed</option>
+                              <option value="cancelled">✕ Cancelled</option>
+                            </select>
                           </div>
                         </td>
-                        <td style={{ textAlign: 'right' }}>
+                        <td className="mp-actions-col" style={{ textAlign: 'right' }}>
                           <div className="mp-action-btn-group">
+                            <button
+                              type="button"
+                              className="mp-row-action-btn view"
+                              onClick={() => setViewingAppt(appt)}
+                              title="View Full Appointment Details"
+                            >
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                              </svg>
+                            </button>
                             <button
                               type="button"
                               className="mp-row-action-btn edit"
@@ -1023,6 +1044,249 @@ export default function MpCalenderAdmin() {
               >
                 Yes, Delete
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+         Large Pop-Up View: Comprehensive Appointment Details
+         ========================================================================= */}
+      {viewingAppt && (
+        <div className="mp-modal-backdrop" onClick={() => setViewingAppt(null)}>
+          <div className="mp-modal-card lg mp-detail-view-modal" onClick={(e) => e.stopPropagation()}>
+            {/* Header */}
+            <div className="mp-modal-header">
+              <div className="mp-detail-header-left">
+                <div className="mp-detail-badge-row">
+                  <span className={`mp-detail-source-badge ${viewingAppt.source || 'client'}`}>
+                    {viewingAppt.source === 'admin' ? 'Manual (Admin)' : 'Client Booking'}
+                  </span>
+                  <span className="mp-detail-id-pill">
+                    ID: {String(viewingAppt._id).slice(-8)}
+                  </span>
+                </div>
+                <h3 className="mp-modal-title">Appointment Details</h3>
+                <p className="mp-modal-subtitle">
+                  Review complete meeting schedule, client credentials, and project brief.
+                </p>
+              </div>
+
+              <div className="mp-detail-header-right">
+                <div className="mp-detail-status-pill-wrap">
+                  <span className="mp-detail-status-caption">Status:</span>
+                  <select
+                    className={`mp-status-select ${STATUS_OPTIONS.find((s) => s.value === viewingAppt.status)?.badgeClass || 'pending'}`}
+                    value={viewingAppt.status}
+                    onChange={(e) => {
+                      const newStatus = e.target.value;
+                      handleQuickStatusChange(viewingAppt._id, newStatus);
+                      setViewingAppt((prev) => ({ ...prev, status: newStatus }));
+                    }}
+                    title="Change status directly"
+                  >
+                    {STATUS_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <button
+                  type="button"
+                  className="mp-modal-close-btn"
+                  onClick={() => setViewingAppt(null)}
+                  aria-label="Close"
+                >
+                  &times;
+                </button>
+              </div>
+            </div>
+
+            {/* Date & Time Hero Banner */}
+            <div className="mp-detail-hero-banner">
+              <div className="mp-detail-hero-item">
+                <div className="mp-detail-hero-icon date">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                </div>
+                <div className="mp-detail-hero-info">
+                  <span className="mp-detail-hero-label">Meeting Date</span>
+                  <span className="mp-detail-hero-val date">{viewingAppt.date}</span>
+                </div>
+              </div>
+
+              <div className="mp-detail-hero-divider" />
+
+              <div className="mp-detail-hero-item">
+                <div className="mp-detail-hero-icon time">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                </div>
+                <div className="mp-detail-hero-info">
+                  <span className="mp-detail-hero-label">Time Slot</span>
+                  <span className="mp-detail-hero-val time">{viewingAppt.timeSlot}</span>
+                </div>
+              </div>
+
+              <div className="mp-detail-hero-divider" />
+
+              <div className="mp-detail-hero-item">
+                <div className="mp-detail-hero-icon method">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polygon points="23 7 16 12 23 17 23 7" />
+                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                  </svg>
+                </div>
+                <div className="mp-detail-hero-info">
+                  <span className="mp-detail-hero-label">Meeting Method</span>
+                  <span className="mp-detail-hero-val method">
+                    {viewingAppt.meetingMethod || 'Google Meet'} (Online)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Two-Column Information Cards */}
+            <div className="mp-detail-cards-grid">
+              {/* Client Information Card */}
+              <div className="mp-detail-card">
+                <div className="mp-detail-card-head">
+                  <div className="mp-detail-card-icon client">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                  </div>
+                  <h4>Client Information</h4>
+                </div>
+
+                <div className="mp-detail-card-body">
+                  <div className="mp-detail-field-group">
+                    <span className="mp-detail-field-label">Full Name</span>
+                    <span className="mp-detail-field-value strong">{viewingAppt.clientName}</span>
+                  </div>
+
+                  <div className="mp-detail-field-group">
+                    <span className="mp-detail-field-label">Email Address</span>
+                    <div className="mp-detail-link-wrap">
+                      <a href={`mailto:${viewingAppt.clientEmail}`} className="mp-detail-action-link email">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect width="20" height="16" x="2" y="4" rx="2" />
+                          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                        </svg>
+                        <span>{viewingAppt.clientEmail}</span>
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="mp-detail-field-group">
+                    <span className="mp-detail-field-label">Phone Number</span>
+                    <div className="mp-detail-link-wrap">
+                      {viewingAppt.clientPhone ? (
+                        <a href={`tel:${viewingAppt.clientPhone.replace(/\s+/g, '')}`} className="mp-detail-action-link phone">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                          </svg>
+                          <span>{viewingAppt.clientPhone}</span>
+                        </a>
+                      ) : (
+                        <span className="mp-dim-text">Not provided</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {viewingAppt.createdAt && (
+                    <div className="mp-detail-field-group">
+                      <span className="mp-detail-field-label">Submission Date</span>
+                      <span className="mp-detail-field-value sub">
+                        {new Date(viewingAppt.createdAt).toLocaleString(undefined, {
+                          dateStyle: 'medium',
+                          timeStyle: 'short'
+                        })}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Service & Project Brief Card */}
+              <div className="mp-detail-card">
+                <div className="mp-detail-card-head">
+                  <div className="mp-detail-card-icon project">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="16" y1="13" x2="8" y2="13" />
+                      <line x1="16" y1="17" x2="8" y2="17" />
+                      <polyline points="10 9 9 9 8 9" />
+                    </svg>
+                  </div>
+                  <h4>Project & Service Requirements</h4>
+                </div>
+
+                <div className="mp-detail-card-body">
+                  <div className="mp-detail-field-group">
+                    <span className="mp-detail-field-label">Project Brief / Notes</span>
+                    <div className="mp-detail-full-notes">
+                      {viewingAppt.notes ? (
+                        <p>{viewingAppt.notes}</p>
+                      ) : (
+                        <span className="mp-dim-text">No notes provided for this booking.</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer with Actions */}
+            <div className="mp-modal-actions mp-detail-modal-footer">
+              <button
+                type="button"
+                className="mp-admin-btn secondary"
+                onClick={() => setViewingAppt(null)}
+              >
+                Close View
+              </button>
+              <div className="mp-detail-footer-right">
+                <button
+                  type="button"
+                  className="mp-admin-btn danger outline"
+                  onClick={() => {
+                    const toDelete = viewingAppt;
+                    setViewingAppt(null);
+                    setDeletingAppt(toDelete);
+                  }}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  </svg>
+                  Delete
+                </button>
+                <button
+                  type="button"
+                  className="mp-admin-btn primary"
+                  onClick={() => {
+                    const toEdit = viewingAppt;
+                    setViewingAppt(null);
+                    handleOpenEdit(toEdit);
+                  }}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                  </svg>
+                  Edit Appointment
+                </button>
+              </div>
             </div>
           </div>
         </div>

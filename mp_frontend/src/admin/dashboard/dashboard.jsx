@@ -2,17 +2,18 @@ import { useState, useEffect } from 'react';
 import HeroEdit from './hero/heroedit';
 import AboutEdit from './about/aboutedit';
 import ContactEdit from './contact/contactEdit';
-import MessagesDrawer from './messages/messagesDrawer';
+import MpCalenderAdmin from './contact/mpCalenderAdmin/mpCalenderAdmin';
+import AppointmentsDrawer from './appointments/appointmentsDrawer';
 import './dashboard.css';
 
 export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
-  const [activePage, setActivePage] = useState('hero'); // 'hero' | 'about' | 'contact'
+  const [activePage, setActivePage] = useState('hero'); // 'hero' | 'about' | 'contact' | 'appointments'
   const [isHeroOpen, setIsHeroOpen] = useState(true);
   const [activeHeroSection, setActiveHeroSection] = useState('all');
   const [isContactOpen, setIsContactOpen] = useState(true);
   const [activeContactSection, setActiveContactSection] = useState('all');
-  const [isMessagesOpen, setIsMessagesOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [isAppointmentsOpen, setIsAppointmentsOpen] = useState(false);
+  const [pendingApptCount, setPendingApptCount] = useState(0);
 
   const handleOpenLiveWebsite = () => {
     if (onBackToSite) {
@@ -22,26 +23,41 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
     }
   };
 
-  // Fetch unread count for badge
+  // Fetch pending appointments count for badge
   useEffect(() => {
-    const fetchUnreadCount = async () => {
+    const fetchPendingApptCount = async () => {
       try {
-        const res = await fetch('/api/contact/messages');
+        const res = await fetch('/api/contact/appointments');
         if (res.ok) {
           const data = await res.json();
           if (data.success && Array.isArray(data.data)) {
-            const count = data.data.filter(m => !m.read && m.status !== 'read').length;
-            setUnreadCount(count);
+            const pending = data.data.filter(a => a.status === 'pending').length;
+            setPendingApptCount(pending);
+            return;
           }
         }
       } catch (err) {
-        console.warn('Could not fetch message count:', err.message);
+        console.warn('Could not fetch appointments count:', err.message);
       }
+      try {
+        const saved = localStorage.getItem('mp_client_appointments');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          setPendingApptCount(parsed.filter(a => a.status === 'pending').length);
+        }
+      } catch {}
     };
 
-    fetchUnreadCount();
-    const timer = setInterval(fetchUnreadCount, 30000);
-    return () => clearInterval(timer);
+    fetchPendingApptCount();
+    const timer = setInterval(fetchPendingApptCount, 25000);
+    const handleSync = () => fetchPendingApptCount();
+    window.addEventListener('mp_appointments_updated', handleSync);
+    window.addEventListener('storage', handleSync);
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener('mp_appointments_updated', handleSync);
+      window.removeEventListener('storage', handleSync);
+    };
   }, []);
 
   // Set document title for Admin Dashboard
@@ -56,11 +72,15 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
     <div className="mp-dashboard-root">
       <div className="mp-dashboard-glow" />
 
-      {/* Messages Side Drawer */}
-      <MessagesDrawer
-        isOpen={isMessagesOpen}
-        onClose={() => setIsMessagesOpen(false)}
-        onUnreadCountChange={setUnreadCount}
+      {/* Appointments Side Drawer (Replaced Messages Section) */}
+      <AppointmentsDrawer
+        isOpen={isAppointmentsOpen}
+        onClose={() => setIsAppointmentsOpen(false)}
+        onOpenCalendarView={() => {
+          setActivePage('appointments');
+          setIsAppointmentsOpen(false);
+        }}
+        onPendingCountChange={setPendingApptCount}
       />
 
       {/* Sidebar Navigation */}
@@ -287,11 +307,9 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
 
                   <button
                     type="button"
-                    className={`mp-sub-nav-item ${activePage === 'contact' && activeContactSection === 'calendar' ? 'active' : ''}`}
+                    className={`mp-sub-nav-item ${activePage === 'appointments' || (activePage === 'contact' && activeContactSection === 'calendar') ? 'active' : ''}`}
                     onClick={() => {
-                      setActivePage('contact');
-                      setIsContactOpen(true);
-                      setActiveContactSection('calendar');
+                      setActivePage('appointments');
                     }}
                     title="Client Meeting Appointments Calendar"
                   >
@@ -304,12 +322,40 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
                       </svg>
                       <span>Appointments</span>
                     </div>
+                    {pendingApptCount > 0 && (
+                      <span className="mp-sidebar-unread-pill" title={`${pendingApptCount} pending appointments`}>
+                        {pendingApptCount}
+                      </span>
+                    )}
                   </button>
                 </div>
               )}
             </div>
 
             <span className="mp-nav-section-label">Sections (CMS)</span>
+
+            {/* Direct Appointments Navigation */}
+            <button
+              type="button"
+              className={`mp-nav-item ${activePage === 'appointments' ? 'active' : ''}`}
+              onClick={() => setActivePage('appointments')}
+              title="Manage Client Meeting Appointments Calendar"
+            >
+              <div className="mp-nav-item-left">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>Appointments</span>
+              </div>
+              {pendingApptCount > 0 && (
+                <span className="mp-sidebar-unread-pill" title={`${pendingApptCount} pending appointments`}>
+                  {pendingApptCount}
+                </span>
+              )}
+            </button>
 
             <div className="mp-nav-item" style={{ opacity: 0.5, cursor: 'default' }}>
               <div className="mp-nav-item-left">
@@ -388,6 +434,18 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
             <span>/</span>
             {activePage === 'about' ? (
               <span className="current">About Page</span>
+            ) : activePage === 'appointments' ? (
+              <>
+                <span
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setActivePage('appointments')}
+                  title="Client Appointments Calendar"
+                >
+                  Appointments
+                </span>
+                <span>/</span>
+                <span className="current">Client Meetings</span>
+              </>
             ) : activePage === 'contact' ? (
               <>
                 <span
@@ -440,25 +498,28 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
           </div>
 
           <div className="mp-topbar-actions">
-            {/* Messages Icon Button */}
+            {/* Appointments Icon Button (Replaces Messages Section) */}
             <button
               type="button"
-              className={`mp-topbar-msg-btn ${unreadCount > 0 ? 'has-unread' : ''}`}
-              onClick={() => setIsMessagesOpen(true)}
-              title={unreadCount > 0 ? `${unreadCount} unread customer inquiries` : 'Customer inquiries & messages'}
-              aria-label="View user contact messages"
+              className={`mp-topbar-msg-btn ${pendingApptCount > 0 ? 'has-unread' : ''}`}
+              onClick={() => setIsAppointmentsOpen(true)}
+              title={pendingApptCount > 0 ? `${pendingApptCount} pending client appointments` : 'Client meeting appointments'}
+              aria-label="View client appointments"
             >
               <div className="mp-msg-btn-icon-wrap">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
                 </svg>
-                {unreadCount > 0 && (
+                {pendingApptCount > 0 && (
                   <span className="mp-topbar-msg-badge">
-                    {unreadCount > 99 ? '99+' : unreadCount}
+                    {pendingApptCount > 99 ? '99+' : pendingApptCount}
                   </span>
                 )}
               </div>
-              <span className="mp-topbar-msg-label">Messages</span>
+              <span className="mp-topbar-msg-label">Appointments</span>
             </button>
 
             {/* View Live Website Button */}
@@ -483,11 +544,19 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
             <AboutEdit />
           ) : activePage === 'contact' ? (
             <ContactEdit
-              onOpenMessages={() => setIsMessagesOpen(true)}
-              unreadCount={unreadCount}
+              onOpenMessages={() => setIsAppointmentsOpen(true)}
+              unreadCount={pendingApptCount}
               activeSection={activeContactSection}
-              onSelectSection={setActiveContactSection}
+              onSelectSection={(sec) => {
+                if (sec === 'calendar') {
+                  setActivePage('appointments');
+                } else {
+                  setActiveContactSection(sec);
+                }
+              }}
             />
+          ) : activePage === 'appointments' ? (
+            <MpCalenderAdmin />
           ) : (
             <HeroEdit
               activeSection={activeHeroSection}

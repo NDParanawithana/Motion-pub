@@ -1606,6 +1606,7 @@ a.mp-info-val:hover {
   width: 95vw;
   max-height: 92vh;
   overflow-y: auto;
+  scroll-behavior: smooth;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
   box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.9), 0 0 35px rgba(0, 242, 254, 0.12);
@@ -1733,13 +1734,14 @@ a.mp-info-val:hover {
   vertical-align: top;
 }
 
-/* Eliminate bottom gap: when on Step 1 (slide-left), Slide 2 does not stretch the container height */
-.mp-modal-slider-track.slide-left .mp-swap-view-details {
+/* Eliminate bottom gap: when on Step 1 (slide-left, calendar), Slide 2 (details) does not stretch the container height */
+.mp-modal-slider-track.slide-left .mp-swap-view-calendar {
   position: relative;
   margin-left: 0;
+  pointer-events: auto;
 }
 
-.mp-modal-slider-track.slide-left .mp-swap-view-calendar {
+.mp-modal-slider-track.slide-left .mp-swap-view-details {
   position: absolute;
   top: 0;
   left: 50%;
@@ -1747,8 +1749,8 @@ a.mp-info-val:hover {
   pointer-events: none;
 }
 
-/* When on Step 2 (slide-right), Slide 2 sets the container height, and Slide 1 does not stretch it */
-.mp-modal-slider-track.slide-right .mp-swap-view-details {
+/* When on Step 2 (slide-right, details), Slide 2 sets the container height, and Slide 1 (calendar) does not stretch it */
+.mp-modal-slider-track.slide-right .mp-swap-view-calendar {
   position: absolute;
   top: 0;
   left: 0;
@@ -1756,7 +1758,7 @@ a.mp-info-val:hover {
   pointer-events: none;
 }
 
-.mp-modal-slider-track.slide-right .mp-swap-view-calendar {
+.mp-modal-slider-track.slide-right .mp-swap-view-details {
   position: relative;
   margin-left: 50%;
   pointer-events: auto;
@@ -1902,6 +1904,7 @@ a.mp-info-val:hover {
    ========================================================================== */
 
 .mp-meeting-method-section {
+  scroll-margin-top: 1.5rem;
   margin-top: 1.25rem;
   margin-bottom: 0.5rem;
   padding: 1.25rem;

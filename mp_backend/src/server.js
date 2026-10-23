@@ -7,6 +7,7 @@ import { connectToMongoDB, checkMongoStatus, disconnectFromMongoDB } from './con
 import adminLoginRoutes from './routes/admin/admin_login_routes.js';
 import heroRoutes from './routes/content/hero_routes.js';
 import contactRoutes from './routes/contact/contact_routes.js';
+import { initAppointmentIndexes } from './models/contact/appointment_model.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,10 +28,14 @@ app.use('/api/admin', adminLoginRoutes);
 app.use('/api/content', heroRoutes);
 
 // Attempt initial MongoDB connection
-connectToMongoDB().catch((err) => {
-  console.warn('⚠️ MongoDB initial connection notice:', err.message);
-  console.log('👉 Please ensure your password is set in mp_backend/.env');
-});
+connectToMongoDB()
+  .then(async () => {
+    await initAppointmentIndexes();
+  })
+  .catch((err) => {
+    console.warn('⚠️ MongoDB initial connection notice:', err.message);
+    console.log('👉 Please ensure your password is set in mp_backend/.env');
+  });
 
 // MongoDB Connection Check Endpoint
 app.get('/api/db-status', async (req, res) => {

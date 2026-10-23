@@ -183,10 +183,11 @@ export default function Contact() {
     const [selectedMeetingTime, setSelectedMeetingTime] = useState('');
     const [bookedAppointmentInfo, setBookedAppointmentInfo] = useState(null);
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-    const [activeBookingSection, setActiveBookingSection] = useState('details'); // 'details' | 'datetime'
+    const [activeBookingSection, setActiveBookingSection] = useState('datetime'); // 'datetime' | 'details'
 
     const dropdownRef = useRef(null);
     const modalCardRef = useRef(null);
+    const meetingMethodRef = useRef(null);
 
     const handleSectionChange = (section) => {
         setActiveBookingSection(section);
@@ -326,6 +327,25 @@ export default function Contact() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (activeMode === 'appointment') {
+            if (!selectedMeetingDate) {
+                setStatus({
+                    state: 'error',
+                    message: 'Please select an available meeting date on the calendar.',
+                });
+                handleSectionChange('datetime');
+                return;
+            }
+            if (!selectedMeetingTime) {
+                setStatus({
+                    state: 'error',
+                    message: 'Please choose an available meeting time slot on the calendar.',
+                });
+                handleSectionChange('datetime');
+                return;
+            }
+        }
+
         if (!formData.firstName.trim() || !formData.email.trim()) {
             setStatus({
                 state: 'error',
@@ -346,7 +366,7 @@ export default function Contact() {
         if (!formData.serviceType || !formData.serviceType.trim()) {
             setStatus({
                 state: 'error',
-                message: 'Please select a service type.',
+                message: 'Please provide a project brief description.',
             });
             handleSectionChange('details');
             return;
@@ -381,34 +401,6 @@ export default function Contact() {
             return;
         }
 
-        if (!formData.serviceType || !formData.serviceType.trim()) {
-            setStatus({
-                state: 'error',
-                message: 'Please provide a project brief description.',
-            });
-            handleSectionChange('details');
-            return;
-        }
-
-        if (activeMode === 'appointment') {
-            if (!selectedMeetingDate) {
-                setStatus({
-                    state: 'error',
-                    message: 'Please select an available meeting date on the calendar.',
-                });
-                handleSectionChange('datetime');
-                return;
-            }
-            if (!selectedMeetingTime) {
-                setStatus({
-                    state: 'error',
-                    message: 'Please choose an available meeting time slot on the calendar.',
-                });
-                handleSectionChange('datetime');
-                return;
-            }
-        }
-
         setStatus({ state: 'loading', message: '' });
 
         const fullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
@@ -426,7 +418,7 @@ export default function Contact() {
                 timeSlot: selectedMeetingTime,
                 notes: formData.message.trim(),
                 source: 'client',
-                status: 'confirmed',
+                status: 'pending',
             };
 
             try {
@@ -439,6 +431,25 @@ export default function Contact() {
                 const data = await res.json().catch(() => ({}));
 
                 if (!res.ok || !data.success) {
+                    if (res.status === 409) {
+                        if (data.code === 'USER_ALREADY_HAS_APPOINTMENT') {
+                            // User already has an active appointment: stay on details step and show clear warning
+                            setStatus({
+                                state: 'error',
+                                message: data.message || 'You already have an active appointment scheduled. Each client can only have one active meeting at a time.',
+                            });
+                            return;
+                        }
+
+                        // Slot conflict: preserve form fields, clear conflict time, guide back to Step 1
+                        setSelectedMeetingTime('');
+                        setActiveBookingSection('datetime');
+                        if (modalCardRef.current) {
+                            modalCardRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+                        // Instantly refresh calendar slots so taken slot is locked visually
+                        window.dispatchEvent(new Event('mp_appointments_updated'));
+                    }
                     throw new Error(data.message || 'Failed to schedule appointment. Please choose another slot.');
                 }
 
@@ -487,6 +498,7 @@ export default function Contact() {
                 // Reset form
                 setSelectedMeetingDate('');
                 setSelectedMeetingTime('');
+                setActiveBookingSection('datetime');
                 setFormData({
                     firstName: '',
                     lastName: '',
@@ -858,7 +870,7 @@ export default function Contact() {
                                     className="mp-appt-primary-btn"
                                     onClick={() => {
                                         setStatus({ state: 'idle', message: '' });
-                                        setActiveBookingSection('details');
+                                        setActiveBookingSection('datetime');
                                         setIsBookingModalOpen(true);
                                     }}
                                 >
@@ -905,21 +917,6 @@ export default function Contact() {
                                     <button
                                         type="button"
                                         role="tab"
-                                        aria-selected={activeBookingSection === 'details'}
-                                        className={`mp-swap-tab-btn ${activeBookingSection === 'details' ? 'active' : ''}`}
-                                        onClick={() => handleSectionChange('details')}
-                                    >
-                                        <span className="mp-swap-tab-icon">
-                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                                <circle cx="12" cy="7" r="4" />
-                                            </svg>
-                                        </span>
-                                        <span className="mp-swap-tab-label">Client &amp; Project Details</span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        role="tab"
                                         aria-selected={activeBookingSection === 'datetime'}
                                         className={`mp-swap-tab-btn ${activeBookingSection === 'datetime' ? 'active' : ''}`}
                                         onClick={() => handleSectionChange('datetime')}
@@ -932,24 +929,193 @@ export default function Contact() {
                                                 <line x1="3" y1="10" x2="21" y2="10" />
                                             </svg>
                                         </span>
-                                        <span className="mp-swap-tab-label">Meeting Details</span>
+                                        <span className="mp-swap-tab-label">1. Meeting Details</span>
                                         {selectedMeetingDate && selectedMeetingTime && (
                                             <span className="mp-swap-tab-dot" title="Slot selected" />
+                                        )}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        role="tab"
+                                        aria-selected={activeBookingSection === 'details'}
+                                        className={`mp-swap-tab-btn ${activeBookingSection === 'details' ? 'active' : ''}`}
+                                        onClick={() => handleSectionChange('details')}
+                                    >
+                                        <span className="mp-swap-tab-icon">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                                <circle cx="12" cy="7" r="4" />
+                                            </svg>
+                                        </span>
+                                        <span className="mp-swap-tab-label">2. Client &amp; Project Details</span>
+                                        {formData.firstName && formData.email && formData.phone && formData.serviceType && (
+                                            <span className="mp-swap-tab-dot" title="Details entered" />
                                         )}
                                     </button>
                                 </div>
                             </div>
                             <p className="mp-booking-modal-subtext">
-                                {activeBookingSection === 'details'
-                                    ? 'Step 1: Enter your contact & project info to prepare your scheduled meeting.'
-                                    : 'Step 2: Pick an available date, time slot, and your preferred online meeting platform.'}
+                                {activeBookingSection === 'datetime'
+                                    ? 'Step 1: Pick an available date, time slot, and your preferred online meeting platform.'
+                                    : 'Step 2: Enter your contact & project info to finalize your scheduled meeting.'}
                             </p>
                         </div>
 
                         <div className="mp-booking-modal-swap-body mp-modal-slider-viewport">
                             <form onSubmit={handleSubmit} className="mp-contact-form" noValidate>
-                                <div className={`mp-modal-slider-track ${activeBookingSection === 'datetime' ? 'slide-right' : 'slide-left'}`}>
-                                    {/* Slide 1 (LEFT): Client & Project Details */}
+                                <div className={`mp-modal-slider-track ${activeBookingSection === 'details' ? 'slide-right' : 'slide-left'}`}>
+                                    {/* Slide 1 (LEFT): Step 1: Meeting Details */}
+                                    <div
+                                        className="mp-modal-slide mp-swap-view mp-swap-view-calendar"
+                                        inert={activeBookingSection !== 'datetime' ? '' : undefined}
+                                    >
+                                        <div className="mp-cal-section-header">
+                                            <span className="mp-cal-section-title">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                                    <circle cx="12" cy="12" r="10" />
+                                                    <polyline points="12 6 12 12 16 14" />
+                                                </svg>
+                                                Step 1: Meeting Details
+                                            </span>
+                                            <span className={`mp-cal-section-badge ${selectedMeetingDate && selectedMeetingTime ? 'active' : ''}`}>
+                                                {selectedMeetingDate && selectedMeetingTime ? 'Slot Picked ✓' : 'Required'}
+                                            </span>
+                                        </div>
+
+                                        <div className="mp-modal-cal-wrap">
+                                            <MpCalender
+                                                selectedDate={selectedMeetingDate}
+                                                selectedTime={selectedMeetingTime}
+                                                onSelectDateTime={({ date, timeSlot, source }) => {
+                                                    setSelectedMeetingDate(date);
+                                                    setSelectedMeetingTime(timeSlot);
+                                                    if (status.state === 'error') {
+                                                        setStatus({ state: 'idle', message: '' });
+                                                    }
+                                                    // When a time slot is selected, automatically scroll down to Meeting Type Selection
+                                                    if (timeSlot && (source === 'time' || !source)) {
+                                                        setTimeout(() => {
+                                                            if (meetingMethodRef.current && modalCardRef.current) {
+                                                                const cardRect = modalCardRef.current.getBoundingClientRect();
+                                                                const targetRect = meetingMethodRef.current.getBoundingClientRect();
+                                                                const offset = targetRect.top - cardRect.top + modalCardRef.current.scrollTop - 24;
+                                                                modalCardRef.current.scrollTo({
+                                                                    top: Math.max(0, offset),
+                                                                    behavior: 'smooth',
+                                                                });
+                                                            } else if (meetingMethodRef.current) {
+                                                                meetingMethodRef.current.scrollIntoView({
+                                                                    behavior: 'smooth',
+                                                                    block: 'start',
+                                                                });
+                                                            }
+                                                        }, 100);
+                                                    }
+                                                }}
+                                                offDays={contactSettings.offDays}
+                                            />
+                                        </div>
+
+                                        {selectedMeetingDate && selectedMeetingTime && (
+                                            <div className="mp-modal-slot-chip-bar">
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                                    <line x1="16" y1="2" x2="16" y2="6" />
+                                                    <line x1="8" y1="2" x2="8" y2="6" />
+                                                    <line x1="3" y1="10" x2="21" y2="10" />
+                                                </svg>
+                                                <span>Meeting Reserved For: <strong>{selectedMeetingDate}</strong> at <strong>{selectedMeetingTime}</strong></span>
+                                            </div>
+                                        )}
+
+                                        {/* Online Meeting Platform Selection */}
+                                        <div className="mp-meeting-method-section" ref={meetingMethodRef}>
+                                            <div className="mp-field-label-row">
+                                                <label className="mp-form-label">
+                                                    Online Meeting Method*
+                                                </label>
+                                            </div>
+                                            <p className="mp-field-helper-hint">
+                                                All client meetings are held online. Choose your preferred video platform:
+                                            </p>
+
+                                            <div className="mp-meeting-methods-grid" role="radiogroup" aria-label="Online Meeting Method">
+                                                {ONLINE_MEETING_METHODS.map((m) => {
+                                                    const isSelected = (formData.meetingMethod || 'Google Meet') === m.name;
+                                                    return (
+                                                        <button
+                                                            key={m.id}
+                                                            type="button"
+                                                            role="radio"
+                                                            aria-checked={isSelected}
+                                                            className={`mp-meeting-method-card method-${m.id} ${isSelected ? 'selected' : ''}`}
+                                                            onClick={() => {
+                                                                setFormData((prev) => ({ ...prev, meetingMethod: m.name }));
+                                                                if (status.state === 'error') {
+                                                                    setStatus({ state: 'idle', message: '' });
+                                                                }
+                                                            }}
+                                                        >
+                                                            <div className="mp-method-top-bar">
+                                                                <span className="mp-method-icon-box">{m.icon}</span>
+                                                                <div className="mp-method-radio-ind">
+                                                                    <span className="mp-method-radio-dot" />
+                                                                </div>
+                                                            </div>
+                                                            <div className="mp-method-body">
+                                                                <span className="mp-method-name">{m.name}</span>
+                                                                <span className="mp-method-desc">{m.desc}</span>
+                                                            </div>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+
+                                        {status.message && (
+                                            <div className={`mp-form-status-alert ${status.state}`}>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                    <circle cx="12" cy="12" r="10" />
+                                                    <line x1="12" y1="8" x2="12" y2="12" />
+                                                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                                                </svg>
+                                                <span>{status.message}</span>
+                                            </div>
+                                        )}
+
+                                        <div className="mp-swap-action-footer">
+                                            <button
+                                                type="button"
+                                                className="mp-swap-next-btn"
+                                                onClick={() => {
+                                                    if (!selectedMeetingDate) {
+                                                        setStatus({
+                                                            state: 'error',
+                                                            message: 'Please select an available meeting date on the calendar.',
+                                                        });
+                                                        return;
+                                                    }
+                                                    if (!selectedMeetingTime) {
+                                                        setStatus({
+                                                            state: 'error',
+                                                            message: 'Please choose an available meeting time slot on the calendar.',
+                                                        });
+                                                        return;
+                                                    }
+                                                    setStatus({ state: 'idle', message: '' });
+                                                    handleSectionChange('details');
+                                                }}
+                                            >
+                                                <span>Continue to Client &amp; Project Details</span>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                                    <polyline points="12 5 19 12 12 19" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Slide 2 (RIGHT): Step 2: Client & Project Details */}
                                     <div
                                         className="mp-modal-slide mp-swap-view mp-swap-view-details"
                                         inert={activeBookingSection !== 'details' ? '' : undefined}
@@ -960,7 +1126,7 @@ export default function Contact() {
                                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                                                     <circle cx="12" cy="7" r="4" />
                                                 </svg>
-                                                Step 1: Client &amp; Project Details
+                                                Step 2: Client &amp; Project Details
                                             </span>
                                             <span className={`mp-cal-section-badge ${formData.firstName && formData.email && formData.phone && formData.serviceType ? 'active' : ''}`}>
                                                 {formData.firstName && formData.email && formData.phone && formData.serviceType ? 'Details Added ✓' : 'Required'}
@@ -1172,110 +1338,6 @@ export default function Contact() {
                                             />
                                         </div>
 
-                                        <div className="mp-swap-action-footer">
-                                            <button
-                                                type="button"
-                                                className="mp-swap-next-btn"
-                                                onClick={() => handleSectionChange('datetime')}
-                                            >
-                                                <span>Continue to Meeting Details</span>
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                                                    <line x1="5" y1="12" x2="19" y2="12" />
-                                                    <polyline points="12 5 19 12 12 19" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {/* Slide 2 (RIGHT): Meeting Details */}
-                                    <div
-                                        className="mp-modal-slide mp-swap-view mp-swap-view-calendar"
-                                        inert={activeBookingSection !== 'datetime' ? '' : undefined}
-                                    >
-                                        <div className="mp-cal-section-header">
-                                            <span className="mp-cal-section-title">
-                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                                                    <circle cx="12" cy="12" r="10" />
-                                                    <polyline points="12 6 12 12 16 14" />
-                                                </svg>
-                                                Step 2: Meeting Details
-                                            </span>
-                                            <span className={`mp-cal-section-badge ${selectedMeetingDate && selectedMeetingTime ? 'active' : ''}`}>
-                                                {selectedMeetingDate && selectedMeetingTime ? 'Slot Picked ✓' : 'Required'}
-                                            </span>
-                                        </div>
-
-                                        <div className="mp-modal-cal-wrap">
-                                            <MpCalender
-                                                selectedDate={selectedMeetingDate}
-                                                selectedTime={selectedMeetingTime}
-                                                onSelectDateTime={({ date, timeSlot }) => {
-                                                    setSelectedMeetingDate(date);
-                                                    setSelectedMeetingTime(timeSlot);
-                                                    if (status.state === 'error') {
-                                                        setStatus({ state: 'idle', message: '' });
-                                                    }
-                                                }}
-                                                offDays={contactSettings.offDays}
-                                            />
-                                        </div>
-
-                                        {selectedMeetingDate && selectedMeetingTime && (
-                                            <div className="mp-modal-slot-chip-bar">
-                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                                    <line x1="16" y1="2" x2="16" y2="6" />
-                                                    <line x1="8" y1="2" x2="8" y2="6" />
-                                                    <line x1="3" y1="10" x2="21" y2="10" />
-                                                </svg>
-                                                <span>Meeting Reserved For: <strong>{selectedMeetingDate}</strong> at <strong>{selectedMeetingTime}</strong></span>
-                                            </div>
-                                        )}
-
-                                        {/* Online Meeting Platform Selection */}
-                                        <div className="mp-meeting-method-section">
-                                            <div className="mp-field-label-row">
-                                                <label className="mp-form-label">
-                                                    Online Meeting Method*
-                                                </label>
-                                            </div>
-                                            <p className="mp-field-helper-hint">
-                                                All client meetings are held online. Choose your preferred video platform:
-                                            </p>
-
-                                            <div className="mp-meeting-methods-grid" role="radiogroup" aria-label="Online Meeting Method">
-                                                {ONLINE_MEETING_METHODS.map((m) => {
-                                                    const isSelected = (formData.meetingMethod || 'Google Meet') === m.name;
-                                                    return (
-                                                        <button
-                                                            key={m.id}
-                                                            type="button"
-                                                            role="radio"
-                                                            aria-checked={isSelected}
-                                                            className={`mp-meeting-method-card method-${m.id} ${isSelected ? 'selected' : ''}`}
-                                                            onClick={() => {
-                                                                setFormData((prev) => ({ ...prev, meetingMethod: m.name }));
-                                                                if (status.state === 'error') {
-                                                                    setStatus({ state: 'idle', message: '' });
-                                                                }
-                                                            }}
-                                                        >
-                                                            <div className="mp-method-top-bar">
-                                                                <span className="mp-method-icon-box">{m.icon}</span>
-                                                                <div className="mp-method-radio-ind">
-                                                                    <span className="mp-method-radio-dot" />
-                                                                </div>
-                                                            </div>
-                                                            <div className="mp-method-body">
-                                                                <span className="mp-method-name">{m.name}</span>
-                                                                <span className="mp-method-desc">{m.desc}</span>
-                                                            </div>
-                                                        </button>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-
                                         {status.message && (
                                             <div className={`mp-form-status-alert ${status.state}`}>
                                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -1291,9 +1353,9 @@ export default function Contact() {
                                             <button
                                                 type="button"
                                                 className="mp-booking-modal-back-btn"
-                                                onClick={() => handleSectionChange('details')}
+                                                onClick={() => handleSectionChange('datetime')}
                                             >
-                                                ← Back to Client Details
+                                                ← Back to Meeting Details
                                             </button>
                                             <button
                                                 type="submit"
