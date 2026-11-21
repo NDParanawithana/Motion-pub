@@ -1,5 +1,5 @@
 /* ===================================================
-   3D ART COMPONENT - DUAL NEON FLOATING CARDS
+   3D ART COMPONENT - NEON FLOATING VIDEO SHOWCASE
    =================================================== */
 
 .three-d-art-wrapper {
@@ -7,7 +7,7 @@
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   padding: 0;
   perspective: 1200px;
   overflow: visible;
@@ -16,7 +16,7 @@
 
 .three-d-art-scene {
   position: relative;
-  width: min(100%, 255px);
+  width: min(100%, 580px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -25,7 +25,7 @@
   cursor: pointer;
 }
 
-/* ===== 3D Card Stack Container ===== */
+/* ===== 3D Card Container ===== */
 .art-card-container {
   position: relative;
   z-index: 2;
@@ -45,7 +45,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
   transform-style: preserve-3d;
   animation: cardStackFloat 6s ease-in-out infinite alternate;
 }
@@ -54,7 +53,7 @@
 .art-card {
   position: relative;
   width: 100%;
-  border-radius: 20px;
+  border-radius: 22px;
   background-color: #0b0d08;
   overflow: hidden;
   transform-style: preserve-3d;
@@ -62,21 +61,21 @@
   will-change: transform, box-shadow;
 
   /* Radiant Neon Lime Green Border & Ambient Outer Halo */
-  border: 1.8px solid #94E000;
+  border: 2px solid #94E000;
   box-shadow:
     0 0 0 1px rgba(184, 255, 0, 0.25),
-    0 0 14px rgba(148, 224, 0, 0.45),
-    0 0 32px rgba(148, 224, 0, 0.18),
-    0 10px 28px rgba(0, 0, 0, 0.8),
-    inset 0 0 10px rgba(148, 224, 0, 0.12);
+    0 0 18px rgba(148, 224, 0, 0.45),
+    0 0 42px rgba(148, 224, 0, 0.2),
+    0 16px 40px rgba(0, 0, 0, 0.8),
+    inset 0 0 12px rgba(148, 224, 0, 0.12);
 }
 
 .art-card:hover {
   box-shadow:
     0 0 0 1.5px rgba(184, 255, 0, 0.5),
-    0 0 22px rgba(148, 224, 0, 0.65),
-    0 0 50px rgba(148, 224, 0, 0.3),
-    0 14px 38px rgba(0, 0, 0, 0.9),
+    0 0 26px rgba(148, 224, 0, 0.65),
+    0 0 60px rgba(148, 224, 0, 0.3),
+    0 18px 46px rgba(0, 0, 0, 0.9),
     inset 0 0 14px rgba(148, 224, 0, 0.2);
 }
 
@@ -123,7 +122,7 @@
   z-index: 2;
 }
 
-/* ===== TOP CARD: Video Showcase ===== */
+/* ===== Video Showcase Frame ===== */
 .art-card-top {
   aspect-ratio: 16 / 9;
   transform: translateZ(35px);
@@ -131,72 +130,7 @@
 }
 
 .art-card-top .art-card-img {
-  object-position: center top;
-}
-
-/* ===== BOTTOM CARD: Video Editing Timeline ===== */
-.art-card-bottom {
-  aspect-ratio: 16 / 9;
-  border-radius: 16px;
-  transform: perspective(700px) rotateX(8deg) translateZ(22px);
-  transform-origin: top center;
-  animation: bottomCardShift 6s ease-in-out infinite alternate;
-}
-
-.art-card-img-timeline {
   object-position: center;
-  filter: contrast(1.04) brightness(1.02);
-}
-
-/* ===== Animated Timeline Playhead ===== */
-.art-timeline-playhead {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  left: 54%;
-  pointer-events: none;
-  z-index: 3;
-  animation: playheadScrub 7s ease-in-out infinite alternate;
-}
-
-.art-playhead-needle {
-  width: 2px;
-  height: 100%;
-  background: #B8FF00;
-  box-shadow:
-    0 0 6px #B8FF00,
-    0 0 14px rgba(184, 255, 0, 0.85);
-}
-
-.art-playhead-cap {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 6px solid #B8FF00;
-  filter: drop-shadow(0 0 4px #B8FF00);
-}
-
-/* Audio Scan Line Effect across Timeline */
-.art-timeline-scanline {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(184, 255, 0, 0.04) 48%,
-    rgba(184, 255, 0, 0.12) 50%,
-    rgba(184, 255, 0, 0.04) 52%,
-    transparent 100%
-  );
-  z-index: 2;
-  animation: scanlineSweep 4s ease-in-out infinite;
 }
 
 /* ============================
@@ -227,18 +161,6 @@
   }
 }
 
-@keyframes bottomCardShift {
-  0% {
-    transform: perspective(700px) rotateX(8deg) translateZ(22px);
-  }
-  50% {
-    transform: perspective(700px) rotateX(6deg) translateZ(25px);
-  }
-  100% {
-    transform: perspective(700px) rotateX(9deg) translateZ(20px);
-  }
-}
-
 @keyframes borderGlowBreathe {
   0% {
     opacity: 0.7;
@@ -248,71 +170,30 @@
   }
 }
 
-@keyframes playheadScrub {
-  0% {
-    left: 28%;
-  }
-  40% {
-    left: 64%;
-  }
-  70% {
-    left: 45%;
-  }
-  100% {
-    left: 78%;
-  }
-}
-
-@keyframes scanlineSweep {
-  0% {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-  20% {
-    opacity: 0.8;
-  }
-  80% {
-    opacity: 0.8;
-  }
-  100% {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-}
-
 /* ============================
    RESPONSIVE DESIGN
    ============================ */
 
 @media (max-width: 900px) {
-  .three-d-art-scene {
-    width: min(100%, 230px);
+  .three-d-art-wrapper {
+    justify-content: center;
   }
 
-  .art-floating-layer {
-    gap: 8px;
+  .three-d-art-scene {
+    width: min(100%, 540px);
   }
 
   .art-card {
-    border-radius: 17px;
-  }
-
-  .art-card-bottom {
-    border-radius: 13px;
-    transform: perspective(700px) rotateX(5deg) translateZ(15px);
+    border-radius: 18px;
   }
 }
 
 @media (max-width: 480px) {
   .three-d-art-scene {
-    width: min(100%, 200px);
+    width: 100%;
   }
 
   .art-card {
     border-radius: 14px;
-  }
-
-  .art-card-bottom {
-    border-radius: 11px;
   }
 }

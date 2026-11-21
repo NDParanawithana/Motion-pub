@@ -57,7 +57,7 @@
 
 /* Left Column: Typing Animation */
 .mp-hero-left {
-  flex: 1.1;
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -103,7 +103,7 @@
 
 /* Right Column: 3D Art */
 .mp-hero-right {
-  flex: 0.9;
+  flex: 1.15;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -126,8 +126,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(1rem, 3.5vw, 3rem);
-  font-size: clamp(2rem, 5vw, 4.5rem);
+  gap: clamp(0.85rem, 2.8vw, 2.35rem);
+  font-size: clamp(1.65rem, 3.8vw, 3.35rem);
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.1;
@@ -269,11 +269,12 @@
   }
 
   .mp-hero-right {
+    width: 100%;
     justify-content: center;
   }
 
   .mp-words-row {
-    gap: 0.75rem;
-    font-size: 1.85rem;
+    gap: 0.65rem;
+    font-size: 1.55rem;
   }
 }

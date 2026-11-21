@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react'
 import defaultVideo from '../../assets/videos/default.mp4'
-import timelinePreview from '../../assets/images/timeline_preview.jpg'
 import './3dart.css'
 
 export default function ThreeDArt({ videoSrc }) {
@@ -49,7 +48,7 @@ export default function ThreeDArt({ videoSrc }) {
           }}
         >
           <div className="art-floating-layer">
-            {/* TOP CARD: Video Showcase */}
+            {/* Video Showcase Frame */}
             <div className="art-card art-card-top">
               <div className="art-card-border-glow"></div>
               <div className="art-card-content">
@@ -64,28 +63,6 @@ export default function ThreeDArt({ videoSrc }) {
                 />
                 {/* Subtle Glass / Sheen Overlay */}
                 <div className="art-card-sheen"></div>
-              </div>
-            </div>
-
-            {/* BOTTOM CARD: Video Editing Timeline */}
-            <div className="art-card art-card-bottom">
-              <div className="art-card-border-glow"></div>
-              <div className="art-card-content">
-                <img
-                  src={timelinePreview}
-                  alt="Video Editing Timeline"
-                  className="art-card-img art-card-img-timeline"
-                  loading="eager"
-                />
-
-                {/* Animated Vertical Playhead Overlay */}
-                <div className="art-timeline-playhead">
-                  <div className="art-playhead-needle"></div>
-                  <div className="art-playhead-cap"></div>
-                </div>
-
-                {/* Dynamic Audio Level Pulse Accent */}
-                <div className="art-timeline-scanline"></div>
               </div>
             </div>
           </div>

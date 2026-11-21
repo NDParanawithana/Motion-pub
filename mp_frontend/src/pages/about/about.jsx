@@ -346,75 +346,6 @@ export default function About() {
     }
   }, [])
 
-  // Gradient color stops for highlight text (matching the original CSS gradient)
-  const highlightColors = [
-    '#dfff32', '#c4f01a', '#94e000', '#6fdf40',
-    '#4ade80', '#3cd9a0', '#2dd4bf', '#33c8de', '#38bdf8',
-  ]
-
-  // Interpolate a color from the palette based on position (0 to 1)
-  const getGradientColor = (t) => {
-    const idx = t * (highlightColors.length - 1)
-    const lo = Math.floor(idx)
-    const hi = Math.min(lo + 1, highlightColors.length - 1)
-    const frac = idx - lo
-    const parse = (hex) => [
-      parseInt(hex.slice(1, 3), 16),
-      parseInt(hex.slice(3, 5), 16),
-      parseInt(hex.slice(5, 7), 16),
-    ]
-    const [r1, g1, b1] = parse(highlightColors[lo])
-    const [r2, g2, b2] = parse(highlightColors[hi])
-    const r = Math.round(r1 + (r2 - r1) * frac)
-    const g = Math.round(g1 + (g2 - g1) * frac)
-    const b = Math.round(b1 + (b2 - b1) * frac)
-    return `rgb(${r}, ${g}, ${b})`
-  }
-
-  // Split text into individually animated bouncing letters
-  const renderBouncingLetters = (text, startIndex = 0, useGradient = false) => {
-    let idx = startIndex
-    const words = text.split(' ')
-    // Count total visible (non-space) characters for gradient positioning
-    const totalVisible = text.replace(/ /g, '').length
-    let visibleIdx = 0
-
-    return words.map((word, wordIdx) => {
-      const letters = word.split('').map((char) => {
-        const delay = idx * 55
-        const style = { animationDelay: `${delay}ms` }
-
-        if (useGradient) {
-          const t = totalVisible > 1 ? visibleIdx / (totalVisible - 1) : 0
-          const color = getGradientColor(t)
-          style.color = color
-          style.WebkitTextFillColor = color
-        }
-
-        visibleIdx++
-        const el = (
-          <span
-            key={`${animateKey}-${idx}`}
-            className="bounce-letter"
-            style={style}
-          >
-            {char}
-          </span>
-        )
-        idx++
-        return el
-      })
-      idx++ // account for space
-
-      return (
-        <span key={`w-${wordIdx}`} className="bounce-word">
-          {letters}
-          {wordIdx < words.length - 1 && <span className="bounce-space">&nbsp;</span>}
-        </span>
-      )
-    })
-  }
-
   return (
     <section className="mp-about-section" id="about" ref={sectionRef}>
       {/* Ambient background glow */}
@@ -430,14 +361,25 @@ export default function About() {
       />
 
       <div className="mp-about-container">
-        {/* Main Section Title with Bouncing Letters */}
+        {/* Main Section Title with Simple Line-by-Line Entrance */}
         <h2 className="mp-about-title">
-          <span className="mp-title-line">
-            {renderBouncingLetters(headingLine1, 0)}
+          <span className="mp-title-line-wrap">
+            <span
+              key={`line1-${animateKey}`}
+              className="mp-title-line"
+              style={{ animationDelay: '0.08s' }}
+            >
+              {headingLine1}
+            </span>
           </span>
-          <br />
-          <span className="highlight mp-title-line">
-            {renderBouncingLetters(headingLine2, headingLine1.length + 1, true)}
+          <span className="mp-title-line-wrap">
+            <span
+              key={`line2-${animateKey}`}
+              className="mp-title-line highlight"
+              style={{ animationDelay: '0.28s' }}
+            >
+              {headingLine2}
+            </span>
           </span>
         </h2>
 
@@ -445,14 +387,14 @@ export default function About() {
         <div className="mp-about-content" key={animateKey}>
           <LineByLineText
             parts={leadHtml || defaultLeadParts}
-            baseDelay={1.5}
+            baseDelay={0.85}
             stagger={0.32}
             animateKey={animateKey}
             className="mp-about-lead"
             tag="p"
           />
 
-          <div className="mp-about-divider mp-divider-zoom-in" style={{ animationDelay: '2.4s' }}>
+          <div className="mp-about-divider mp-divider-zoom-in" style={{ animationDelay: '1.75s' }}>
             <span className="mp-about-divider-line left" />
             <span className="mp-about-divider-camera" title="Motion Pub Studio">
               <svg
@@ -475,7 +417,7 @@ export default function About() {
 
           <LineByLineText
             parts={subtextHtml || defaultSubtextParts}
-            baseDelay={2.8}
+            baseDelay={2.15}
             stagger={0.32}
             animateKey={animateKey}
             className="mp-about-subtext"
@@ -485,7 +427,7 @@ export default function About() {
           {additionalParagraphsHtml.map((htmlStr, idx) => {
             if (htmlStr === '[DIVIDER]') {
               return (
-                <div key={idx} className="mp-about-divider mp-divider-zoom-in" style={{ animationDelay: `${2.8 + (idx + 1) * 0.4}s`, margin: '4rem auto' }}>
+                <div key={idx} className="mp-about-divider mp-divider-zoom-in" style={{ animationDelay: `${2.15 + (idx + 1) * 0.4}s`, margin: '4rem auto' }}>
                   <span className="mp-about-divider-line left" />
                   <span className="mp-about-divider-camera" title="Motion Pub Studio">
                     <svg
@@ -511,7 +453,7 @@ export default function About() {
               <LineByLineText
                 key={idx}
                 parts={htmlStr}
-                baseDelay={2.8 + (idx + 1) * 0.4}
+                baseDelay={2.15 + (idx + 1) * 0.4}
                 stagger={0.32}
                 animateKey={animateKey}
                 className="mp-about-subtext mp-about-additional-p"

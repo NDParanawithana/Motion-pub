@@ -254,7 +254,7 @@ export default function Contact() {
                     setContactSettings(merged);
                     setIsOpenNow(getIsOpenNow(merged));
                 }
-            } catch {}
+            } catch { }
         };
         window.addEventListener('storage', handleStorage);
         return () => window.removeEventListener('storage', handleStorage);
@@ -466,7 +466,7 @@ export default function Contact() {
                         serviceType: formData.serviceType.trim(),
                         message: `[Scheduled Online Meeting: ${selectedMeetingDate} at ${selectedMeetingTime} via ${formData.meetingMethod || 'Google Meet'}] ${formData.message.trim()}`.trim(),
                     }),
-                }).catch(() => {});
+                }).catch(() => { });
 
                 // Local storage sync fallback
                 try {
@@ -474,7 +474,7 @@ export default function Contact() {
                     const existingList = saved ? JSON.parse(saved) : [];
                     const updatedList = [data.data || { _id: `local-${Date.now()}`, ...apptPayload }, ...existingList];
                     localStorage.setItem('mp_client_appointments', JSON.stringify(updatedList));
-                } catch {}
+                } catch { }
 
                 // Trigger real-time cross-tab sync
                 window.dispatchEvent(new Event('mp_appointments_updated'));
@@ -580,7 +580,7 @@ export default function Contact() {
             {/* Sticky Page Heading in Pin Container with matching icon and changeable props */}
             <PageHeader
                 text="CONTACT US"
-                textColor="#1091b1ff"
+                textColor="#a5f900"
                 containerColor="#8888881f"
                 icon="contact"
                 offset={0}
@@ -819,68 +819,68 @@ export default function Contact() {
                 <div className="mp-contact-card-wrap">
                     <div className="mp-contact-card">
                         <div className="mp-appointment-hero-card">
-                                <div className="mp-appt-card-top">
-                                    <div className="mp-appt-icon-box">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                                            <line x1="16" y1="2" x2="16" y2="6" />
-                                            <line x1="8" y1="2" x2="8" y2="6" />
-                                            <line x1="3" y1="10" x2="21" y2="10" />
-                                        </svg>
-                                    </div>
-                                </div>
-
-                                <div className="mp-appt-card-body">
-                                    <h3 className="mp-appt-card-title">Schedule a 1-on-1 Client Meeting</h3>
-                                    <p className="mp-appt-card-desc">
-                                        Book a direct video meeting with our production team. Pick a date, choose a time slot, and tell us about your project vision.
-                                    </p>
-
-                                    <div className="mp-appt-highlights-grid">
-                                        <div className="mp-appt-feature-item">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                                <polyline points="20 6 9 17 4 12" />
-                                            </svg>
-                                            <span>Real-Time Calendar Availability</span>
-                                        </div>
-                                        <div className="mp-appt-feature-item">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                                <polyline points="20 6 9 17 4 12" />
-                                            </svg>
-                                            <span>Google Meet Video Link</span>
-                                        </div>
-                                        <div className="mp-appt-feature-item">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                                <polyline points="20 6 9 17 4 12" />
-                                            </svg>
-                                            <span>Tailored Creative Scope & Pricing</span>
-                                        </div>
-                                    </div>
-
-                                    {selectedMeetingDate && selectedMeetingTime && (
-                                        <div className="mp-appt-selected-bar">
-                                            <span className="mp-appt-selected-icon">✓</span>
-                                            <span>Reserved Slot: <strong>{selectedMeetingDate}</strong> at <strong>{selectedMeetingTime}</strong></span>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <button
-                                    type="button"
-                                    className="mp-appt-primary-btn"
-                                    onClick={() => {
-                                        setStatus({ state: 'idle', message: '' });
-                                        setActiveBookingSection('datetime');
-                                        setIsBookingModalOpen(true);
-                                    }}
-                                >
-                                    <span>{selectedMeetingDate && selectedMeetingTime ? 'Change Slot / Continue' : 'Book a Meeting'}</span>
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                                        <line x1="5" y1="12" x2="19" y2="12" />
-                                        <polyline points="12 5 19 12 12 19" />
+                            <div className="mp-appt-card-top">
+                                <div className="mp-appt-icon-box">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                        <line x1="16" y1="2" x2="16" y2="6" />
+                                        <line x1="8" y1="2" x2="8" y2="6" />
+                                        <line x1="3" y1="10" x2="21" y2="10" />
                                     </svg>
-                                </button>
+                                </div>
                             </div>
+
+                            <div className="mp-appt-card-body">
+                                <h3 className="mp-appt-card-title">Schedule a 1-on-1 Client Meeting</h3>
+                                <p className="mp-appt-card-desc">
+                                    Book a direct video meeting with our production team. Pick a date, choose a time slot, and tell us about your project vision.
+                                </p>
+
+                                <div className="mp-appt-highlights-grid">
+                                    <div className="mp-appt-feature-item">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                            <polyline points="20 6 9 17 4 12" />
+                                        </svg>
+                                        <span>Real-Time Calendar Availability</span>
+                                    </div>
+                                    <div className="mp-appt-feature-item">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                            <polyline points="20 6 9 17 4 12" />
+                                        </svg>
+                                        <span>Google Meet Video Link</span>
+                                    </div>
+                                    <div className="mp-appt-feature-item">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                            <polyline points="20 6 9 17 4 12" />
+                                        </svg>
+                                        <span>Tailored Creative Scope & Pricing</span>
+                                    </div>
+                                </div>
+
+                                {selectedMeetingDate && selectedMeetingTime && (
+                                    <div className="mp-appt-selected-bar">
+                                        <span className="mp-appt-selected-icon">✓</span>
+                                        <span>Reserved Slot: <strong>{selectedMeetingDate}</strong> at <strong>{selectedMeetingTime}</strong></span>
+                                    </div>
+                                )}
+                            </div>
+
+                            <button
+                                type="button"
+                                className="mp-appt-primary-btn"
+                                onClick={() => {
+                                    setStatus({ state: 'idle', message: '' });
+                                    setActiveBookingSection('datetime');
+                                    setIsBookingModalOpen(true);
+                                }}
+                            >
+                                <span>{selectedMeetingDate && selectedMeetingTime ? 'Change Slot / Continue' : 'Book a Meeting'}</span>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                    <polyline points="12 5 19 12 12 19" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1087,6 +1087,7 @@ export default function Contact() {
                                             <button
                                                 type="button"
                                                 className="mp-swap-next-btn"
+                                                aria-label="Next step: Client and Project Details"
                                                 onClick={() => {
                                                     if (!selectedMeetingDate) {
                                                         setStatus({
@@ -1106,8 +1107,8 @@ export default function Contact() {
                                                     handleSectionChange('details');
                                                 }}
                                             >
-                                                <span>Continue to Client &amp; Project Details</span>
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                                                <span>Next</span>
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                                     <line x1="5" y1="12" x2="19" y2="12" />
                                                     <polyline points="12 5 19 12 12 19" />
                                                 </svg>
@@ -1376,9 +1377,9 @@ export default function Contact() {
                                 </div>
                             </form>
                         </div>
-        </div>
-    </div>
-)}
+                    </div>
+                </div>
+            )}
 
             {/* Success Popup Modal */}
             {showSuccessPopup && (

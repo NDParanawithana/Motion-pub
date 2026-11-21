@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Motion Pub - Contact Section (Sleek Dark Theme with Indigo/Purple Accents)
+   Motion Pub - Contact Section (Sleek Dark Theme with Brand #94E000 Accents)
    ========================================================================== */
 
 .mp-contact-section {
@@ -19,7 +19,7 @@
   scroll-margin-top: 80px;
 }
 
-/* Ambient glow orbs in indigo/purple */
+/* Ambient glow orbs with subtle brand lime glow */
 .mp-contact-glow-orb {
   position: absolute;
   pointer-events: none;
@@ -33,7 +33,7 @@
   left: 5%;
   width: 500px;
   height: 380px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(148, 224, 0, 0.08) 0%, transparent 70%);
 }
 
 .mp-contact-glow-orb.bottom-right {
@@ -41,7 +41,7 @@
   right: 5%;
   width: 550px;
   height: 420px;
-  background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(120, 183, 0, 0.06) 0%, transparent 70%);
 }
 
 /* Align PageHeader perfectly with the Contact container */
@@ -150,22 +150,22 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(99, 102, 241, 0.14);
-  border: 1px solid rgba(99, 102, 241, 0.25);
-  color: #818cf8;
+  background: rgba(148, 224, 0, 0.12);
+  border: 1px solid rgba(148, 224, 0, 0.25);
+  color: #94e000;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.12);
+  box-shadow: 0 4px 14px rgba(148, 224, 0, 0.12);
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, border-color 0.2s ease;
 }
 
 .mp-contact-info-item:hover .mp-info-icon-box {
   transform: translateY(-2px) scale(1.05);
-  background: rgba(99, 102, 241, 0.22);
-  border-color: rgba(99, 102, 241, 0.45);
-  color: #a5b4fc;
+  background: rgba(148, 224, 0, 0.2);
+  border-color: rgba(148, 224, 0, 0.45);
+  color: #bbf443;
 }
 
 .mp-info-text-col {
@@ -190,7 +190,7 @@
 }
 
 a.mp-info-val:hover {
-  color: #a5b4fc;
+  color: #94e000;
 }
 
 /* ==========================================================================
@@ -211,8 +211,8 @@ a.mp-info-val:hover {
 }
 
 .mp-hours-card:hover {
-  border-color: rgba(99, 102, 241, 0.35);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), 0 0 24px rgba(99, 102, 241, 0.1);
+  border-color: rgba(148, 224, 0, 0.35);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), 0 0 24px rgba(148, 224, 0, 0.12);
 }
 
 .mp-hours-header {
@@ -232,7 +232,7 @@ a.mp-info-val:hover {
 }
 
 .mp-hours-icon {
-  color: #818cf8;
+  color: #94e000;
 }
 
 .mp-hours-title {
@@ -336,12 +336,12 @@ a.mp-info-val:hover {
 }
 
 .mp-time-tag {
-  color: #a5b4fc;
+  color: #94e000;
   font-weight: 600;
-  background: rgba(99, 102, 241, 0.12);
+  background: rgba(148, 224, 0, 0.1);
   padding: 0.22rem 0.6rem;
   border-radius: 6px;
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  border: 1px solid rgba(148, 224, 0, 0.25);
   font-size: 0.84rem;
 }
 
@@ -384,9 +384,9 @@ a.mp-info-val:hover {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(99, 102, 241, 0.12);
-  border: 1px solid rgba(99, 102, 241, 0.25);
-  color: #a5b4fc;
+  background: rgba(165, 249, 0, 0.1);
+  border: 1px solid rgba(165, 249, 0, 0.22);
+  color: #a5f900;
   text-decoration: none;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
@@ -394,10 +394,10 @@ a.mp-info-val:hover {
 
 .mp-social-link-btn:hover {
   transform: translateY(-3px) scale(1.06);
-  background: rgba(99, 102, 241, 0.24);
-  border-color: #818cf8;
-  color: #ffffff;
-  box-shadow: 0 8px 22px rgba(99, 102, 241, 0.45);
+  background: #8dd600;
+  border-color: #8dd600;
+  color: #0a0f00;
+  box-shadow: 0 8px 22px rgba(141, 214, 0, 0.35);
 }
 
 /* Individual Brand Hover Accents */
@@ -554,7 +554,7 @@ a.mp-info-val:hover {
   border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 22px;
   padding: clamp(1.75rem, 3.5vw, 2.75rem);
-  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6), 0 0 35px rgba(99, 102, 241, 0.05);
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6), 0 0 35px rgba(148, 224, 0, 0.06);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   box-sizing: border-box;
@@ -611,11 +611,11 @@ a.mp-info-val:hover {
   font-size: 0.88rem;
 }
 
-/* Focus States matching purple focus from screenshot */
+/* Focus States matching brand color */
 .mp-form-input:focus,
 .mp-form-textarea:focus {
-  border-color: #8b5cf6;
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+  border-color: #94e000;
+  box-shadow: 0 0 0 3px rgba(148, 224, 0, 0.22);
   background: rgba(15, 17, 23, 0.95);
 }
 
@@ -637,8 +637,8 @@ a.mp-info-val:hover {
 }
 
 .mp-phone-input-wrap:focus-within {
-  border-color: #8b5cf6;
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+  border-color: #94e000;
+  box-shadow: 0 0 0 3px rgba(148, 224, 0, 0.22);
   background: rgba(15, 17, 23, 0.95);
 }
 
@@ -719,13 +719,37 @@ a.mp-info-val:hover {
   background: #1b1e26;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 10px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65), 0 0 12px rgba(99, 102, 241, 0.1);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65), 0 0 12px rgba(148, 224, 0, 0.1);
   padding: 0.35rem;
   margin: 0;
   list-style: none;
   z-index: 50;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.mp-country-dropdown-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.mp-country-dropdown-list::-webkit-scrollbar-button {
+  display: none !important;
+}
+
+.mp-country-dropdown-list::-webkit-scrollbar-track {
+  background: transparent;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.mp-country-dropdown-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .mp-country-dropdown-list {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
 }
 
 .mp-country-option {
@@ -741,13 +765,13 @@ a.mp-info-val:hover {
 }
 
 .mp-country-option:hover {
-  background: rgba(99, 102, 241, 0.15);
+  background: rgba(148, 224, 0, 0.14);
   color: #ffffff;
 }
 
 .mp-country-option.selected {
-  background: rgba(99, 102, 241, 0.25);
-  color: #a5b4fc;
+  background: rgba(148, 224, 0, 0.22);
+  color: #94e000;
   font-weight: 600;
 }
 
@@ -823,15 +847,15 @@ a.mp-info-val:hover {
 }
 
 .mp-contact-submit-btn {
-  background: #6366f1;
-  color: #ffffff;
+  background: #a5f900;
+  color: #0d1400;
   font-size: 0.94rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 0.75rem 1.9rem;
   border: none;
   border-radius: 9px;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.45);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   display: inline-flex;
   align-items: center;
@@ -840,14 +864,15 @@ a.mp-info-val:hover {
 }
 
 .mp-contact-submit-btn:hover:not(:disabled) {
-  background: #5558e6;
+  background: #8dd600;
   transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(99, 102, 241, 0.6);
+  box-shadow: 0 4px 14px rgba(141, 214, 0, 0.28);
+  color: #0a0f00;
 }
 
 .mp-contact-submit-btn:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 2px 8px rgba(141, 214, 0, 0.3);
 }
 
 .mp-contact-submit-btn:disabled {
@@ -864,8 +889,8 @@ a.mp-info-val:hover {
 .mp-btn-spinner {
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #ffffff;
+  border: 2px solid rgba(13, 20, 0, 0.3);
+  border-top-color: #0d1400;
   border-radius: 50%;
   animation: mpBtnSpin 0.7s linear infinite;
 }
@@ -975,13 +1000,13 @@ a.mp-info-val:hover {
 .mp-contact-popup-card {
   position: relative;
   background: #181a24;
-  border: 1px solid rgba(99, 102, 241, 0.35);
+  border: 1px solid rgba(148, 224, 0, 0.35);
   border-radius: 24px;
   padding: 2.75rem 2.25rem 2.25rem;
   max-width: 460px;
   width: 100%;
   text-align: center;
-  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85), 0 0 40px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85), 0 0 40px rgba(148, 224, 0, 0.18);
   box-sizing: border-box;
   animation: mpPopupScaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -1014,19 +1039,19 @@ a.mp-info-val:hover {
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: rgba(99, 102, 241, 0.15);
-  border: 2px solid #818cf8;
-  color: #818cf8;
+  background: rgba(148, 224, 0, 0.14);
+  border: 2px solid #94e000;
+  color: #94e000;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1.4rem;
-  box-shadow: 0 0 25px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 0 25px rgba(148, 224, 0, 0.35);
   animation: mpIconPulse 2s infinite ease-in-out;
 }
 
 .mp-popup-check-icon {
-  stroke: #a5b4fc;
+  stroke: #94e000;
 }
 
 .mp-popup-title {
@@ -1046,27 +1071,29 @@ a.mp-info-val:hover {
 }
 
 .mp-popup-confirm-btn {
-  background: #6366f1;
-  color: #ffffff;
+  background: #a5f900;
+  color: #0d1400;
   font-size: 0.96rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 0.75rem 2.8rem;
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: inherit;
 }
 
 .mp-popup-confirm-btn:hover {
-  background: #5558e6;
+  background: #8dd600;
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.7);
+  box-shadow: 0 4px 14px rgba(141, 214, 0, 0.28);
+  color: #0a0f00;
 }
 
 .mp-popup-confirm-btn:active {
   transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(141, 214, 0, 0.3);
 }
 
 @keyframes mpPopupFadeIn {
@@ -1091,10 +1118,10 @@ a.mp-info-val:hover {
 
 @keyframes mpIconPulse {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.35);
+    box-shadow: 0 0 20px rgba(148, 224, 0, 0.3);
   }
   50% {
-    box-shadow: 0 0 32px rgba(99, 102, 241, 0.65);
+    box-shadow: 0 0 32px rgba(148, 224, 0, 0.55);
   }
 }
 
@@ -1126,13 +1153,13 @@ a.mp-info-val:hover {
 }
 
 .mp-service-select-btn:hover {
-  border-color: rgba(139, 92, 246, 0.45);
+  border-color: rgba(148, 224, 0, 0.45);
   background: rgba(16, 18, 25, 0.9);
 }
 
 .mp-service-select-btn.active {
-  border-color: #8b5cf6;
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25);
+  border-color: #94e000;
+  box-shadow: 0 0 0 3px rgba(148, 224, 0, 0.22);
   background: rgba(15, 17, 23, 0.95);
 }
 
@@ -1145,7 +1172,7 @@ a.mp-info-val:hover {
 }
 
 .mp-service-icon {
-  color: #818cf8;
+  color: #94e000;
   flex-shrink: 0;
 }
 
@@ -1162,7 +1189,7 @@ a.mp-info-val:hover {
 
 .mp-service-chevron.open {
   transform: rotate(180deg);
-  color: #a78bfa;
+  color: #94e000;
 }
 
 .mp-service-dropdown-list {
@@ -1175,14 +1202,38 @@ a.mp-info-val:hover {
   background: #181b22;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 10px;
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.7), 0 0 16px rgba(139, 92, 246, 0.14);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.7), 0 0 16px rgba(148, 224, 0, 0.1);
   padding: 0.4rem;
   margin: 0;
   list-style: none;
   z-index: 60;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
   animation: mpServiceMenuFade 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.mp-service-dropdown-menu::-webkit-scrollbar {
+  width: 5px;
+}
+
+.mp-service-dropdown-menu::-webkit-scrollbar-button {
+  display: none !important;
+}
+
+.mp-service-dropdown-menu::-webkit-scrollbar-track {
+  background: transparent;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.mp-service-dropdown-menu::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .mp-service-dropdown-menu {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
 }
 
 @keyframes mpServiceMenuFade {
@@ -1209,13 +1260,13 @@ a.mp-info-val:hover {
 }
 
 .mp-service-option:hover {
-  background: rgba(139, 92, 246, 0.18);
+  background: rgba(148, 224, 0, 0.14);
   color: #ffffff;
 }
 
 .mp-service-option.selected {
-  background: rgba(139, 92, 246, 0.28);
-  color: #c4b5fd;
+  background: rgba(148, 224, 0, 0.24);
+  color: #94e000;
   font-weight: 600;
 }
 
@@ -1224,7 +1275,7 @@ a.mp-info-val:hover {
 }
 
 .mp-service-check-icon {
-  color: #a78bfa;
+  color: #94e000;
 }
 
 /* ==========================================================================
@@ -1282,14 +1333,14 @@ a.mp-info-val:hover {
 }
 
 .mp-mode-toggle-btn.active {
-  background: linear-gradient(135deg, rgba(16, 145, 177, 0.35) 0%, rgba(99, 102, 241, 0.35) 100%);
-  border: 1px solid rgba(0, 242, 254, 0.35);
-  color: #00f2fe;
-  box-shadow: 0 4px 14px rgba(0, 242, 254, 0.2);
+  background: rgba(148, 224, 0, 0.16);
+  border: 1px solid rgba(148, 224, 0, 0.4);
+  color: #94e000;
+  box-shadow: 0 4px 14px rgba(148, 224, 0, 0.2);
 }
 
 .mp-mode-toggle-btn.active svg {
-  color: #00f2fe;
+  color: #94e000;
 }
 
 /* Calendar Embedding Wrapper */
@@ -1358,8 +1409,8 @@ a.mp-info-val:hover {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: rgba(16, 145, 177, 0.12);
-  border: 1px solid rgba(0, 242, 254, 0.3);
+  background: rgba(148, 224, 0, 0.1);
+  border: 1px solid rgba(148, 224, 0, 0.3);
   border-radius: 12px;
   padding: 0.75rem 1rem;
   margin: 0.75rem 0 1.25rem 0;
@@ -1370,8 +1421,8 @@ a.mp-info-val:hover {
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: rgba(0, 242, 254, 0.2);
-  color: #00f2fe;
+  background: rgba(148, 224, 0, 0.2);
+  color: #94e000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1421,13 +1472,13 @@ a.mp-info-val:hover {
   width: 52px;
   height: 52px;
   border-radius: 14px;
-  background: linear-gradient(135deg, rgba(16, 145, 177, 0.25) 0%, rgba(99, 102, 241, 0.2) 100%);
-  border: 1px solid rgba(0, 242, 254, 0.35);
-  color: #00f2fe;
+  background: rgba(148, 224, 0, 0.12);
+  border: 1px solid rgba(148, 224, 0, 0.3);
+  color: #94e000;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 20px rgba(0, 242, 254, 0.15);
+  box-shadow: 0 8px 20px rgba(148, 224, 0, 0.15);
 }
 
 .mp-appt-card-tags {
@@ -1445,9 +1496,9 @@ a.mp-info-val:hover {
 }
 
 .mp-appt-tag.live {
-  background: rgba(16, 145, 177, 0.15);
-  border: 1px solid rgba(0, 242, 254, 0.3);
-  color: #00f2fe;
+  background: rgba(148, 224, 0, 0.12);
+  border: 1px solid rgba(148, 224, 0, 0.3);
+  color: #94e000;
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
@@ -1457,8 +1508,8 @@ a.mp-info-val:hover {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #00f2fe;
-  box-shadow: 0 0 8px #00f2fe;
+  background: #94e000;
+  box-shadow: 0 0 8px #94e000;
   animation: mpDotPulse 1.8s infinite ease-in-out;
 }
 
@@ -1511,7 +1562,7 @@ a.mp-info-val:hover {
 }
 
 .mp-appt-feature-item svg {
-  color: #00f2fe;
+  color: #94e000;
   flex-shrink: 0;
 }
 
@@ -1520,8 +1571,8 @@ a.mp-info-val:hover {
   align-items: center;
   gap: 0.65rem;
   padding: 0.75rem 1rem;
-  background: rgba(16, 145, 177, 0.16);
-  border: 1px solid rgba(0, 242, 254, 0.35);
+  background: rgba(148, 224, 0, 0.12);
+  border: 1px solid rgba(148, 224, 0, 0.3);
   border-radius: 12px;
   font-size: 0.88rem;
   color: #ffffff;
@@ -1531,8 +1582,8 @@ a.mp-info-val:hover {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #00f2fe;
-  color: #090c12;
+  background: #94e000;
+  color: #0d1400;
   font-weight: 800;
   font-size: 0.75rem;
   display: inline-flex;
@@ -1553,17 +1604,24 @@ a.mp-info-val:hover {
   cursor: pointer;
   border: none;
   font-family: inherit;
-  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #6366f1 100%);
-  color: #090c12;
-  box-shadow: 0 6px 20px rgba(0, 242, 254, 0.35), 0 0 25px rgba(79, 172, 254, 0.2);
+  background: #a5f900;
+  color: #0d1400;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   width: 100%;
   margin-top: 0.5rem;
 }
 
 .mp-appt-primary-btn:hover {
+  background: #8dd600;
   transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(0, 242, 254, 0.5), 0 0 32px rgba(79, 172, 254, 0.35);
+  box-shadow: 0 4px 16px rgba(141, 214, 0, 0.28);
+  color: #0a0f00;
+}
+
+.mp-appt-primary-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(141, 214, 0, 0.3);
 }
 
 .mp-appt-primary-btn svg {
@@ -1599,19 +1657,61 @@ a.mp-info-val:hover {
 .mp-booking-modal-card {
   position: relative;
   background: #141722;
-  border: 1px solid rgba(0, 242, 254, 0.25);
+  border: 1px solid rgba(148, 224, 0, 0.28);
   border-radius: 24px;
   padding: 2.25rem 2.25rem 1.6rem 2.25rem;
   max-width: 860px;
   width: 95vw;
   max-height: 92vh;
   overflow-y: auto;
+  overflow-x: hidden;
   scroll-behavior: smooth;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.9), 0 0 35px rgba(0, 242, 254, 0.12);
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.9), 0 0 35px rgba(148, 224, 0, 0.12);
   box-sizing: border-box;
   animation: mpPopupScaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom scrollbar to fix alignment and prevent sticking out of 24px rounded corners */
+.mp-booking-modal-card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.mp-booking-modal-card::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.mp-booking-modal-card::-webkit-scrollbar-track {
+  background: transparent;
+  margin-top: 26px;
+  margin-bottom: 26px;
+}
+
+.mp-booking-modal-card::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background 0.2s ease;
+}
+
+.mp-booking-modal-card::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 224, 0, 0.55);
+  background-clip: padding-box;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .mp-booking-modal-card {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+  }
+}
+
+.mp-booking-modal-card .mp-popup-close-btn {
+  top: 1.15rem;
+  right: 1.25rem;
+  z-index: 15;
 }
 
 .mp-booking-modal-header {
@@ -1673,10 +1773,10 @@ a.mp-info-val:hover {
 }
 
 .mp-swap-tab-btn.active {
-  background: linear-gradient(135deg, rgba(0, 242, 254, 0.18) 0%, rgba(79, 172, 254, 0.15) 100%);
-  border-color: rgba(0, 242, 254, 0.45);
-  color: #00f2fe;
-  box-shadow: 0 2px 10px rgba(0, 242, 254, 0.2);
+  background: rgba(165, 249, 0, 0.16);
+  border-color: rgba(165, 249, 0, 0.45);
+  color: #a5f900;
+  box-shadow: 0 2px 10px rgba(165, 249, 0, 0.2);
 }
 
 .mp-swap-tab-icon {
@@ -1690,8 +1790,8 @@ a.mp-info-val:hover {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #00f2fe;
-  box-shadow: 0 0 6px #00f2fe;
+  background: #94e000;
+  box-shadow: 0 0 6px #94e000;
 }
 
 .mp-booking-modal-subtext {
@@ -1774,8 +1874,8 @@ a.mp-info-val:hover {
   align-items: center;
   gap: 0.65rem;
   padding: 0.75rem 1rem;
-  background: rgba(16, 145, 177, 0.18);
-  border: 1px solid rgba(0, 242, 254, 0.4);
+  background: rgba(148, 224, 0, 0.14);
+  border: 1px solid rgba(148, 224, 0, 0.35);
   border-radius: 12px;
   font-size: 0.9rem;
   color: #ffffff;
@@ -1783,38 +1883,65 @@ a.mp-info-val:hover {
 }
 
 .mp-modal-slot-chip-bar svg {
-  color: #00f2fe;
+  color: #94e000;
   flex-shrink: 0;
 }
 
 .mp-swap-action-footer {
   display: flex;
   justify-content: flex-end;
-  margin-top: 1.25rem;
-  padding-top: 1rem;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .mp-swap-next-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.65rem;
-  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-  color: #080c14;
-  font-weight: 750;
-  font-size: 0.95rem;
-  padding: 0.85rem 1.65rem;
+  background: #a5f900;
+  color: #0d1400;
+  font-weight: 700;
+  font-size: 0.94rem;
+  padding: 0.75rem 1.9rem;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(0, 242, 254, 0.3);
-  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: inherit;
+  user-select: none;
 }
 
 .mp-swap-next-btn:hover {
+  background: #8dd600;
+  border-color: transparent;
+  color: #0a0f00;
   transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(0, 242, 254, 0.45);
+  box-shadow: 0 4px 14px rgba(141, 214, 0, 0.28);
+}
+
+.mp-swap-next-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(141, 214, 0, 0.3);
+}
+
+.mp-swap-next-btn:focus-visible {
+  outline: 2px solid #a5f900;
+  outline-offset: 2px;
+}
+
+.mp-swap-next-btn svg {
+  color: #0d1400;
+  flex-shrink: 0;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+}
+
+.mp-swap-next-btn:hover svg {
+  color: #0a0f00;
+  transform: translateX(4px);
 }
 
 /* Details View Slot Banner */
@@ -1824,8 +1951,8 @@ a.mp-info-val:hover {
   justify-content: space-between;
   gap: 1rem;
   padding: 0.85rem 1.15rem;
-  background: rgba(16, 145, 177, 0.14);
-  border: 1px solid rgba(0, 242, 254, 0.35);
+  background: rgba(148, 224, 0, 0.12);
+  border: 1px solid rgba(148, 224, 0, 0.35);
   border-radius: 14px;
   color: #ffffff;
   font-size: 0.9rem;
@@ -1835,8 +1962,8 @@ a.mp-info-val:hover {
 }
 
 .mp-details-slot-bar:hover {
-  background: rgba(16, 145, 177, 0.24);
-  border-color: rgba(0, 242, 254, 0.6);
+  background: rgba(148, 224, 0, 0.2);
+  border-color: rgba(148, 224, 0, 0.55);
   transform: translateY(-1px);
 }
 
@@ -1853,12 +1980,12 @@ a.mp-info-val:hover {
 }
 
 .mp-details-slot-left svg {
-  color: #00f2fe;
+  color: #94e000;
   flex-shrink: 0;
 }
 
 .mp-details-slot-change {
-  color: #00f2fe;
+  color: #94e000;
   font-size: 0.84rem;
   font-weight: 650;
   text-decoration: underline;
@@ -1881,7 +2008,7 @@ a.mp-info-val:hover {
   border: 1px solid rgba(255, 255, 255, 0.14);
   color: rgba(255, 255, 255, 0.7);
   padding: 0.75rem 1.4rem;
-  border-radius: 9px;
+  border-radius: 10px;
   font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
@@ -1892,11 +2019,30 @@ a.mp-info-val:hover {
 .mp-booking-modal-back-btn:hover {
   background: rgba(255, 255, 255, 0.06);
   color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.25);
+  border-color: #8dd600;
 }
 
 .mp-contact-submit-btn.modal-submit {
   padding: 0.75rem 2rem;
+  border-radius: 10px;
+  background: #a5f900;
+  color: #0d1400;
+  font-weight: 700;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.mp-contact-submit-btn.modal-submit:hover:not(:disabled) {
+  background: #8dd600;
+  border-color: transparent;
+  color: #0a0f00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(141, 214, 0, 0.28);
+}
+
+.mp-contact-submit-btn.modal-submit:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(141, 214, 0, 0.3);
 }
 
 /* ==========================================================================
@@ -2122,7 +2268,7 @@ a.mp-info-val:hover {
 .mp-popup-appt-method {
   display: block;
   font-size: 0.82rem;
-  color: #00f2fe;
+  color: #94e000;
   margin-top: 0.25rem;
 }
 
@@ -2130,6 +2276,11 @@ a.mp-info-val:hover {
   .mp-booking-modal-card {
     padding: 1.5rem 1.15rem;
     border-radius: 18px;
+  }
+
+  .mp-booking-modal-card::-webkit-scrollbar-track {
+    margin-top: 20px;
+    margin-bottom: 20px;
   }
 
   .mp-booking-modal-header-top {

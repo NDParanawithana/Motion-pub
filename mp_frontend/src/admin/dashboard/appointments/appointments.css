@@ -27,7 +27,7 @@
 
 .mp-appt-drawer-panel {
   width: 100%;
-  max-width: 620px;
+  max-width: 780px;
   height: 100vh;
   background: #0d100c;
   border-left: 1px solid rgba(255, 255, 255, 0.09);
@@ -504,8 +504,44 @@
 .mp-appt-list-container {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1.25rem 1.75rem;
   transition: padding 0.25s ease;
+}
+
+.mp-appt-list-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.mp-appt-list-container::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.mp-appt-list-container::-webkit-scrollbar-track {
+  background: transparent;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.mp-appt-list-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.mp-appt-list-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 242, 254, 0.55);
+  background-clip: padding-box;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .mp-appt-list-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+  }
 }
 
 .mp-appt-drawer-panel.full-screen .mp-appt-list-container {

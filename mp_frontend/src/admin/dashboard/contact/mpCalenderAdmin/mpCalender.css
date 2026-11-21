@@ -1202,18 +1202,44 @@
   max-width: 780px;
   max-height: 90vh;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 2rem;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 .mp-modal-card.lg::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+}
+
+.mp-modal-card.lg::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.mp-modal-card.lg::-webkit-scrollbar-track {
+  background: transparent;
+  margin-top: 22px;
+  margin-bottom: 22px;
 }
 
 .mp-modal-card.lg::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background 0.2s ease;
+}
+
+.mp-modal-card.lg::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 242, 254, 0.55);
+  background-clip: padding-box;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .mp-modal-card.lg {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
+  }
 }
 
 .mp-detail-header-left {

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import './mpCalender.css';
+import '../../appointments/appointments.css';
 
 const DEFAULT_TIME_SLOTS = [
   '10:00 AM',
@@ -23,12 +24,18 @@ const STATUS_OPTIONS = [
   { value: 'cancelled', label: 'Cancelled', badgeClass: 'cancelled' },
 ];
 
-export default function MpCalenderAdmin() {
+export default function MpCalenderAdmin({
+  isDrawer = false,
+  onClose,
+  onOpenCalendarView,
+  onPendingCountChange,
+}) {
   const [appointments, setAppointments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [viewMode, setViewMode] = useState('list'); // 'list' | 'calendar'
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const [serviceOptions, setServiceOptions] = useState([
     'Edit Video',
     'Video Production',
@@ -128,6 +135,38 @@ export default function MpCalenderAdmin() {
       window.removeEventListener('storage', handleSync);
     };
   }, []);
+
+  // Sync pending count to dashboard badge if callback provided
+  useEffect(() => {
+    if (onPendingCountChange) {
+      const pending = appointments.filter((a) => a.status === 'pending').length;
+      onPendingCountChange(pending);
+    }
+  }, [appointments, onPendingCountChange]);
+
+  // Esc key handler for drawer and modals
+  useEffect(() => {
+    if (!isDrawer) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (viewingAppt) {
+          setViewingAppt(null);
+        } else if (editingAppt) {
+          setEditingAppt(null);
+        } else if (isAddModalOpen) {
+          setIsAddModalOpen(false);
+        } else if (deletingAppt) {
+          setDeletingAppt(null);
+        } else if (isFullScreen) {
+          setIsFullScreen(false);
+        } else if (onClose) {
+          onClose();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isDrawer, viewingAppt, editingAppt, isAddModalOpen, deletingAppt, isFullScreen, onClose]);
 
   // Filtered Appointments
   const filteredAppointments = useMemo(() => {
@@ -355,7 +394,7 @@ export default function MpCalenderAdmin() {
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-  return (
+  const calBody = (
     <div className="mp-admin-cal-root">
       {/* Top Banner Alert */}
       {banner && (
@@ -367,56 +406,58 @@ export default function MpCalenderAdmin() {
         </div>
       )}
 
-      {/* Header with Title & Main Actions */}
-      <div className="mp-admin-cal-header">
-        <div>
-          <h2 className="mp-admin-cal-title">
-            <span className="mp-cal-badge-pill">CMS</span>
-            Client Meeting Appointments
-          </h2>
-          <p className="mp-admin-cal-subtitle">
-            Manage scheduled video editing client meetings, manual appointments, and calendar availability.
-          </p>
-        </div>
+      {/* Header with Title & Main Actions (Only if not drawer mode) */}
+      {!isDrawer && (
+        <div className="mp-admin-cal-header">
+          <div>
+            <h2 className="mp-admin-cal-title">
+              <span className="mp-cal-badge-pill">CMS</span>
+              Client Meeting Appointments
+            </h2>
+            <p className="mp-admin-cal-subtitle">
+              Manage scheduled video editing client meetings, manual appointments, and calendar availability.
+            </p>
+          </div>
 
-        <div className="mp-admin-cal-actions">
-          <button
-            type="button"
-            className="mp-admin-btn secondary"
-            onClick={fetchAppointments}
-            disabled={isLoading}
-            title="Refresh appointments"
-          >
-            <svg
-              className={`mp-spin-icon ${isLoading ? 'spinning' : ''}`}
-              width="15"
-              height="15"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
+          <div className="mp-admin-cal-actions">
+            <button
+              type="button"
+              className="mp-admin-btn secondary"
+              onClick={fetchAppointments}
+              disabled={isLoading}
+              title="Refresh appointments"
             >
-              <polyline points="23 4 23 10 17 10" />
-              <polyline points="1 20 1 14 7 14" />
-              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-            </svg>
-            <span>Refresh</span>
-          </button>
+              <svg
+                className={`mp-spin-icon ${isLoading ? 'spinning' : ''}`}
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <polyline points="23 4 23 10 17 10" />
+                <polyline points="1 20 1 14 7 14" />
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+              </svg>
+              <span>Refresh</span>
+            </button>
 
-          <button
-            type="button"
-            className="mp-admin-btn primary"
-            onClick={handleOpenAdd}
-            title="Schedule a new appointment"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            <span>Add Appointment</span>
-          </button>
+            <button
+              type="button"
+              className="mp-admin-btn primary"
+              onClick={handleOpenAdd}
+              title="Schedule a new appointment"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              <span>Add Appointment</span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* KPI Stats Cards */}
       <div className="mp-admin-kpi-grid">
@@ -1293,4 +1334,122 @@ export default function MpCalenderAdmin() {
       )}
     </div>
   );
+
+  if (isDrawer) {
+    return (
+      <div
+        className={`mp-appt-drawer-overlay ${isFullScreen ? 'is-fullscreen' : ''}`}
+        onClick={onClose}
+      >
+        <aside
+          className={`mp-appt-drawer-panel ${isFullScreen ? 'full-screen' : ''}`}
+          onClick={(e) => e.stopPropagation()}
+          aria-label="Client Appointments"
+        >
+          {/* Drawer Header */}
+          <div className="mp-appt-drawer-header">
+            <div className="mp-appt-header-title-wrap">
+              <div className="mp-appt-header-icon-badge">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+              </div>
+              <div>
+                <div className="mp-appt-title-row">
+                  <h2 className="mp-appt-drawer-title">Client Appointments</h2>
+                  {kpis.pendingCount > 0 && (
+                    <span className="mp-appt-pending-pill" title="Appointments awaiting confirmation">
+                      ● {kpis.pendingCount} Pending
+                    </span>
+                  )}
+                  {isFullScreen && (
+                    <span className="mp-appt-fullscreen-indicator">Full Browser View</span>
+                  )}
+                </div>
+                <p className="mp-appt-drawer-subtitle">
+                  Scheduled consultations &amp; video editing client meetings
+                </p>
+              </div>
+            </div>
+
+            <div className="mp-appt-header-actions">
+              <button
+                type="button"
+                className="mp-appt-btn-primary"
+                onClick={handleOpenAdd}
+                title="Schedule a new appointment"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                <span>+ Add</span>
+              </button>
+
+              <button
+                type="button"
+                className={`mp-appt-btn-action-icon ${isLoading ? 'spinning' : ''}`}
+                onClick={fetchAppointments}
+                title="Refresh appointments"
+                disabled={isLoading}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <polyline points="23 4 23 10 17 10" />
+                  <polyline points="1 20 1 14 7 14" />
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                </svg>
+              </button>
+
+              <button
+                type="button"
+                className={`mp-appt-btn-action-icon ${isFullScreen ? 'active-fullscreen' : ''}`}
+                onClick={() => setIsFullScreen((prev) => !prev)}
+                title={isFullScreen ? 'Restore normal drawer view (Esc)' : 'Expand to full browser size'}
+                aria-label={isFullScreen ? 'Restore normal view' : 'Expand to full browser size'}
+              >
+                {isFullScreen ? (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                    <polyline points="4 14 10 14 10 20"></polyline>
+                    <polyline points="20 10 14 10 14 4"></polyline>
+                    <line x1="14" y1="10" x2="21" y2="3"></line>
+                    <line x1="3" y1="21" x2="10" y2="14"></line>
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <polyline points="9 21 3 21 3 15"></polyline>
+                    <line x1="21" y1="3" x2="14" y2="10"></line>
+                    <line x1="3" y1="21" x2="10" y2="14"></line>
+                  </svg>
+                )}
+              </button>
+
+              <button
+                type="button"
+                className="mp-appt-btn-close"
+                onClick={onClose}
+                title="Close (Esc)"
+                aria-label="Close"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Drawer Body Container */}
+          <div className="mp-appt-list-container">
+            {calBody}
+          </div>
+        </aside>
+      </div>
+    );
+  }
+
+  return calBody;
 }

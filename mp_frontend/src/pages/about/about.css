@@ -61,54 +61,38 @@
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* Multi-color gradient for the second line ("VISUAL STORIES.") matching brand theme */
+/* Gradient for the second line ("VISUAL STORIES.") using shades of only the brand color */
 .mp-about-title .highlight {
-  background: linear-gradient(90deg, #dfff32 0%, #94e000 24%, #4ade80 48%, #2dd4bf 72%, #38bdf8 100%);
+  background: linear-gradient(90deg, #d8ff3e 0%, #a5f900 28%, #94e000 52%, #8dd600 74%, #4f8000 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   display: inline-block;
   text-shadow: none;
-  filter: drop-shadow(0 0 30px rgba(148, 224, 0, 0.4));
+  filter: drop-shadow(0 0 25px rgba(165, 249, 0, 0.35));
 }
 
-/* Title line wrapper */
+/* Simple Line-by-Line Title Appear Animation */
+.mp-title-line-wrap {
+  display: block;
+}
+
 .mp-title-line {
-  display: inline;
-}
-
-/* Bouncing Letter Animation */
-.bounce-word {
-  display: inline-block;
-  white-space: nowrap;
-}
-
-.bounce-space {
-  display: inline-block;
-}
-
-.bounce-letter {
   display: inline-block;
   opacity: 0;
-  transform: translateY(60px) scale(0.7);
-  animation: letterBounceIn 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transform: translateY(20px);
+  animation: titleLineFadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
 }
 
-@keyframes letterBounceIn {
+@keyframes titleLineFadeUp {
   0% {
     opacity: 0;
-    transform: translateY(60px) scale(0.7);
-  }
-  50% {
-    opacity: 1;
-    transform: translateY(-8px) scale(1.05);
-  }
-  70% {
-    transform: translateY(4px) scale(0.98);
+    transform: translateY(20px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
@@ -191,6 +175,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .mp-title-line,
   .mp-line-anim {
     opacity: 1 !important;
     transform: none !important;
