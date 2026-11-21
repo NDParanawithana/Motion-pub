@@ -10,30 +10,41 @@ export const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB limit
 });
 
-// File filter to restrict uploads to valid video formats
-const videoFileFilter = (req, file, cb) => {
-  const allowedMimeTypes = [
+// File filter to allow both valid video and image formats for Hero background
+const heroMediaFileFilter = (req, file, cb) => {
+  const allowedVideoMimeTypes = [
     'video/mp4',
     'video/webm',
     'video/quicktime', // .mov
     'video/x-matroska', // .mkv
     'video/ogg'
   ];
+  const allowedImageMimeTypes = [
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+    'image/webp',
+    'image/avif',
+    'image/gif'
+  ];
 
-  if (allowedMimeTypes.includes(file.mimetype) || file.mimetype.startsWith('video/')) {
+  const isVideo = allowedVideoMimeTypes.includes(file.mimetype) || file.mimetype.startsWith('video/');
+  const isImage = allowedImageMimeTypes.includes(file.mimetype) || file.mimetype.startsWith('image/');
+
+  if (isVideo || isImage) {
     cb(null, true);
   } else {
-    cb(new Error('Invalid file format. Please upload a valid video file (MP4, WebM, MOV).'), false);
+    cb(new Error('Invalid file format. Please upload a valid video (MP4, WebM, MOV) or image (JPG, PNG, WebP).'), false);
   }
 };
 
-// Multer upload middleware configured for up to 100MB video files
+// Multer upload middleware configured for up to 100MB hero video or image files
 export const uploadVideoMiddleware = multer({
   storage,
   limits: {
     fileSize: 100 * 1024 * 1024, // 100 MB max limit
   },
-  fileFilter: videoFileFilter,
+  fileFilter: heroMediaFileFilter,
 });
 
 /**
@@ -56,19 +67,20 @@ export const uploadToCloudinary = (fileBuffer, folder = 'motion_pub') => {
 };
 
 /**
- * Upload a video buffer stream directly to Cloudinary
+ * Upload a hero media buffer (video or image) directly to Cloudinary
  * @param {Buffer} fileBuffer
+ * @param {'video'|'image'} resourceType
  * @param {string} folder
  * @returns {Promise<Object>}
  */
-export const uploadVideoToCloudinary = (fileBuffer, folder = 'motion_pub/hero') => {
+export const uploadHeroMediaToCloudinary = (fileBuffer, resourceType = 'video', folder = 'motion_pub/hero') => {
   return new Promise((resolve, reject) => {
+    const options = resourceType === 'image'
+      ? { folder, resource_type: 'image' }
+      : { folder, resource_type: 'video', chunk_size: 6000000 };
+
     const uploadStream = cloudinary.uploader.upload_stream(
-      {
-        folder,
-        resource_type: 'video',
-        chunk_size: 6000000, // 6MB chunks for reliable streaming
-      },
+      options,
       (error, result) => {
         if (error) {
           return reject(error);
@@ -79,6 +91,16 @@ export const uploadVideoToCloudinary = (fileBuffer, folder = 'motion_pub/hero') 
 
     uploadStream.end(fileBuffer);
   });
+};
+
+/**
+ * Upload a video buffer stream directly to Cloudinary
+ * @param {Buffer} fileBuffer
+ * @param {string} folder
+ * @returns {Promise<Object>}
+ */
+export const uploadVideoToCloudinary = (fileBuffer, folder = 'motion_pub/hero') => {
+  return uploadHeroMediaToCloudinary(fileBuffer, 'video', folder);
 };
 
 /**
@@ -101,41 +123,48 @@ export const deleteFromCloudinary = async (publicId, resourceType = 'video') => 
 };
 
 /**
- * Clean up previously uploaded or orphaned hero videos in Cloudinary to reduce storage waste
- * @param {string|null} keepPublicId - public ID to preserve (or null to delete all hero videos)
+ * Clean up previously uploaded or orphaned hero media (both videos and images) in Cloudinary
+ * @param {string|null} keepPublicId - public ID to preserve (or null to delete all hero media)
  * @returns {Promise<{ deletedCount: number, freedBytes: number, deletedIds: string[] }>}
  */
 export const cleanupOrphanHeroVideos = async (keepPublicId = null) => {
-  try {
-    const response = await cloudinary.api.resources({
-      type: 'upload',
-      prefix: 'motion_pub/hero',
-      resource_type: 'video',
-      max_results: 100,
-    });
+  let totalDeletedCount = 0;
+  let totalFreedBytes = 0;
+  const allDeletedIds = [];
 
-    const resources = response.resources || [];
-    const toDelete = resources.filter(res => res.public_id !== keepPublicId);
+  for (const resourceType of ['video', 'image']) {
+    try {
+      const response = await cloudinary.api.resources({
+        type: 'upload',
+        prefix: 'motion_pub/hero',
+        resource_type: resourceType,
+        max_results: 100,
+      });
 
-    if (toDelete.length === 0) {
-      return { deletedCount: 0, freedBytes: 0, deletedIds: [] };
+      const resources = response.resources || [];
+      const toDelete = resources.filter(res => res.public_id !== keepPublicId);
+
+      if (toDelete.length === 0) continue;
+
+      const deleteIds = toDelete.map(r => r.public_id);
+      const freedBytes = toDelete.reduce((acc, r) => acc + (r.bytes || 0), 0);
+
+      await cloudinary.api.delete_resources(deleteIds, {
+        resource_type: resourceType,
+        invalidate: true
+      });
+
+      totalDeletedCount += deleteIds.length;
+      totalFreedBytes += freedBytes;
+      allDeletedIds.push(...deleteIds);
+    } catch (err) {
+      console.warn(`Error cleaning up hero ${resourceType}s from Cloudinary:`, err.message);
     }
-
-    const deleteIds = toDelete.map(r => r.public_id);
-    const freedBytes = toDelete.reduce((acc, r) => acc + (r.bytes || 0), 0);
-
-    await cloudinary.api.delete_resources(deleteIds, {
-      resource_type: 'video',
-      invalidate: true
-    });
-
-    return {
-      deletedCount: deleteIds.length,
-      freedBytes,
-      deletedIds
-    };
-  } catch (err) {
-    console.warn('Error cleaning up hero videos from Cloudinary:', err.message);
-    return { deletedCount: 0, freedBytes: 0, deletedIds: [] };
   }
+
+  return {
+    deletedCount: totalDeletedCount,
+    freedBytes: totalFreedBytes,
+    deletedIds: allDeletedIds
+  };
 };

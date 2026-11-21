@@ -4,6 +4,7 @@ import './navbar.css'
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   // No link highlighted when in Hero section (at top of page)
   const [activeLink, setActiveLink] = useState('')
 
@@ -32,6 +33,9 @@ export default function Navbar() {
     ]
 
     const updateActiveSection = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop || 0
+      setIsScrolled(scrollY > 30)
+
       const hash = window.location.hash
 
       // Lock active state when on dedicated page views
@@ -43,8 +47,6 @@ export default function Navbar() {
         setActiveLink('Contact Us')
         return
       }
-
-      const scrollY = window.scrollY || document.documentElement.scrollTop || 0
 
       // When near top of page (Hero section), clear active link
       if (scrollY < 100) {
@@ -134,7 +136,7 @@ export default function Navbar() {
   }, [])
 
   return (
-    <header className="mp-header">
+    <header className={`mp-header ${isScrolled ? 'scrolled' : ''}`}>
       <div className="mp-nav-container">
         {/* Brand Logo - Navigates to Hero (#home) and clears active nav indication */}
         <a
@@ -162,17 +164,6 @@ export default function Navbar() {
             ))}
           </ul>
         </nav>
-
-        {/* Contact Action Button */}
-        <div className="mp-desktop-cta">
-          <a
-            href="#contact"
-            className={`mp-cta-btn ${activeLink === 'Contact Us' ? 'active' : ''}`}
-            onClick={() => handleLinkClick('Contact Us')}
-          >
-            Contact Us
-          </a>
-        </div>
 
         {/* Mobile Hamburger Button */}
         <button
@@ -202,13 +193,6 @@ export default function Navbar() {
             </li>
           ))}
         </ul>
-        <a
-          href="#contact"
-          className="mp-cta-btn mp-mobile-cta"
-          onClick={() => handleLinkClick('Contact')}
-        >
-          Contact
-        </a>
       </div>
     </header>
   )

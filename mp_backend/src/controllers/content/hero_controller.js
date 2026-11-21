@@ -3,25 +3,31 @@ import {
   updateHeroContent,
   updateHeroVideo,
   resetHeroVideo,
+  DEFAULT_HERO_TITLE,
+  DEFAULT_HERO_PARAGRAPH,
   DEFAULT_HERO_TEXT
 } from '../../models/content/hero_model.js';
 import {
-  uploadVideoToCloudinary,
+  uploadHeroMediaToCloudinary,
   deleteFromCloudinary,
   cleanupOrphanHeroVideos
 } from '../../middleware/upload.js';
 
 /**
  * GET /api/content/hero
- * Retrieve hero text statement and video details
+ * Retrieve hero title, paragraph and background media details
  */
 export async function handleGetHero(req, res) {
   try {
     const data = await getHeroContent();
     res.status(200).json({
       success: true,
+      title: data.title,
+      paragraph: data.paragraph,
       fullText: data.fullText,
       videoUrl: data.videoUrl,
+      mediaUrl: data.videoUrl,
+      mediaType: data.mediaType || 'video',
       videoPublicId: data.videoPublicId,
       videoUpdatedAt: data.videoUpdatedAt,
       updatedAt: data.updatedAt
@@ -30,8 +36,12 @@ export async function handleGetHero(req, res) {
     console.error('Error fetching hero content:', error);
     res.status(200).json({
       success: true,
+      title: DEFAULT_HERO_TITLE,
+      paragraph: DEFAULT_HERO_PARAGRAPH,
       fullText: DEFAULT_HERO_TEXT,
       videoUrl: null,
+      mediaUrl: null,
+      mediaType: 'video',
       videoPublicId: null,
       fallback: true
     });
@@ -41,24 +51,47 @@ export async function handleGetHero(req, res) {
 /**
  * PUT /api/content/hero
  * POST /api/content/hero
- * Update hero text statement
+ * Update hero title and paragraph
  */
 export async function handleUpdateHero(req, res) {
   try {
-    const { fullText } = req.body || {};
+    const { title, paragraph, fullText } = req.body || {};
+    const resolvedParagraph = paragraph !== undefined ? paragraph : fullText;
 
-    if (typeof fullText !== 'string' || !fullText.trim()) {
+    const hasTitle = typeof title === 'string' && title.trim().length > 0;
+    const hasParagraph = typeof resolvedParagraph === 'string' && resolvedParagraph.trim().length > 0;
+
+    if (!hasTitle && !hasParagraph) {
       return res.status(400).json({
         success: false,
-        message: 'Valid hero text string is required.'
+        message: 'Valid hero title and paragraph are required.'
       });
     }
 
-    const updated = await updateHeroContent(fullText);
+    if (title !== undefined && !hasTitle) {
+      return res.status(400).json({
+        success: false,
+        message: 'Hero title cannot be empty.'
+      });
+    }
+
+    if (resolvedParagraph !== undefined && !hasParagraph) {
+      return res.status(400).json({
+        success: false,
+        message: 'Hero paragraph cannot be empty.'
+      });
+    }
+
+    const updated = await updateHeroContent({
+      title: hasTitle ? title : undefined,
+      paragraph: hasParagraph ? resolvedParagraph : undefined
+    });
 
     res.status(200).json({
       success: true,
       message: 'Hero content updated successfully!',
+      title: updated.title,
+      paragraph: updated.paragraph,
       fullText: updated.fullText,
       updatedAt: updated.updatedAt
     });
@@ -74,52 +107,61 @@ export async function handleUpdateHero(req, res) {
 
 /**
  * POST /api/content/hero/video
- * Upload video file to Cloudinary, save to MongoDB, and delete previously uploaded video(s)
+ * Upload background video or image file to Cloudinary, save to MongoDB, and clean up previously uploaded media
  */
 export async function handleUploadHeroVideo(req, res) {
   try {
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        message: 'No video file provided. Please choose a video file (MP4, WebM, MOV).'
+        message: 'No file provided. Please choose a video (MP4, WebM, MOV) or image (JPG, PNG, WebP).'
       });
     }
 
     // Default to true unless explicitly requested otherwise
     const shouldDeletePrevious = req.body?.deletePrevious !== 'false';
+    const mediaType = req.file.mimetype?.startsWith('image/') ? 'image' : 'video';
 
-    // 1. Upload new video buffer to Cloudinary
-    const cloudinaryResult = await uploadVideoToCloudinary(req.file.buffer, 'motion_pub/hero');
-
-    if (!cloudinaryResult?.secure_url) {
-      throw new Error('Cloudinary did not return a secure URL for the uploaded video.');
-    }
-
-    // 2. Persist new video metadata in MongoDB
-    const saveResult = await updateHeroVideo(
-      cloudinaryResult.secure_url,
-      cloudinaryResult.public_id
+    // 1. Upload new media buffer to Cloudinary
+    const cloudinaryResult = await uploadHeroMediaToCloudinary(
+      req.file.buffer,
+      mediaType,
+      'motion_pub/hero'
     );
 
-    // 3. Delete previously uploaded videos from Cloudinary to eliminate storage waste
+    if (!cloudinaryResult?.secure_url) {
+      throw new Error('Cloudinary did not return a secure URL for the uploaded file.');
+    }
+
+    // 2. Persist new media metadata in MongoDB
+    const saveResult = await updateHeroVideo(
+      cloudinaryResult.secure_url,
+      cloudinaryResult.public_id,
+      mediaType
+    );
+
+    // 3. Delete previously uploaded media from Cloudinary to eliminate storage waste
     let cleanupStats = { deletedCount: 0, freedBytes: 0 };
     if (shouldDeletePrevious) {
       try {
         cleanupStats = await cleanupOrphanHeroVideos(cloudinaryResult.public_id);
       } catch (cleanErr) {
-        console.warn('Notice: Background cleanup of previous videos encountered an issue:', cleanErr.message);
+        console.warn('Notice: Background cleanup of previous media encountered an issue:', cleanErr.message);
       }
     }
 
     const freedMB = (cleanupStats.freedBytes / (1024 * 1024)).toFixed(1);
+    const label = mediaType === 'image' ? 'image' : 'video';
     const feedbackMessage = cleanupStats.deletedCount > 0
-      ? `New video uploaded successfully and ${cleanupStats.deletedCount} previous video(s) removed (freed ~${freedMB} MB)!`
-      : 'New hero video uploaded successfully!';
+      ? `New hero background ${label} uploaded successfully and ${cleanupStats.deletedCount} previous file(s) removed (freed ~${freedMB} MB)!`
+      : `New hero background ${label} uploaded successfully!`;
 
     res.status(200).json({
       success: true,
       message: feedbackMessage,
       videoUrl: cloudinaryResult.secure_url,
+      mediaUrl: cloudinaryResult.secure_url,
+      mediaType,
       videoPublicId: cloudinaryResult.public_id,
       videoUpdatedAt: saveResult.videoUpdatedAt,
       format: cloudinaryResult.format,
@@ -129,10 +171,10 @@ export async function handleUploadHeroVideo(req, res) {
       freedBytes: cleanupStats.freedBytes
     });
   } catch (error) {
-    console.error('Error uploading hero video:', error);
+    console.error('Error uploading hero background media:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'Failed to upload hero video.',
+      message: error.message || 'Failed to upload hero background media.',
       error: error.message
     });
   }
@@ -140,7 +182,7 @@ export async function handleUploadHeroVideo(req, res) {
 
 /**
  * DELETE /api/content/hero/video
- * Permanently delete hero video and reset database back to default template video
+ * Permanently delete custom hero background media and restore default background video
  */
 export async function handleResetHeroVideo(req, res) {
   try {
@@ -148,10 +190,13 @@ export async function handleResetHeroVideo(req, res) {
 
     let deleteStatus = null;
     if (result.previousPublicId) {
-      deleteStatus = await deleteFromCloudinary(result.previousPublicId, 'video');
+      deleteStatus = await deleteFromCloudinary(
+        result.previousPublicId,
+        result.previousMediaType || 'video'
+      );
     }
 
-    // Also purge any lingering orphan hero videos from folder to ensure 0 waste
+    // Also purge any lingering orphan hero media from folder to ensure 0 waste
     let cleanupStats = { deletedCount: 0, freedBytes: 0 };
     try {
       cleanupStats = await cleanupOrphanHeroVideos(null);
@@ -164,17 +209,19 @@ export async function handleResetHeroVideo(req, res) {
     res.status(200).json({
       success: true,
       message: totalDeleted > 0
-        ? 'Hero video removed and restored to default showcase video.'
-        : 'Hero video restored to default showcase video.',
+        ? 'Hero background removed and restored to default background video.'
+        : 'Hero background restored to default background video.',
       videoUrl: null,
+      mediaUrl: null,
+      mediaType: 'video',
       videoPublicId: null,
       deletedCount: totalDeleted
     });
   } catch (error) {
-    console.error('Error deleting hero video:', error);
+    console.error('Error deleting hero background media:', error);
     res.status(500).json({
       success: false,
-      message: 'Failed to remove hero video.',
+      message: 'Failed to remove hero background media.',
       error: error.message
     });
   }

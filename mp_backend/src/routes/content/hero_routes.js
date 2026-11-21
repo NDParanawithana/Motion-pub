@@ -19,7 +19,7 @@ const handleUploadMiddleware = (req, res, next) => {
       if (err.code === 'LIMIT_FILE_SIZE') {
         return res.status(400).json({
           success: false,
-          message: 'Video file size exceeds the 100MB limit. Please upload a smaller video.'
+          message: 'File size exceeds the 100MB limit. Please upload a smaller video or image.'
         });
       }
       return res.status(400).json({
@@ -29,7 +29,7 @@ const handleUploadMiddleware = (req, res, next) => {
     } else if (err) {
       return res.status(400).json({
         success: false,
-        message: err.message || 'Error uploading video.'
+        message: err.message || 'Error uploading file.'
       });
     }
     next();
