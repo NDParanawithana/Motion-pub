@@ -381,6 +381,56 @@
   cursor: pointer;
 }
 
+/* Live Upload Progress Bar */
+.mp-upload-progress-box {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  background: rgba(148, 224, 0, 0.05);
+  border: 1px solid rgba(148, 224, 0, 0.28);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.mp-upload-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.78rem;
+}
+
+.mp-upload-progress-status {
+  color: #e5e7eb;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mp-upload-progress-pct {
+  color: #a5f700;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.mp-upload-progress-track {
+  width: 100%;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.mp-upload-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #94e000, #c0ff7e);
+  border-radius: 9999px;
+  transition: width 0.2s ease;
+  box-shadow: 0 0 12px rgba(165, 247, 0, 0.55);
+}
+
 /* Video Actions Row */
 .mp-video-actions-row {
   display: flex;

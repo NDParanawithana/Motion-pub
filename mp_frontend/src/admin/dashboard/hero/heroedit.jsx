@@ -65,12 +65,17 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
     const [selectedFileType, setSelectedFileType] = useState(null);
     const [filePreviewUrl, setFilePreviewUrl] = useState(null);
     const [isUploadingVideo, setIsUploadingVideo] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [uploadStatusText, setUploadStatusText] = useState('');
     const [isResettingVideo, setIsResettingVideo] = useState(false);
     const [isCleaningStorage, setIsCleaningStorage] = useState(false);
     const [autoDeletePrevious, setAutoDeletePrevious] = useState(true);
     const [isDragging, setIsDragging] = useState(false);
     const [isVideoMuted, setIsVideoMuted] = useState(true);
     const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+
+    const activeXhrRef = useRef(null);
+    const uploadCancelledRef = useRef(false);
 
     // Fetch current hero title, paragraph and background media from backend database on mount
     useEffect(() => {
@@ -328,30 +333,185 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
         }
     };
 
-    // Upload Selected Background Media (Video or Image)
+    // Cancel an in-progress direct upload
+    const handleCancelUpload = () => {
+        uploadCancelledRef.current = true;
+        if (activeXhrRef.current) {
+            activeXhrRef.current.abort();
+            activeXhrRef.current = null;
+        }
+        setIsUploadingVideo(false);
+        setUploadProgress(0);
+        setUploadStatusText('');
+        setAlert({
+            type: 'error',
+            message: 'Upload cancelled.'
+        });
+    };
+
+    // Helper: send one XHR POST to Cloudinary with live byte progress
+    const sendCloudinaryXhr = (url, formData, headers, onProgress) => {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            activeXhrRef.current = xhr;
+
+            xhr.open('POST', url, true);
+            Object.entries(headers || {}).forEach(([k, v]) => {
+                xhr.setRequestHeader(k, v);
+            });
+
+            xhr.upload.onprogress = (evt) => {
+                if (evt.lengthComputable && onProgress) {
+                    onProgress(evt.loaded, evt.total);
+                }
+            };
+
+            xhr.onload = () => {
+                activeXhrRef.current = null;
+                let parsed = null;
+                try {
+                    parsed = JSON.parse(xhr.responseText);
+                } catch {
+                    // ignore JSON parse error
+                }
+                if (xhr.status >= 200 && xhr.status < 300 && parsed) {
+                    resolve(parsed);
+                } else {
+                    const msg = parsed?.error?.message || `Upload failed (HTTP ${xhr.status})`;
+                    reject(new Error(msg));
+                }
+            };
+
+            xhr.onerror = () => {
+                activeXhrRef.current = null;
+                reject(new Error('Network error while uploading. Please check your internet connection.'));
+            };
+
+            xhr.onabort = () => {
+                activeXhrRef.current = null;
+                reject(new Error('UPLOAD_CANCELLED'));
+            };
+
+            xhr.ontimeout = () => {
+                activeXhrRef.current = null;
+                reject(new Error('Upload timed out. Please check your connection and try again.'));
+            };
+
+            xhr.timeout = 10 * 60 * 1000; // 10 min safety timeout per chunk
+            xhr.send(formData);
+        });
+    };
+
+    // Upload Selected Background Media (Direct Signed Browser-to-Cloudinary Chunked Upload)
     const handleUploadVideo = async () => {
         if (!selectedFile) return;
 
+        // Pause preview playback while uploading to keep the Admin Panel fast & lag-free
+        if (previewVideoRef.current && !previewVideoRef.current.paused) {
+            previewVideoRef.current.pause();
+            setIsVideoPlaying(false);
+        }
+
+        uploadCancelledRef.current = false;
         setIsUploadingVideo(true);
+        setUploadProgress(0);
+        setUploadStatusText('Preparing secure upload...');
         setAlert(null);
 
-        const formData = new FormData();
-        formData.append('video', selectedFile);
-        formData.append('deletePrevious', autoDeletePrevious ? 'true' : 'false');
-
         try {
-            const res = await fetch('/api/content/hero/video', {
-                method: 'POST',
-                body: formData,
-            });
+            const resourceType = selectedFileType === 'image' ? 'image' : 'video';
 
-            const data = await res.json();
+            // 1. Get short-lived upload signature from backend (<10ms)
+            const sigRes = await fetch('/api/content/hero/upload-signature');
+            const sigData = await sigRes.json();
 
-            if (!res.ok || !data.success) {
-                throw new Error(data.message || 'Failed to upload background media.');
+            if (!sigRes.ok || !sigData.success) {
+                throw new Error(sigData.message || 'Could not authorize upload.');
             }
 
-            const uploadedType = data.mediaType === 'image' || selectedFileType === 'image' ? 'image' : 'video';
+            const { cloudName, apiKey, folder, timestamp, signature } = sigData;
+            const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
+
+            // 2. Upload directly from browser to Cloudinary (chunked in 6MB segments for large files)
+            const CHUNK_SIZE = 6 * 1024 * 1024; // 6 MB (Cloudinary min chunk size is 5 MB)
+            const totalBytes = selectedFile.size;
+            let cloudResult = null;
+
+            if (totalBytes <= CHUNK_SIZE) {
+                const fd = new FormData();
+                fd.append('file', selectedFile, selectedFile.name);
+                fd.append('api_key', apiKey);
+                fd.append('timestamp', String(timestamp));
+                fd.append('folder', folder);
+                fd.append('signature', signature);
+
+                setUploadStatusText(`Uploading 0% • 0 MB / ${formatBytes(totalBytes)}`);
+                cloudResult = await sendCloudinaryXhr(uploadUrl, fd, {}, (loaded, total) => {
+                    const pct = Math.min(99, Math.round((loaded / (total || totalBytes)) * 100));
+                    setUploadProgress(pct);
+                    setUploadStatusText(`Uploading ${pct}% • ${formatBytes(loaded)} / ${formatBytes(totalBytes)}`);
+                });
+            } else {
+                const totalChunks = Math.ceil(totalBytes / CHUNK_SIZE);
+                const uniqueUploadId = `mp-hero-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+
+                for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+                    if (uploadCancelledRef.current) {
+                        throw new Error('UPLOAD_CANCELLED');
+                    }
+
+                    const start = chunkIndex * CHUNK_SIZE;
+                    const end = Math.min(start + CHUNK_SIZE, totalBytes);
+                    const chunkBlob = selectedFile.slice(start, end);
+
+                    const fd = new FormData();
+                    fd.append('file', chunkBlob, selectedFile.name);
+                    fd.append('api_key', apiKey);
+                    fd.append('timestamp', String(timestamp));
+                    fd.append('folder', folder);
+                    fd.append('signature', signature);
+
+                    const headers = {
+                        'X-Unique-Upload-Id': uniqueUploadId,
+                        'Content-Range': `bytes ${start}-${end - 1}/${totalBytes}`
+                    };
+
+                    cloudResult = await sendCloudinaryXhr(uploadUrl, fd, headers, (loaded) => {
+                        const uploadedSoFar = Math.min(totalBytes, start + loaded);
+                        const pct = Math.min(99, Math.round((uploadedSoFar / totalBytes) * 100));
+                        setUploadProgress(pct);
+                        setUploadStatusText(
+                            `Uploading chunk ${chunkIndex + 1}/${totalChunks} • ${pct}% (${formatBytes(uploadedSoFar)} / ${formatBytes(totalBytes)})`
+                        );
+                    });
+                }
+            }
+
+            if (!cloudResult?.secure_url) {
+                throw new Error('Cloud storage did not return a media URL.');
+            }
+
+            // 3. Save URL & metadata in MongoDB (<50ms)
+            setUploadProgress(100);
+            setUploadStatusText('Publishing to Hero section...');
+
+            const saveRes = await fetch('/api/content/hero/media', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    videoUrl: cloudResult.secure_url,
+                    videoPublicId: cloudResult.public_id,
+                    mediaType: resourceType,
+                    deletePrevious: autoDeletePrevious
+                })
+            });
+
+            const data = await saveRes.json();
+            if (!saveRes.ok || !data.success) {
+                throw new Error(data.message || 'Failed to save uploaded media.');
+            }
+
+            const uploadedType = data.mediaType === 'image' || resourceType === 'image' ? 'image' : 'video';
 
             // Successfully uploaded and saved in DB
             setVideoUrl(data.videoUrl);
@@ -369,15 +529,14 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
             // Clear temporary preview
             handleClearSelection();
 
-            const cleanMsg = data.message
-                ? data.message.replace(/to Cloudinary/gi, '').replace(/from Cloudinary/gi, '').replace(/Cloudinary/gi, 'cloud storage').replace(/\s{2,}/g, ' ').trim()
-                : `Hero background ${uploadedType} successfully uploaded and live!`;
-
             setAlert({
                 type: 'success',
-                message: cleanMsg || `Hero background ${uploadedType} successfully uploaded and live!`
+                message: data.message || `Hero background ${uploadedType} successfully uploaded and live!`
             });
         } catch (err) {
+            if (err.message === 'UPLOAD_CANCELLED') {
+                return;
+            }
             console.error('Background upload error:', err);
             setAlert({
                 type: 'error',
@@ -385,6 +544,8 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
             });
         } finally {
             setIsUploadingVideo(false);
+            setUploadProgress(0);
+            setUploadStatusText('');
         }
     };
 
@@ -920,6 +1081,24 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
                                 </div>
                             )}
 
+                            {/* Live Upload Progress Bar */}
+                            {isUploadingVideo && (
+                                <div className="mp-upload-progress-box">
+                                    <div className="mp-upload-progress-header">
+                                        <span className="mp-upload-progress-status">
+                                            {uploadStatusText || 'Uploading...'}
+                                        </span>
+                                        <span className="mp-upload-progress-pct">{uploadProgress}%</span>
+                                    </div>
+                                    <div className="mp-upload-progress-track">
+                                        <div
+                                            className="mp-upload-progress-fill"
+                                            style={{ width: `${uploadProgress}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Upload & Storage Management Actions */}
                             <div className="mp-video-actions-row">
                                 <button
@@ -931,7 +1110,7 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
                                     {isUploadingVideo ? (
                                         <>
                                             <span className="mp-spinner" />
-                                            <span>Uploading {selectedFileType === 'image' ? 'Image' : 'Video'}...</span>
+                                            <span>Uploading {uploadProgress}%...</span>
                                         </>
                                     ) : (
                                         <>
@@ -950,6 +1129,17 @@ export default function HeroEdit({ onHeroTextChange, activeSection = 'all', onSe
                                         </>
                                     )}
                                 </button>
+
+                                {isUploadingVideo && (
+                                    <button
+                                        type="button"
+                                        className="mp-btn-delete-previous-video"
+                                        onClick={handleCancelUpload}
+                                        title="Cancel the current upload"
+                                    >
+                                        <span>✕ Cancel</span>
+                                    </button>
+                                )}
 
                                 {/* Button to remove custom background media and restore default */}
                                 {videoUrl && (

@@ -3,6 +3,8 @@ import multer from 'multer';
 import {
   handleGetHero,
   handleUpdateHero,
+  handleGetHeroUploadSignature,
+  handleSaveHeroMedia,
   handleUploadHeroVideo,
   handleResetHeroVideo,
   handleCleanupHeroVideos
@@ -41,7 +43,9 @@ router.get('/hero', handleGetHero);
 router.put('/hero', handleUpdateHero);
 router.post('/hero', handleUpdateHero);
 
-// Hero Showcase Video
+// Hero Background Media (Direct Signed Upload + Server Fallback)
+router.get('/hero/upload-signature', handleGetHeroUploadSignature);
+router.post('/hero/media', handleSaveHeroMedia);
 router.post('/hero/video', handleUploadMiddleware, handleUploadHeroVideo);
 router.delete('/hero/video', handleResetHeroVideo);
 router.post('/hero/video/cleanup', handleCleanupHeroVideos);

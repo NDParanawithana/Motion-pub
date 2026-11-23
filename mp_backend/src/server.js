@@ -63,6 +63,11 @@ const server = app.listen(PORT, () => {
   console.log(`🚀 Backend running at http://localhost:${PORT}`);
 });
 
+// Allow up to 10 minutes for large hero video uploads
+server.timeout = 10 * 60 * 1000;
+server.requestTimeout = 10 * 60 * 1000;
+server.headersTimeout = 10 * 60 * 1000 + 5000;
+
 // Graceful shutdown
 process.on('SIGINT', async () => {
   console.log('\nShutting down server...');

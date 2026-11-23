@@ -67,7 +67,9 @@ export const uploadToCloudinary = (fileBuffer, folder = 'motion_pub') => {
 };
 
 /**
- * Upload a hero media buffer (video or image) directly to Cloudinary
+ * Upload a hero media buffer (video or image) directly to Cloudinary.
+ * Uses chunked streaming for videos > 6MB and a 10-minute per-request timeout
+ * to prevent Cloudinary's default 60s Request Timeout error.
  * @param {Buffer} fileBuffer
  * @param {'video'|'image'} resourceType
  * @param {string} folder
@@ -75,20 +77,52 @@ export const uploadToCloudinary = (fileBuffer, folder = 'motion_pub') => {
  */
 export const uploadHeroMediaToCloudinary = (fileBuffer, resourceType = 'video', folder = 'motion_pub/hero') => {
   return new Promise((resolve, reject) => {
-    const options = resourceType === 'image'
-      ? { folder, resource_type: 'image' }
-      : { folder, resource_type: 'video', chunk_size: 6000000 };
+    const CHUNK_SIZE = 6 * 1024 * 1024; // 6 MB chunks (Cloudinary min is 5 MB)
+    const TIMEOUT_MS = 600000; // 10 minutes
+
+    const handleResult = (error, result) => {
+      if (error) {
+        return reject(error);
+      }
+      resolve(result);
+    };
+
+    if (resourceType === 'image') {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder,
+          resource_type: 'image',
+          timeout: TIMEOUT_MS,
+        },
+        handleResult
+      );
+      uploadStream.end(fileBuffer);
+      return;
+    }
+
+    // Use real chunked streaming for larger videos so each 6MB chunk uploads quickly without hitting timeouts
+    if (fileBuffer.length > CHUNK_SIZE) {
+      const uploadStream = cloudinary.uploader.upload_chunked_stream(
+        {
+          folder,
+          resource_type: 'video',
+          chunk_size: CHUNK_SIZE,
+          timeout: TIMEOUT_MS,
+        },
+        handleResult
+      );
+      uploadStream.end(fileBuffer);
+      return;
+    }
 
     const uploadStream = cloudinary.uploader.upload_stream(
-      options,
-      (error, result) => {
-        if (error) {
-          return reject(error);
-        }
-        resolve(result);
-      }
+      {
+        folder,
+        resource_type: 'video',
+        timeout: TIMEOUT_MS,
+      },
+      handleResult
     );
-
     uploadStream.end(fileBuffer);
   });
 };

@@ -1,3 +1,4 @@
+import cloudinary from '../../config/cloudinary.js';
 import {
   getHeroContent,
   updateHeroContent,
@@ -101,6 +102,96 @@ export async function handleUpdateHero(req, res) {
       success: false,
       message: 'Failed to save hero content to database.',
       error: error.message
+    });
+  }
+}
+
+/**
+ * GET /api/content/hero/upload-signature
+ * Generate a short-lived signed upload token so the browser can upload large videos/images
+ * directly to Cloudinary without routing 50MB+ through the Node server.
+ */
+export function handleGetHeroUploadSignature(req, res) {
+  try {
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    const apiKey = process.env.CLOUDINARY_API_KEY;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+    if (!cloudName || !apiKey || !apiSecret) {
+      return res.status(500).json({
+        success: false,
+        message: 'Cloud storage credentials are not configured on the server.'
+      });
+    }
+
+    const folder = 'motion_pub/hero';
+    const timestamp = Math.round(Date.now() / 1000);
+    const signature = cloudinary.utils.api_sign_request(
+      { folder, timestamp },
+      apiSecret
+    );
+
+    return res.status(200).json({
+      success: true,
+      cloudName,
+      apiKey,
+      folder,
+      timestamp,
+      signature
+    });
+  } catch (error) {
+    console.error('Error generating hero upload signature:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to initialize direct upload.'
+    });
+  }
+}
+
+/**
+ * POST /api/content/hero/media
+ * Save metadata of a background video or image uploaded directly from the browser to Cloudinary.
+ */
+export async function handleSaveHeroMedia(req, res) {
+  try {
+    const { videoUrl, videoPublicId, mediaType, deletePrevious } = req.body || {};
+
+    if (!videoUrl || typeof videoUrl !== 'string') {
+      return res.status(400).json({
+        success: false,
+        message: 'A valid uploaded media URL is required.'
+      });
+    }
+
+    const normalizedType = mediaType === 'image' ? 'image' : 'video';
+    const saveResult = await updateHeroVideo(
+      videoUrl.trim(),
+      videoPublicId || null,
+      normalizedType
+    );
+
+    // Run orphan cleanup in the background so saving returns instantly
+    if (deletePrevious !== false && videoPublicId) {
+      cleanupOrphanHeroVideos(videoPublicId).catch((cleanErr) => {
+        console.warn('Background media cleanup notice:', cleanErr.message);
+      });
+    }
+
+    const label = normalizedType === 'image' ? 'image' : 'video';
+    return res.status(200).json({
+      success: true,
+      message: `New hero background ${label} uploaded and published!`,
+      videoUrl: saveResult.videoUrl,
+      mediaUrl: saveResult.videoUrl,
+      mediaType: normalizedType,
+      videoPublicId: saveResult.videoPublicId,
+      videoUpdatedAt: saveResult.videoUpdatedAt
+    });
+  } catch (error) {
+    console.error('Error saving hero background media:', error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to save hero background media.'
     });
   }
 }

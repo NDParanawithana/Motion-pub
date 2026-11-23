@@ -13,6 +13,7 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
     secure: true,
+    timeout: 600000, // 10 minutes for large hero video uploads
 });
 
 export default cloudinary;
