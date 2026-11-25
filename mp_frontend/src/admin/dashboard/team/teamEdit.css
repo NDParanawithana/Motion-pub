@@ -1,0 +1,815 @@
+/* ==========================================================================
+   Team Management Studio Styling (Motion Pub Admin Console)
+   ========================================================================== */
+@import '../dashboard.css';
+
+.mp-team-edit-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Header */
+.mp-team-edit-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.mp-team-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.mp-team-count-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.42rem 0.85rem;
+  border-radius: 9999px;
+  background: rgba(148, 224, 0, 0.1);
+  border: 1px solid rgba(148, 224, 0, 0.3);
+  color: #c0ff7e;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.mp-team-count-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #a5f700;
+  box-shadow: 0 0 8px #a5f700;
+}
+
+.mp-btn-add-member {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1.2rem;
+  border-radius: 9px;
+  border: none;
+  background: #a5f700;
+  color: #0b1100;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(165, 247, 0, 0.28);
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mp-btn-add-member:hover {
+  background: #b7ff29;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(165, 247, 0, 0.4);
+}
+
+.mp-team-roster-hint {
+  font-size: 0.76rem;
+  color: #9ca3af;
+}
+
+/* Roster List (Full-Width Dashboard View with Internal Scroll) */
+.mp-team-roster-card {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mp-team-roster-card .mp-card-header {
+  flex-shrink: 0;
+}
+
+.mp-team-member-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding-right: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(165, 247, 0, 0.28) transparent;
+}
+
+.mp-team-member-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mp-team-member-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 9999px;
+}
+
+.mp-team-member-list::-webkit-scrollbar-thumb {
+  background: rgba(165, 247, 0, 0.28);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+
+.mp-team-member-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(165, 247, 0, 0.52);
+}
+
+.mp-team-member-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 0.95rem 1.15rem;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.mp-team-member-row:hover {
+  background: rgba(255, 255, 255, 0.042);
+  border-color: rgba(165, 247, 0, 0.28);
+}
+
+.mp-team-row-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.mp-team-order-num {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6b7280;
+  min-width: 26px;
+}
+
+.mp-team-row-avatar {
+  width: 56px;
+  height: 68px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: radial-gradient(circle at 50% 35%, #2b3226, #141713);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c0ff7e;
+  font-weight: 800;
+  font-size: 1rem;
+}
+
+.mp-team-row-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+.mp-team-row-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.24rem;
+  min-width: 0;
+}
+
+.mp-team-row-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f9fafb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mp-team-row-role {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #9ca3af;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mp-team-row-socials {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.2rem;
+}
+
+.mp-social-chip {
+  font-size: 0.69rem;
+  font-weight: 600;
+  padding: 0.14rem 0.5rem;
+  border-radius: 5px;
+  background: rgba(148, 224, 0, 0.1);
+  border: 1px solid rgba(148, 224, 0, 0.24);
+  color: #d0ffa6;
+}
+
+.mp-social-chip.muted {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #6b7280;
+}
+
+.mp-team-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-shrink: 0;
+}
+
+.mp-team-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.46rem 0.9rem;
+  border-radius: 8px;
+  border: 1px solid rgba(165, 247, 0, 0.38);
+  background: rgba(165, 247, 0, 0.12);
+  color: #c0ff7e;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.mp-team-edit-btn:hover {
+  background: #a5f700;
+  border-color: #a5f700;
+  color: #0b1100;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(165, 247, 0, 0.3);
+}
+
+.mp-team-icon-action {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #d1d5db;
+  font-size: 0.88rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.mp-team-icon-action:hover:not(:disabled) {
+  background: rgba(165, 247, 0, 0.15);
+  border-color: rgba(165, 247, 0, 0.45);
+  color: #a5f700;
+}
+
+.mp-team-icon-action.delete:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.55);
+  color: #f87171;
+}
+
+.mp-team-icon-action:disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+
+/* Empty & Loading States */
+.mp-team-empty-state {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: #9ca3af;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mp-team-empty-state p {
+  margin: 0;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.mp-team-empty-state span {
+  font-size: 0.84rem;
+}
+
+.mp-team-loader {
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid rgba(165, 247, 0, 0.2);
+  border-top-color: #a5f700;
+  border-radius: 50%;
+  animation: teamSpin 0.8s linear infinite;
+}
+
+.mp-team-loader.small {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+@keyframes teamSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   FULL-SCREEN POPUP MODAL (Add / Edit Team Member)
+   ========================================================================== */
+
+.mp-team-fullscreen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  z-index: 99999;
+  background: rgba(8, 10, 8, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow: hidden;
+  animation: teamModalFadeIn 0.22s ease forwards;
+}
+
+.mp-team-fullscreen-shell {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(circle at 22% 28%, rgba(148, 224, 0, 0.08) 0%, transparent 50%),
+    #0f120e;
+  overflow: hidden;
+  animation: teamModalScaleIn 0.24s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.mp-team-modal-topbar {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.05rem clamp(1.25rem, 3.5vw, 3rem);
+  background: rgba(15, 18, 14, 0.96);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  flex-shrink: 0;
+}
+
+.mp-team-modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.mp-team-modal-accent-bar {
+  width: 3px;
+  height: 32px;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, #c0ff7e 0%, #94e000 100%);
+  box-shadow: 0 0 12px rgba(165, 247, 0, 0.55);
+  flex-shrink: 0;
+}
+
+.mp-team-modal-title-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.14rem;
+  min-width: 0;
+}
+
+.mp-team-modal-kicker {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(208, 255, 166, 0.62);
+  line-height: 1;
+}
+
+.mp-team-modal-heading {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  font-size: clamp(1.05rem, 1.8vw, 1.32rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mp-team-modal-heading-accent {
+  color: #c0ff7e;
+}
+
+.mp-team-modal-role-inline {
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.48);
+  padding-left: 0.65rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.mp-team-modal-close-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: #e5e7eb;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mp-team-modal-close-btn:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+}
+
+.mp-team-modal-close-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.mp-team-modal-body {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: clamp(1.5rem, 3.5vw, 2.75rem) clamp(1.25rem, 3.5vw, 3rem);
+  box-sizing: border-box;
+  display: block;
+}
+
+.mp-team-modal-alert {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto 1.5rem;
+  box-sizing: border-box;
+}
+
+.mp-team-modal-grid {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.75rem);
+  align-items: start;
+  box-sizing: border-box;
+}
+
+@media (max-width: 960px) {
+  .mp-team-modal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mp-team-modal-preview-col {
+  width: 100%;
+}
+
+.mp-team-live-preview-box {
+  padding: 1.5rem 1.25rem 1.4rem;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(148, 224, 0, 0.13) 0%, transparent 64%),
+    rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.15rem;
+}
+
+.mp-team-preview-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #a5f700;
+}
+
+.mp-team-preview-stage {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.mp-team-preview-stage .mp-team-card.is-active {
+  width: min(260px, 100%);
+  cursor: default;
+}
+
+.mp-team-preview-caption {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #9ca3af;
+  text-align: center;
+  max-width: 280px;
+}
+
+.mp-team-modal-form-col {
+  width: 100%;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-sizing: border-box;
+}
+
+/* Form Controls */
+.mp-team-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+.mp-team-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 600px) {
+  .mp-team-two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mp-team-input {
+  width: 100%;
+  padding: 0.75rem 0.95rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.92rem;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.mp-team-input::placeholder {
+  color: #6b7280;
+}
+
+.mp-team-input:focus {
+  border-color: #a5f700;
+  background: rgba(148, 224, 0, 0.03);
+  box-shadow: 0 0 0 3px rgba(148, 224, 0, 0.14);
+}
+
+.mp-team-url-input {
+  margin-top: 0.65rem;
+  font-size: 0.82rem;
+}
+
+/* Portrait Upload Dropzone */
+.mp-team-dropzone {
+  display: flex;
+  align-items: center;
+  gap: 0.95rem;
+  padding: 1.1rem 1.2rem;
+  border-radius: 11px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.02);
+  color: #a5f700;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.mp-team-dropzone:hover,
+.mp-team-dropzone.dragging {
+  border-color: #a5f700;
+  background: rgba(148, 224, 0, 0.06);
+}
+
+.mp-team-dropzone strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #f3f4f6;
+}
+
+.mp-team-dropzone span {
+  display: block;
+  font-size: 0.77rem;
+  color: #9ca3af;
+  margin-top: 0.15rem;
+}
+
+.mp-team-dropzone-uploading {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  justify-content: center;
+  padding: 0.25rem 0;
+  color: #c0ff7e;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.mp-team-remove-img-btn {
+  background: transparent;
+  border: none;
+  color: #f87171;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.mp-team-remove-img-btn:hover {
+  text-decoration: underline;
+}
+
+/* Social Media Links Grid */
+.mp-team-socials-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.mp-team-socials-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+@media (max-width: 600px) {
+  .mp-team-socials-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mp-team-social-input-wrap {
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mp-team-social-input-wrap:focus-within {
+  border-color: #a5f700;
+  box-shadow: 0 0 0 3px rgba(148, 224, 0, 0.14);
+}
+
+.mp-social-prefix {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #a5f700;
+  background: rgba(148, 224, 0, 0.08);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.mp-team-social-input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.mp-team-social-input::placeholder {
+  color: #6b7280;
+}
+
+/* Form Action Buttons */
+.mp-team-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding-top: 0.5rem;
+}
+
+.mp-btn-save-member {
+  flex: 1;
+  padding: 0.82rem 1.35rem;
+  border-radius: 10px;
+  border: none;
+  background: #a5f700;
+  color: #0b1100;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(165, 247, 0, 0.28);
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mp-btn-save-member:hover:not(:disabled) {
+  background: #b7ff29;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(165, 247, 0, 0.42);
+}
+
+.mp-btn-save-member:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.mp-btn-reset-member {
+  padding: 0.82rem 1.35rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: transparent;
+  color: #9ca3af;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.mp-btn-reset-member:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+
+@keyframes teamModalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes teamModalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Mobile Roster Row Wrapping */
+@media (max-width: 640px) {
+  .mp-team-member-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mp-team-row-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

@@ -13,13 +13,14 @@
   --mp-amber: #E0A800;
   --mp-cyan: #00B4D8;
   --mp-lime: #C8F03E;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   background-color: #0f110d;
   color: #e5e7eb;
   font-family: inherit;
   display: flex;
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 /* Ambient glow in background – dual-color for depth */
@@ -39,15 +40,27 @@
 /* Sidebar */
 .mp-dashboard-sidebar {
   width: 270px;
+  height: 100%;
   background: #141712;
   border-right: 1px solid rgba(255, 255, 255, 0.07);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 1.5rem 1.25rem;
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 10;
   flex-shrink: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.mp-dashboard-sidebar > div:first-child {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 /* Colored accent bar on left edge of sidebar */
@@ -69,7 +82,8 @@
 }
 
 .mp-sidebar-header {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
+  flex-shrink: 0;
 }
 
 .mp-sidebar-logo-group {
@@ -114,6 +128,21 @@
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.2rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+}
+
+.mp-sidebar-nav::-webkit-scrollbar {
+  width: 5px;
+}
+
+.mp-sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 9999px;
 }
 
 .mp-nav-section-label {
@@ -301,9 +330,11 @@
 .mp-sidebar-footer {
   border-top: 1px solid rgba(255, 255, 255, 0.07);
   padding-top: 1.25rem;
+  margin-top: 0.75rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  flex-shrink: 0;
 }
 
 .mp-admin-profile {
@@ -381,12 +412,13 @@
 /* Main Dashboard Content Area */
 .mp-dashboard-main {
   flex: 1;
+  min-width: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
   position: relative;
   z-index: 1;
-  overflow-y: auto;
-  max-height: 100vh;
+  overflow: hidden;
 }
 
 /* Topbar */
@@ -394,14 +426,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.25rem 2.5rem;
+  padding: 1.15rem 2.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(18, 20, 16, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(18, 20, 16, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
   z-index: 20;
+  flex-shrink: 0;
 }
 
 .mp-topbar-breadcrumb {
@@ -563,11 +596,30 @@
 
 /* Page Content View */
 .mp-page-container {
-  padding: 2.25rem 2.5rem;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 2rem 2.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.75rem;
+  width: 100%;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+}
+
+.mp-page-container > * {
   max-width: 1200px;
+}
+
+.mp-page-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mp-page-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 9999px;
 }
 
 .mp-page-header {

@@ -43,6 +43,10 @@ export default function Navbar() {
         setActiveLink('About')
         return
       }
+      if (hash === '#team') {
+        setActiveLink('Team')
+        return
+      }
       if (hash === '#contact') {
         setActiveLink('Contact Us')
         return
@@ -108,6 +112,8 @@ export default function Navbar() {
         setActiveLink('')
       } else if (hash === '#about') {
         setActiveLink('About')
+      } else if (hash === '#team') {
+        setActiveLink('Team')
       } else if (hash === '#contact') {
         setActiveLink('Contact Us')
       } else {

@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { connectToMongoDB, checkMongoStatus, disconnectFromMongoDB } from './config/db.js';
 import adminLoginRoutes from './routes/admin/admin_login_routes.js';
 import heroRoutes from './routes/content/hero_routes.js';
+import teamRoutes from './routes/content/team_routes.js';
 import contactRoutes from './routes/contact/contact_routes.js';
 import { initAppointmentIndexes } from './models/contact/appointment_model.js';
 
@@ -26,6 +27,7 @@ app.use(express.json());
 // Routes
 app.use('/api/admin', adminLoginRoutes);
 app.use('/api/content', heroRoutes);
+app.use('/api/content', teamRoutes);
 
 // Attempt initial MongoDB connection
 connectToMongoDB()

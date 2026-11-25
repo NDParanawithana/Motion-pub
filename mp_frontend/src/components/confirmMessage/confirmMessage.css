@@ -1,0 +1,338 @@
+/* ==========================================================================
+   ConfirmMessage - Reusable Confirmation Modal (Motion Pub Dark Theme)
+   ========================================================================== */
+
+.mp-confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 100000;
+  background: rgba(6, 8, 6, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  box-sizing: border-box;
+  animation: mpConfirmOverlayIn 0.2s ease forwards;
+}
+
+.mp-confirm-dialog {
+  --confirm-accent: #ef4444;
+  --confirm-accent-soft: rgba(239, 68, 68, 0.14);
+  --confirm-accent-border: rgba(239, 68, 68, 0.38);
+  --confirm-accent-glow: rgba(239, 68, 68, 0.3);
+  --confirm-btn-text: #ffffff;
+
+  position: relative;
+  width: 100%;
+  max-width: 430px;
+  padding: 2rem 1.75rem 1.6rem;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 50% -10%, var(--confirm-accent-soft) 0%, transparent 58%),
+    linear-gradient(180deg, #171a15 0%, #10130f 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.78),
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 0 42px var(--confirm-accent-soft);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+  box-sizing: border-box;
+  animation: mpConfirmCardIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Variants */
+.mp-confirm-dialog.variant-warning {
+  --confirm-accent: #f59e0b;
+  --confirm-accent-soft: rgba(245, 158, 11, 0.14);
+  --confirm-accent-border: rgba(245, 158, 11, 0.42);
+  --confirm-accent-glow: rgba(245, 158, 11, 0.3);
+  --confirm-btn-text: #11130f;
+}
+
+.mp-confirm-dialog.variant-primary {
+  --confirm-accent: #a5f700;
+  --confirm-accent-soft: rgba(165, 247, 0, 0.14);
+  --confirm-accent-border: rgba(165, 247, 0, 0.42);
+  --confirm-accent-glow: rgba(165, 247, 0, 0.32);
+  --confirm-btn-text: #0b1100;
+}
+
+/* Top Glowing Accent Hairline */
+.mp-confirm-accent-line {
+  position: absolute;
+  top: 0;
+  left: 16%;
+  right: 16%;
+  height: 2px;
+  border-radius: 0 0 9999px 9999px;
+  background: linear-gradient(90deg, transparent, var(--confirm-accent), transparent);
+  box-shadow: 0 0 14px var(--confirm-accent);
+}
+
+/* Close X Button */
+.mp-confirm-close-x {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: #9ca3af;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mp-confirm-close-x:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  transform: rotate(90deg);
+}
+
+.mp-confirm-close-x:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Animated Icon Medallion */
+.mp-confirm-icon-stage {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mp-confirm-icon-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid var(--confirm-accent-border);
+  background: var(--confirm-accent-soft);
+  animation: mpConfirmPulse 2.4s ease-in-out infinite;
+}
+
+.mp-confirm-icon-core {
+  position: relative;
+  z-index: 1;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: rgba(15, 18, 14, 0.92);
+  border: 1.5px solid var(--confirm-accent-border);
+  color: var(--confirm-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 24px var(--confirm-accent-soft);
+}
+
+/* Typography */
+.mp-confirm-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.24rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.mp-confirm-message {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.58;
+  color: #9ca3af;
+  max-width: 350px;
+}
+
+/* Target Item Preview Pill */
+.mp-confirm-item-chip {
+  width: 100%;
+  margin-top: 1.15rem;
+  padding: 0.68rem 0.85rem;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.mp-confirm-item-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: radial-gradient(circle at 50% 35%, #2b3226, #141713);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c0ff7e;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.mp-confirm-item-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+.mp-confirm-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.mp-confirm-item-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #f9fafb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mp-confirm-item-sub {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Action Buttons */
+.mp-confirm-actions {
+  width: 100%;
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.mp-confirm-btn-cancel,
+.mp-confirm-btn-confirm {
+  padding: 0.76rem 1.1rem;
+  border-radius: 11px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+
+.mp-confirm-btn-cancel {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  color: #d1d5db;
+}
+
+.mp-confirm-btn-cancel:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.24);
+  color: #ffffff;
+}
+
+.mp-confirm-btn-confirm {
+  background: var(--confirm-accent);
+  border: 1px solid var(--confirm-accent);
+  color: var(--confirm-btn-text);
+  box-shadow: 0 6px 20px var(--confirm-accent-glow);
+}
+
+.mp-confirm-btn-confirm:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+  box-shadow: 0 10px 26px var(--confirm-accent-glow);
+}
+
+.mp-confirm-btn-cancel:disabled,
+.mp-confirm-btn-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.mp-confirm-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: mpConfirmSpin 0.75s linear infinite;
+}
+
+@keyframes mpConfirmOverlayIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mpConfirmCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes mpConfirmPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.35;
+  }
+}
+
+@keyframes mpConfirmSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 440px) {
+  .mp-confirm-dialog {
+    padding: 1.75rem 1.25rem 1.35rem;
+  }
+
+  .mp-confirm-actions {
+    grid-template-columns: 1fr;
+  }
+}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Navbar from './components/navbar/navbar'
 import Hero from './components/hero/hero'
 import About from './pages/about/about'
+import Team from './pages/team/team'
 import Contact from './pages/contact/contact'
 import MongoStatus from './components/MongoStatus/MongoStatus'
 import AdminLogin from './admin/adminlogin/adminLogin'
@@ -13,6 +14,7 @@ function App() {
     const hash = window.location.hash;
     if (hash === '#dashboard') return 'dashboard';
     if (hash === '#about') return 'about';
+    if (hash === '#team') return 'team';
     if (hash === '#contact') return 'contact';
     return 'site';
   });
@@ -33,6 +35,9 @@ function App() {
       } else if (hash === '#about') {
         setCurrentView('about');
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      } else if (hash === '#team') {
+        setCurrentView('team');
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       } else if (hash === '#contact') {
         setCurrentView('contact');
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
@@ -42,7 +47,7 @@ function App() {
     };
 
     // Ensure initial load with hash lands at the exact top position
-    if (window.location.hash === '#about' || window.location.hash === '#contact') {
+    if (window.location.hash === '#about' || window.location.hash === '#team' || window.location.hash === '#contact') {
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     }
 
@@ -72,6 +77,8 @@ function App() {
       document.title = 'MP Admin';
     } else if (currentView === 'about') {
       document.title = 'About Us | Motion Pub';
+    } else if (currentView === 'team') {
+      document.title = 'Our Team | Motion Pub';
     } else if (currentView === 'contact') {
       document.title = 'Contact Us | Motion Pub';
     } else {
@@ -155,6 +162,9 @@ function App() {
         {currentView === 'about' ? (
           /* Standalone About Page (Fits screen) */
           <About />
+        ) : currentView === 'team' ? (
+          /* Standalone Team Page */
+          <Team />
         ) : currentView === 'contact' ? (
           /* Standalone Contact Page (Fits screen) */
           <Contact />

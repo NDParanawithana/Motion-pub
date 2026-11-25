@@ -1,0 +1,205 @@
+/* ==========================================================================
+   Motion Pub - Team Page Styling (Dark Neon-Lime Theme)
+   ========================================================================== */
+
+.mp-team-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 86px 0 clamp(2.5rem, 5vh, 4rem);
+  background-color: var(--bg-color, #141414);
+  overflow-x: clip;
+  box-sizing: border-box;
+  scroll-margin-top: 80px;
+}
+
+/* Ambient Neon Lime Glow Behind Spotlight Card */
+.mp-team-bg-glow {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 780px;
+  height: 460px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(148, 224, 0, 0.11) 0%,
+    rgba(148, 224, 0, 0.03) 45%,
+    transparent 72%
+  );
+  filter: blur(110px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.mp-team-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 clamp(1.25rem, 3.5vw, 3rem);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Top Centered Header */
+.mp-team-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: clamp(2rem, 4.5vh, 3.25rem);
+}
+
+.mp-team-title {
+  margin: 0;
+  font-size: clamp(2rem, 4.2vw, 3.45rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  animation: teamFadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+.mp-team-title-accent {
+  background: linear-gradient(90deg, #d8ff3e 0%, #a5f700 45%, #78b700 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 22px rgba(165, 247, 0, 0.28));
+}
+
+/* 5-Card Spotlight Carousel Stage */
+.mp-team-carousel {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.85rem, 1.6vw, 1.4rem);
+  padding: 0.75rem 0 1.25rem;
+  min-height: clamp(350px, 46vh, 455px);
+  animation: teamFadeUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both;
+}
+
+/* Bottom Progress Bar + Arrow Controls Row */
+.mp-team-controls {
+  width: 100%;
+  max-width: 1120px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  margin-top: clamp(1.5rem, 3.5vh, 2.5rem);
+  animation: teamFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+}
+
+.mp-team-progress-track {
+  position: relative;
+  flex: 1;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.mp-team-progress-indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #78b700 0%, #a5f700 55%, #d8ff3e 100%);
+  box-shadow: 0 0 12px rgba(165, 247, 0, 0.65);
+  transition: left 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mp-team-nav-arrows {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
+.mp-team-arrow-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #1c1f19;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  transition:
+    transform 0.22s ease,
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.mp-team-arrow-btn:hover {
+  transform: translateY(-2px);
+  background: #a5f700;
+  border-color: #a5f700;
+  color: #0b1100;
+  box-shadow: 0 8px 22px rgba(165, 247, 0, 0.38);
+}
+
+.mp-team-arrow-btn:active {
+  transform: translateY(0);
+}
+
+.mp-team-empty-msg {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 1rem;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+@keyframes teamFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mp-team-title,
+  .mp-team-carousel,
+  .mp-team-controls {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .mp-team-section {
+    padding: 82px 0 3rem;
+  }
+
+  .mp-team-controls {
+    gap: 1.15rem;
+  }
+
+  .mp-team-arrow-btn {
+    width: 38px;
+    height: 38px;
+  }
+}
