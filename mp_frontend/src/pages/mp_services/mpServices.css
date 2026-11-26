@@ -1,0 +1,353 @@
+/* ==========================================================================
+   Motion Pub - Services Page (Stacked Editorial Layout + Dark Neon-Lime Theme)
+   ========================================================================== */
+
+.mp-services-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 74px 0 clamp(3.5rem, 7vh, 5.5rem) 0;
+  background-color: var(--bg-color, #141414);
+  overflow-x: clip;
+  overflow-y: visible;
+  box-sizing: border-box;
+  scroll-margin-top: 80px;
+}
+
+/* Ambient Studio Neon-Lime Glow */
+.mp-services-bg-glow {
+  position: absolute;
+  top: 22%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 860px;
+  height: 520px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(148, 224, 0, 0.1) 0%,
+    rgba(148, 224, 0, 0.03) 48%,
+    transparent 74%
+  );
+  filter: blur(115px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.mp-services-shell {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 3.2vw, 2.5rem);
+  box-sizing: border-box;
+}
+
+/* Stacked Cards Container */
+.mp-services-stack {
+  position: relative;
+  z-index: 2;
+  margin-top: clamp(1rem, 2.2vh, 1.85rem);
+  padding: 0 clamp(0.4rem, 2.4vw, 2.1rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Individual Horizontal Editorial Card */
+.mp-service-row-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(1.35rem, 3vw, 2.5rem);
+  align-items: stretch;
+  padding: clamp(1.4rem, 2.6vw, 2.15rem) clamp(1.4rem, 2.8vw, 2.35rem);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(216, 255, 140, 0.16),
+    0 -14px 36px rgba(0, 0, 0, 0.55),
+    0 20px 48px rgba(0, 0, 0, 0.52);
+  transition:
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.28s ease,
+    box-shadow 0.28s ease;
+  animation: mpServicesSlideUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mp-service-row-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(165, 247, 0, 0.42);
+  box-shadow:
+    0 24px 54px rgba(0, 0, 0, 0.56),
+    0 0 32px rgba(148, 224, 0, 0.1);
+}
+
+/* Cohesive Motion Pub Dark Neon-Lime Card Variations */
+.mp-service-row-card.tone-lime {
+  background: linear-gradient(135deg, #212e14 0%, #171e12 58%, #141812 100%);
+  border-color: rgba(165, 247, 0, 0.32);
+}
+
+.mp-service-row-card.tone-charcoal {
+  background: linear-gradient(135deg, #1b211b 0%, #151916 58%, #121513 100%);
+  border-color: rgba(192, 255, 126, 0.18);
+}
+
+.mp-service-row-card.tone-olive {
+  background: linear-gradient(135deg, #1e2617 0%, #161a13 58%, #131512 100%);
+  border-color: rgba(148, 224, 0, 0.24);
+}
+
+/* Left Column: Big Condensed Title + Divider List */
+.mp-service-row-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-width: 0;
+  padding: 0.25rem 0;
+}
+
+.mp-service-row-title {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-size: clamp(1.9rem, 3.2vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
+  color: #ffffff;
+  font-family: 'Antonio', 'Chakra Petch', system-ui, sans-serif;
+}
+
+.mp-service-row-card.tone-lime .mp-service-row-title {
+  color: #e6ffc8;
+}
+
+.mp-service-title-line {
+  display: block;
+}
+
+/* Expandable "What's Included" Rows Matching Reference */
+.mp-service-accordion {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.mp-service-acc-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  transition: border-color 0.2s ease;
+}
+
+.mp-service-acc-item.is-open {
+  border-bottom-color: rgba(165, 247, 0, 0.35);
+}
+
+.mp-service-acc-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.72rem 0.15rem;
+  background: transparent;
+  border: none;
+  color: #e4ece0;
+  font-size: clamp(0.86rem, 1.05vw, 0.96rem);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.18s ease;
+}
+
+.mp-service-acc-trigger:hover {
+  color: #c0ff7e;
+}
+
+.mp-service-acc-label {
+  min-width: 0;
+}
+
+.mp-service-acc-plus {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  font-size: 1.15rem;
+  font-weight: 400;
+  line-height: 1;
+  color: #a5f700;
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s ease;
+}
+
+.mp-service-acc-item.is-open .mp-service-acc-plus {
+  transform: rotate(45deg);
+  color: #d8ff8a;
+}
+
+.mp-service-acc-detail {
+  margin: 0 0 0.8rem 0;
+  padding-right: 1.5rem;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: #a4b09e;
+  animation: mpServicesFadeIn 0.2s ease-out;
+}
+
+/* Right Column: Rounded Image Frame + Floating Pill Badge */
+.mp-service-row-media {
+  position: relative;
+  width: 100%;
+  min-height: 245px;
+  aspect-ratio: 16 / 10;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #0e100d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.mp-service-media-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease;
+}
+
+.mp-service-row-card:hover .mp-service-media-img {
+  transform: scale(1.045);
+}
+
+.mp-service-media-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 12, 9, 0.38) 0%,
+    rgba(10, 12, 9, 0.06) 45%,
+    rgba(10, 12, 9, 0.28) 100%
+  );
+  pointer-events: none;
+}
+
+/* Floating Glassmorphism Pill Badge (Top-Right inside Image) */
+.mp-service-floating-pill {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.44rem 0.95rem;
+  border-radius: 9999px;
+  background: rgba(16, 20, 14, 0.48);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(192, 255, 126, 0.34);
+  color: #e8ffce;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 8px 22px rgba(0, 0, 0, 0.42);
+  transition:
+    transform 0.22s ease,
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.mp-service-floating-pill svg {
+  color: #a5f700;
+  transition: transform 0.22s ease, color 0.22s ease;
+}
+
+.mp-service-floating-pill:hover {
+  background: rgba(165, 247, 0, 0.2);
+  border-color: rgba(165, 247, 0, 0.68);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    0 10px 26px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(165, 247, 0, 0.26);
+}
+
+.mp-service-floating-pill:hover svg {
+  color: #d8ff8a;
+  transform: translate(1.5px, -1.5px);
+}
+
+@keyframes mpServicesFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mpServicesSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 860px) {
+  .mp-services-stack {
+    margin-top: 1.15rem;
+    padding: 0;
+  }
+
+  .mp-service-row-card {
+    grid-template-columns: 1fr;
+    gap: 1.35rem;
+    border-radius: 20px;
+  }
+
+  .mp-service-row-media {
+    min-height: 210px;
+    aspect-ratio: 16 / 9;
+  }
+}
+
+@media (max-width: 520px) {
+  .mp-services-section {
+    padding-top: 74px;
+  }
+
+  .mp-service-row-card {
+    padding: 1.25rem;
+  }
+
+  .mp-service-floating-pill {
+    top: 10px;
+    right: 10px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.65rem;
+  }
+}

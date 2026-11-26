@@ -3,6 +3,7 @@ import Navbar from './components/navbar/navbar'
 import Hero from './components/hero/hero'
 import About from './pages/about/about'
 import Team from './pages/team/team'
+import MpServices from './pages/mp_services/mpServices'
 import Contact from './pages/contact/contact'
 import MongoStatus from './components/MongoStatus/MongoStatus'
 import AdminLogin from './admin/adminlogin/adminLogin'
@@ -15,6 +16,7 @@ function App() {
     if (hash === '#dashboard') return 'dashboard';
     if (hash === '#about') return 'about';
     if (hash === '#team') return 'team';
+    if (hash === '#services') return 'services';
     if (hash === '#contact') return 'contact';
     return 'site';
   });
@@ -38,6 +40,9 @@ function App() {
       } else if (hash === '#team') {
         setCurrentView('team');
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      } else if (hash === '#services') {
+        setCurrentView('services');
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       } else if (hash === '#contact') {
         setCurrentView('contact');
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
@@ -47,7 +52,12 @@ function App() {
     };
 
     // Ensure initial load with hash lands at the exact top position
-    if (window.location.hash === '#about' || window.location.hash === '#team' || window.location.hash === '#contact') {
+    if (
+      window.location.hash === '#about' ||
+      window.location.hash === '#team' ||
+      window.location.hash === '#services' ||
+      window.location.hash === '#contact'
+    ) {
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     }
 
@@ -79,6 +89,8 @@ function App() {
       document.title = 'About Us | Motion Pub';
     } else if (currentView === 'team') {
       document.title = 'Our Team | Motion Pub';
+    } else if (currentView === 'services') {
+      document.title = 'Services & Focus | Motion Pub';
     } else if (currentView === 'contact') {
       document.title = 'Contact Us | Motion Pub';
     } else {
@@ -165,50 +177,17 @@ function App() {
         ) : currentView === 'team' ? (
           /* Standalone Team Page */
           <Team />
+        ) : currentView === 'services' ? (
+          /* Standalone Services Page */
+          <MpServices />
         ) : currentView === 'contact' ? (
           /* Standalone Contact Page (Fits screen) */
           <Contact />
         ) : (
-          /* Main Landing Experience (Scrollable without About/Contact interruption) */
+          /* Main Landing Experience (Scrollable without About/Team/Services/Contact interruption) */
           <>
             {/* Hero Section */}
             <Hero />
-
-            {/* Services Section */}
-            <section className="section" id="services">
-              <div className="container">
-                <div className="section-header">
-                  <span className="section-tag">Services</span>
-                  <h2 className="section-title">What We Do Best</h2>
-                  <p className="section-description">
-                    Tailored creative solutions designed to captivate your audience and scale your brand.
-                  </p>
-                </div>
-                <div className="cards-grid">
-                  <div className="feature-card">
-                    <div className="card-icon">✨</div>
-                    <h3 className="card-title">Motion Design & 3D</h3>
-                    <p className="card-text">
-                      Captivating animation, 3D modeling, and visual storytelling for digital campaigns.
-                    </p>
-                  </div>
-                  <div className="feature-card">
-                    <div className="card-icon">💻</div>
-                    <h3 className="card-title">Web Development</h3>
-                    <p className="card-text">
-                      Responsive, blazing-fast web applications built on modern frameworks.
-                    </p>
-                  </div>
-                  <div className="feature-card">
-                    <div className="card-icon">🔮</div>
-                    <h3 className="card-title">Brand Identity</h3>
-                    <p className="card-text">
-                      Comprehensive design systems, logos, and digital guidelines that build trust.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </section>
 
             {/* Our Works Section */}
             <section className="section" id="works">
