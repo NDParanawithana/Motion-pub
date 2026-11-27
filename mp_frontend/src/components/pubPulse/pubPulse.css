@@ -1,0 +1,300 @@
+/* ==========================================================================
+   PubPulse Reusable Action Button Component (Motion Pub Dark Neon-Lime)
+   ========================================================================== */
+
+.mp-pubpulse-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 0.68rem 0.85rem 0.68rem 0.72rem;
+  border-radius: 9999px;
+  isolation: isolate;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.065) 0%,
+    rgba(20, 24, 18, 0.8) 100%
+  );
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(165, 247, 0, 0.36);
+  color: #ffffff;
+  text-decoration: none;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 12px 30px rgba(0, 0, 0, 0.45),
+    0 0 22px rgba(148, 224, 0, 0.12);
+  animation: mpPubPulseGlow 3.2s ease-in-out infinite;
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* Shimmer Light Sweep Across Capsule */
+.mp-pubpulse-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    110deg,
+    transparent 20%,
+    rgba(192, 255, 126, 0.16) 46%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(165, 247, 0, 0.14) 54%,
+    transparent 80%
+  );
+  background-size: 260% 100%;
+  background-position: 140% 0;
+  animation: mpPubPulseShimmer 3.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Expanding Neon-Lime Pulse Halo Around Whole Button */
+.mp-pubpulse-btn::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  border: 1.5px solid rgba(165, 247, 0, 0.58);
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+  animation: mpPubPulseHalo 3.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+@keyframes mpPubPulseGlow {
+  0%, 100% {
+    transform: translateY(0);
+    border-color: rgba(165, 247, 0, 0.34);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      0 12px 30px rgba(0, 0, 0, 0.45),
+      0 0 18px rgba(148, 224, 0, 0.12);
+  }
+  50% {
+    transform: translateY(-2px);
+    border-color: rgba(165, 247, 0, 0.62);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      0 15px 36px rgba(0, 0, 0, 0.52),
+      0 0 30px rgba(165, 247, 0, 0.26);
+  }
+}
+
+@keyframes mpPubPulseShimmer {
+  0%, 42% {
+    background-position: 140% 0;
+  }
+  78%, 100% {
+    background-position: -120% 0;
+  }
+}
+
+@keyframes mpPubPulseHalo {
+  0% {
+    transform: scale(1, 1);
+    opacity: 0.65;
+  }
+  55% {
+    transform: scale(1.06, 1.24);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.06, 1.24);
+    opacity: 0;
+  }
+}
+
+.mp-pubpulse-btn:hover {
+  animation-play-state: paused;
+  transform: translateY(-3px) scale(1.02);
+  border-color: rgba(165, 247, 0, 0.78);
+  background: linear-gradient(
+    135deg,
+    rgba(165, 247, 0, 0.16) 0%,
+    rgba(22, 27, 19, 0.9) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    0 18px 40px rgba(0, 0, 0, 0.58),
+    0 0 36px rgba(165, 247, 0, 0.3);
+}
+
+.mp-pubpulse-btn:hover::after {
+  animation-play-state: paused;
+  opacity: 0;
+}
+
+.mp-pubpulse-btn:active {
+  transform: translateY(-1px);
+}
+
+.mp-pubpulse-btn:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(165, 247, 0, 0.35),
+    0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* Left PubPulse Icon Medallion with Subtle Breathing Halo */
+.mp-pubpulse-icon-wrap {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mp-pubpulse-pulse-ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(165, 247, 0, 0.55);
+  opacity: 0;
+  animation: mpPubPulseBreath 2.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes mpPubPulseBreath {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(1.22);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.22);
+    opacity: 0;
+  }
+}
+
+.mp-pubpulse-icon-img {
+  position: relative;
+  z-index: 1;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  border: 1.5px solid rgba(165, 247, 0, 0.48);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.mp-pubpulse-btn:hover .mp-pubpulse-icon-img {
+  transform: scale(1.05);
+  border-color: #a5f700;
+}
+
+/* Text Stack */
+.mp-pubpulse-text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 0.16rem;
+  padding-right: 0.55rem;
+}
+
+.mp-pubpulse-label {
+  font-size: 1.12rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  line-height: 1.15;
+}
+
+.mp-pubpulse-sublabel {
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: #a8b5a2;
+  line-height: 1.25;
+  transition: color 0.22s ease;
+}
+
+.mp-pubpulse-btn:hover .mp-pubpulse-sublabel {
+  color: #d4ffa0;
+}
+
+/* Right Arrow Circle */
+.mp-pubpulse-arrow {
+  position: relative;
+  z-index: 1;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(165, 247, 0, 0.14);
+  border: 1px solid rgba(165, 247, 0, 0.34);
+  color: #b7ff3c;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition:
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease,
+    transform 0.22s ease;
+}
+
+.mp-pubpulse-arrow svg {
+  animation: mpPubPulseArrowNudge 3.2s ease-in-out infinite;
+}
+
+@keyframes mpPubPulseArrowNudge {
+  0%, 60%, 100% {
+    transform: translate(0, 0);
+  }
+  75% {
+    transform: translate(2.5px, -2.5px);
+  }
+  88% {
+    transform: translate(0, 0);
+  }
+}
+
+.mp-pubpulse-btn:hover .mp-pubpulse-arrow {
+  background: #a5f700;
+  border-color: #a5f700;
+  color: #0b1100;
+  transform: translate(1px, -1px);
+}
+
+.mp-pubpulse-btn:hover .mp-pubpulse-arrow svg {
+  animation: none;
+  transform: translate(1px, -1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mp-pubpulse-btn,
+  .mp-pubpulse-btn::before,
+  .mp-pubpulse-btn::after,
+  .mp-pubpulse-pulse-ring,
+  .mp-pubpulse-arrow svg {
+    animation: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .mp-pubpulse-btn {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .mp-pubpulse-text {
+    flex: 1;
+  }
+}

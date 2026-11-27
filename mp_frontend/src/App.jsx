@@ -4,6 +4,7 @@ import Hero from './components/hero/hero'
 import About from './pages/about/about'
 import Team from './pages/team/team'
 import MpServices from './pages/mp_services/mpServices'
+import PubPulsePage from './pages/pubPulsePage/pubPulsePage'
 import MpTestimonials from './pages/mp_testimonials/mpTestimonials'
 import Contact from './pages/contact/contact'
 import MongoStatus from './components/MongoStatus/MongoStatus'
@@ -18,6 +19,7 @@ function App() {
     if (hash === '#about') return 'about';
     if (hash === '#team') return 'team';
     if (hash === '#services') return 'services';
+    if (hash === '#pubpulse') return 'pubpulse';
     if (hash === '#testimonials') return 'testimonials';
     if (hash === '#contact') return 'contact';
     return 'site';
@@ -45,6 +47,9 @@ function App() {
       } else if (hash === '#services') {
         setCurrentView('services');
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      } else if (hash === '#pubpulse') {
+        setCurrentView('pubpulse');
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       } else if (hash === '#testimonials') {
         setCurrentView('testimonials');
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
@@ -61,6 +66,7 @@ function App() {
       window.location.hash === '#about' ||
       window.location.hash === '#team' ||
       window.location.hash === '#services' ||
+      window.location.hash === '#pubpulse' ||
       window.location.hash === '#testimonials' ||
       window.location.hash === '#contact'
     ) {
@@ -97,6 +103,8 @@ function App() {
       document.title = 'Our Team | Motion Pub';
     } else if (currentView === 'services') {
       document.title = 'Services & Focus | Motion Pub';
+    } else if (currentView === 'pubpulse') {
+      document.title = 'PubPulse | Motion Pub';
     } else if (currentView === 'testimonials') {
       document.title = 'Testimonials | Motion Pub';
     } else if (currentView === 'contact') {
@@ -188,6 +196,9 @@ function App() {
         ) : currentView === 'services' ? (
           /* Standalone Services Page */
           <MpServices />
+        ) : currentView === 'pubpulse' ? (
+          /* Standalone PubPulse Page */
+          <PubPulsePage />
         ) : currentView === 'testimonials' ? (
           /* Standalone Testimonials Page */
           <MpTestimonials />

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import PageHeader from '../../components/pageHeader/pageHeader'
+import PubPulse from '../../components/pubPulse/pubPulse'
 import animatedVideoImg from '../../assets/services/animated-video-production.jpg'
 import postProductionImg from '../../assets/services/post-production-editing.jpg'
 import brandStorytellingImg from '../../assets/services/brand-storytelling.jpg'
@@ -205,6 +206,11 @@ export default function MpServices() {
               </div>
             </article>
           ))}
+        </div>
+
+        {/* PubPulse Action Button Below Services Container */}
+        <div className="mp-services-pubpulse-wrap">
+          <PubPulse />
         </div>
       </div>
     </section>

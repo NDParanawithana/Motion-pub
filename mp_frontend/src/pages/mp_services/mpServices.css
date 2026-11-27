@@ -296,6 +296,14 @@
   transform: translate(1.5px, -1.5px);
 }
 
+/* PubPulse Button Wrapper Below Services Grid */
+.mp-services-pubpulse-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(1.85rem, 3.6vh, 2.75rem);
+  animation: mpServicesSlideUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.32s both;
+}
+
 @keyframes mpServicesFadeIn {
   from {
     opacity: 0;

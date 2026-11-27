@@ -47,7 +47,7 @@ export default function Navbar() {
         setActiveLink('Team')
         return
       }
-      if (hash === '#services') {
+      if (hash === '#services' || hash === '#pubpulse') {
         setActiveLink('Services')
         return
       }
@@ -122,7 +122,7 @@ export default function Navbar() {
         setActiveLink('About')
       } else if (hash === '#team') {
         setActiveLink('Team')
-      } else if (hash === '#services') {
+      } else if (hash === '#services' || hash === '#pubpulse') {
         setActiveLink('Services')
       } else if (hash === '#testimonials') {
         setActiveLink('Testimonials')
