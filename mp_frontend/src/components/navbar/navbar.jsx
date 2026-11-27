@@ -51,6 +51,10 @@ export default function Navbar() {
         setActiveLink('Services')
         return
       }
+      if (hash === '#testimonials') {
+        setActiveLink('Testimonials')
+        return
+      }
       if (hash === '#contact') {
         setActiveLink('Contact Us')
         return
@@ -120,6 +124,8 @@ export default function Navbar() {
         setActiveLink('Team')
       } else if (hash === '#services') {
         setActiveLink('Services')
+      } else if (hash === '#testimonials') {
+        setActiveLink('Testimonials')
       } else if (hash === '#contact') {
         setActiveLink('Contact Us')
       } else {

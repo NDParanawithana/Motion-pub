@@ -4,6 +4,7 @@ import Hero from './components/hero/hero'
 import About from './pages/about/about'
 import Team from './pages/team/team'
 import MpServices from './pages/mp_services/mpServices'
+import MpTestimonials from './pages/mp_testimonials/mpTestimonials'
 import Contact from './pages/contact/contact'
 import MongoStatus from './components/MongoStatus/MongoStatus'
 import AdminLogin from './admin/adminlogin/adminLogin'
@@ -17,6 +18,7 @@ function App() {
     if (hash === '#about') return 'about';
     if (hash === '#team') return 'team';
     if (hash === '#services') return 'services';
+    if (hash === '#testimonials') return 'testimonials';
     if (hash === '#contact') return 'contact';
     return 'site';
   });
@@ -43,6 +45,9 @@ function App() {
       } else if (hash === '#services') {
         setCurrentView('services');
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      } else if (hash === '#testimonials') {
+        setCurrentView('testimonials');
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       } else if (hash === '#contact') {
         setCurrentView('contact');
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
@@ -56,6 +61,7 @@ function App() {
       window.location.hash === '#about' ||
       window.location.hash === '#team' ||
       window.location.hash === '#services' ||
+      window.location.hash === '#testimonials' ||
       window.location.hash === '#contact'
     ) {
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
@@ -91,6 +97,8 @@ function App() {
       document.title = 'Our Team | Motion Pub';
     } else if (currentView === 'services') {
       document.title = 'Services & Focus | Motion Pub';
+    } else if (currentView === 'testimonials') {
+      document.title = 'Testimonials | Motion Pub';
     } else if (currentView === 'contact') {
       document.title = 'Contact Us | Motion Pub';
     } else {
@@ -180,6 +188,9 @@ function App() {
         ) : currentView === 'services' ? (
           /* Standalone Services Page */
           <MpServices />
+        ) : currentView === 'testimonials' ? (
+          /* Standalone Testimonials Page */
+          <MpTestimonials />
         ) : currentView === 'contact' ? (
           /* Standalone Contact Page (Fits screen) */
           <Contact />
@@ -220,45 +231,6 @@ function App() {
                     <p className="card-text">
                       Global digital platform revamp delivering a 40% increase in brand recall.
                     </p>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Testimonials Section */}
-            <section className="section" id="testimonials">
-              <div className="container">
-                <div className="section-header">
-                  <span className="section-tag">Testimonials</span>
-                  <h2 className="section-title">Client Perspectives</h2>
-                  <p className="section-description">
-                    Hear directly from the teams and founders we’ve partnered with.
-                  </p>
-                </div>
-                <div className="testimonials-grid">
-                  <div className="testimonial-card">
-                    <p className="quote">
-                      &ldquo;The Motion Pub team took our brand vision and turned it into an unforgettable digital reality. Their attention to motion detail is unmatched.&rdquo;
-                    </p>
-                    <div className="author-info">
-                      <div className="author-avatar">A</div>
-                      <div>
-                        <div className="author-name">Alex Rivera</div>
-                        <div className="author-role">Founder, Pulse Technologies</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="testimonial-card">
-                    <p className="quote">
-                      &ldquo;Super smooth communication, impeccable turnaround time, and world-class design delivery. Our conversion rates shot up immediately.&rdquo;
-                    </p>
-                    <div className="author-info">
-                      <div className="author-avatar">S</div>
-                      <div>
-                        <div className="author-name">Sarah Jenkins</div>
-                        <div className="author-role">Head of Product, Nova Systems</div>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>

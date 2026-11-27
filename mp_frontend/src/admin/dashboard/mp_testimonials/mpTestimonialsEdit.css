@@ -1,0 +1,926 @@
+/* ==========================================================================
+   Testimonials Management Studio Styling (Motion Pub Admin Console)
+   ========================================================================== */
+@import '../dashboard.css';
+
+.mp-testi-edit-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Header */
+.mp-testi-edit-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.mp-testi-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.mp-testi-count-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.42rem 0.85rem;
+  border-radius: 9999px;
+  background: rgba(148, 224, 0, 0.1);
+  border: 1px solid rgba(148, 224, 0, 0.3);
+  color: #c0ff7e;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.mp-testi-count-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #a5f700;
+  box-shadow: 0 0 8px #a5f700;
+}
+
+.mp-btn-add-testi {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1.2rem;
+  border-radius: 9px;
+  border: none;
+  background: #a5f700;
+  color: #0b1100;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(165, 247, 0, 0.28);
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mp-btn-add-testi:hover {
+  background: #b7ff29;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(165, 247, 0, 0.4);
+}
+
+.mp-testi-roster-hint {
+  font-size: 0.76rem;
+  color: #9ca3af;
+}
+
+/* Roster Card with Internal Scroll */
+.mp-testi-roster-card {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mp-testi-roster-card .mp-card-header {
+  flex-shrink: 0;
+}
+
+.mp-testi-edit-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding-right: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(165, 247, 0, 0.28) transparent;
+}
+
+.mp-testi-edit-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mp-testi-edit-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 9999px;
+}
+
+.mp-testi-edit-list::-webkit-scrollbar-thumb {
+  background: rgba(165, 247, 0, 0.28);
+  border-radius: 9999px;
+}
+
+.mp-testi-edit-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(165, 247, 0, 0.48);
+}
+
+/* Row Item */
+.mp-testi-row-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.95rem 1.15rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.mp-testi-row-item:hover {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(165, 247, 0, 0.25);
+}
+
+.mp-testi-order-badge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6b7280;
+  min-width: 26px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.mp-testi-row-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.5px solid rgba(165, 247, 0, 0.4);
+  background: #1b2017;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mp-testi-row-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mp-testi-row-initials {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #c0ff7e;
+}
+
+.mp-testi-row-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.mp-testi-row-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.mp-testi-row-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.mp-testi-row-sep {
+  color: #4b5563;
+}
+
+.mp-testi-row-tagline {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.mp-testi-row-quote {
+  margin: 0;
+  font-size: 0.83rem;
+  line-height: 1.48;
+  color: #cbd5c7;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mp-testi-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-shrink: 0;
+}
+
+.mp-testi-icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.03);
+  color: #9ca3af;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.18s ease;
+}
+
+.mp-testi-icon-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.mp-testi-icon-btn:disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+
+.mp-testi-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 34px;
+  padding: 0 0.85rem;
+  border-radius: 8px;
+  border: 1px solid rgba(165, 247, 0, 0.32);
+  background: rgba(165, 247, 0, 0.1);
+  color: #c0ff7e;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.mp-testi-edit-btn:hover {
+  background: rgba(165, 247, 0, 0.2);
+  border-color: rgba(165, 247, 0, 0.55);
+  color: #ffffff;
+}
+
+.mp-testi-delete-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(239, 68, 68, 0.22);
+  background: rgba(239, 68, 68, 0.08);
+  color: #fca5a5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.mp-testi-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.48);
+  color: #ffffff;
+}
+
+/* Empty / Loading State */
+.mp-testi-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.mp-testi-empty-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.mp-testi-empty-desc {
+  margin: 0 0 0.4rem;
+  font-size: 0.84rem;
+  color: #9ca3af;
+}
+
+.mp-testi-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid rgba(165, 247, 0, 0.22);
+  border-top-color: #a5f700;
+  border-radius: 50%;
+  animation: mpTestiAdminSpin 0.75s linear infinite;
+}
+
+.mp-testi-spinner.sm {
+  width: 18px;
+  height: 18px;
+  border-width: 2px;
+}
+
+@keyframes mpTestiAdminSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   Full-Screen Portaled Add / Edit Studio Modal
+   ========================================================================== */
+
+.mp-testi-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #0d100c;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: mpTestiAdminFade 0.2s ease-out both;
+}
+
+@keyframes mpTestiAdminFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.mp-testi-modal-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.mp-testi-modal-topbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem clamp(1.25rem, 3.5vw, 2.75rem);
+  background: #121510;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mp-testi-modal-heading-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.mp-testi-modal-accent-bar {
+  width: 3px;
+  height: 34px;
+  border-radius: 9999px;
+  background: #a5f700;
+  box-shadow: 0 0 12px rgba(165, 247, 0, 0.55);
+  flex-shrink: 0;
+}
+
+.mp-testi-modal-heading-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.mp-testi-modal-kicker {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a5f700;
+}
+
+.mp-testi-modal-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.mp-testi-modal-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.mp-testi-modal-sep {
+  color: #4b5563;
+}
+
+.mp-testi-modal-subrole {
+  font-size: 0.84rem;
+  color: #9ca3af;
+}
+
+.mp-testi-modal-close-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #d1d5db;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.mp-testi-modal-close-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.24);
+  color: #ffffff;
+}
+
+.mp-testi-modal-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: clamp(1.5rem, 3vw, 2.5rem) clamp(1.25rem, 3.5vw, 2.75rem);
+  box-sizing: border-box;
+}
+
+.mp-testi-modal-grid {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.15fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  align-items: start;
+}
+
+/* Left Column: Live Client Card Preview */
+.mp-testi-preview-pane {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.75rem 1.5rem;
+  border-radius: 16px;
+  background: radial-gradient(
+      circle at 50% 25%,
+      rgba(148, 224, 0, 0.08) 0%,
+      transparent 65%
+    ),
+    #141414;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-sizing: border-box;
+}
+
+.mp-testi-preview-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a5f700;
+}
+
+.mp-testi-preview-stage {
+  width: 100%;
+  max-width: 420px;
+  padding-top: 1.1rem;
+}
+
+.mp-testi-preview-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.mp-testi-preview-bubble {
+  position: relative;
+  padding: 2.2rem 1.65rem calc(2.1rem + 13px);
+  min-height: 195px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.45));
+}
+
+.mp-testi-preview-bubble-glass {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.032) 100%
+  );
+}
+
+.mp-testi-preview-card.tone-emerald .mp-testi-preview-bubble-glass {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.068) 0%,
+    rgba(255, 255, 255, 0.026) 100%
+  );
+}
+
+.mp-testi-preview-card.tone-olive .mp-testi-preview-bubble-glass {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.058) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+}
+
+.mp-testi-preview-bubble-outline {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.mp-testi-preview-quote-badge {
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #94e000;
+  color: #0b1100;
+  border: 2px solid #141414;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+  z-index: 3;
+}
+
+.mp-testi-preview-quote-badge.open {
+  top: -19px;
+  left: 20px;
+}
+
+.mp-testi-preview-quote-badge.close {
+  bottom: -6px;
+  right: 20px;
+}
+
+.mp-testi-preview-quote-text {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.62;
+  color: #e6efe1;
+  word-break: break-word;
+}
+
+.mp-testi-preview-author {
+  display: flex;
+  align-items: center;
+  gap: 0.95rem;
+  margin-top: 1.05rem;
+  padding-left: 0.85rem;
+}
+
+.mp-testi-preview-avatar-ring {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  padding: 2.5px;
+  background: linear-gradient(135deg, rgba(165, 247, 0, 0.72) 0%, rgba(255, 255, 255, 0.14) 100%);
+  flex-shrink: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mp-testi-preview-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.mp-testi-preview-avatar-initials {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #1c2416;
+  color: #c0ff7e;
+  font-size: 1rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mp-testi-preview-author-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
+.mp-testi-preview-author-name {
+  font-size: 1rem;
+  font-weight: 750;
+  color: #ffffff;
+}
+
+.mp-testi-preview-author-tagline {
+  font-size: 0.82rem;
+  color: #9ca698;
+}
+
+.mp-testi-preview-hint {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #7c8578;
+  text-align: center;
+  max-width: 340px;
+}
+
+/* Right Column: Editor Form */
+.mp-testi-form-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.75rem;
+  border-radius: 16px;
+  background: #151813;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-sizing: border-box;
+}
+
+.mp-testi-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mp-testi-field label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #d1d5db;
+}
+
+.mp-testi-field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.mp-testi-char-count {
+  font-size: 0.76rem;
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
+}
+
+.mp-testi-remove-img-btn {
+  background: none;
+  border: none;
+  color: #f87171;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.mp-testi-remove-img-btn:hover {
+  text-decoration: underline;
+}
+
+.mp-testi-upload-zone {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.95rem 1.1rem;
+  border-radius: 11px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.025);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.mp-testi-upload-zone:hover,
+.mp-testi-upload-zone.is-dragging {
+  border-color: rgba(165, 247, 0, 0.55);
+  background: rgba(165, 247, 0, 0.05);
+}
+
+.mp-testi-upload-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(165, 247, 0, 0.12);
+  color: #a5f700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mp-testi-upload-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.mp-testi-upload-copy strong {
+  font-size: 0.88rem;
+  color: #ffffff;
+}
+
+.mp-testi-upload-copy span {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.mp-testi-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.mp-testi-input,
+.mp-testi-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.72rem 0.95rem;
+  border-radius: 9px;
+  background: rgba(9, 11, 9, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.mp-testi-textarea {
+  resize: vertical;
+  min-height: 112px;
+  line-height: 1.55;
+}
+
+.mp-testi-input:focus,
+.mp-testi-textarea:focus {
+  border-color: rgba(165, 247, 0, 0.65);
+  box-shadow: 0 0 0 3px rgba(165, 247, 0, 0.14);
+}
+
+/* Tone Picker */
+.mp-testi-tone-picker {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.mp-testi-tone-chip {
+  flex: 1;
+  min-width: 110px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.58rem 0.85rem;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.mp-testi-tone-chip:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+
+.mp-testi-tone-chip.active {
+  background: rgba(165, 247, 0, 0.12);
+  border-color: rgba(165, 247, 0, 0.5);
+  color: #d8ff8a;
+}
+
+.mp-testi-tone-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+}
+
+.mp-testi-tone-swatch.tone-lime {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.mp-testi-tone-swatch.tone-emerald {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.mp-testi-tone-swatch.tone-olive {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Form Submit / Cancel Row */
+.mp-testi-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 0.4rem;
+}
+
+.mp-testi-submit-btn {
+  flex: 1;
+  padding: 0.8rem 1.4rem;
+  border-radius: 10px;
+  border: none;
+  background: #a5f700;
+  color: #0b1100;
+  font-size: 0.92rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(165, 247, 0, 0.28);
+  transition: all 0.18s ease;
+}
+
+.mp-testi-submit-btn:hover:not(:disabled) {
+  background: #b8ff29;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(165, 247, 0, 0.4);
+}
+
+.mp-testi-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mp-testi-cancel-btn {
+  padding: 0.8rem 1.25rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #d1d5db;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.mp-testi-cancel-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.09);
+  color: #ffffff;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .mp-testi-modal-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .mp-testi-row-item {
+    flex-wrap: wrap;
+  }
+
+  .mp-testi-row-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .mp-testi-form-row {
+    grid-template-columns: 1fr;
+  }
+}

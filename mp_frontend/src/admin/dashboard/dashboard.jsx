@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import HeroEdit from './hero/heroedit';
 import AboutEdit from './about/aboutedit';
 import TeamEdit from './team/teamEdit';
+import MpTestimonialsEdit from './mp_testimonials/mpTestimonialsEdit';
 import ContactEdit from './contact/contactEdit';
 import MpCalenderAdmin from './contact/mpCalenderAdmin/mpCalenderAdmin';
 import AppointmentsDrawer from './appointments/appointmentsDrawer';
@@ -213,6 +214,23 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
                     <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                   </svg>
                   <span>Team Page</span>
+                </div>
+              </button>
+            </div>
+
+            {/* Testimonials Page Navigation Link */}
+            <div className="mp-nav-group">
+              <button
+                type="button"
+                className={`mp-nav-item ${activePage === 'testimonials' ? 'active' : ''}`}
+                onClick={() => setActivePage('testimonials')}
+                title="Manage Testimonials Page"
+              >
+                <div className="mp-nav-item-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                  <span>Testimonials Page</span>
                 </div>
               </button>
             </div>
@@ -458,6 +476,8 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
               <span className="current">About Page</span>
             ) : activePage === 'team' ? (
               <span className="current">Team Page</span>
+            ) : activePage === 'testimonials' ? (
+              <span className="current">Testimonials Page</span>
             ) : activePage === 'appointments' ? (
               <>
                 <span
@@ -568,6 +588,8 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
             <AboutEdit />
           ) : activePage === 'team' ? (
             <TeamEdit />
+          ) : activePage === 'testimonials' ? (
+            <MpTestimonialsEdit />
           ) : activePage === 'contact' ? (
             <ContactEdit
               onOpenMessages={() => setIsAppointmentsOpen(true)}

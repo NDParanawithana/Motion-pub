@@ -1,0 +1,673 @@
+/* ==========================================================================
+   Motion Pub - User Testimonials Page (Speech-Bubble Layout + Dark Neon-Lime)
+   ========================================================================== */
+
+.mp-testi-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 74px 0 clamp(3rem, 6vh, 4.75rem) 0;
+  background-color: var(--bg-color, #141414);
+  overflow-x: clip;
+  overflow-y: visible;
+  box-sizing: border-box;
+  scroll-margin-top: 80px;
+}
+
+/* Subtle Neon-Lime Ambient Glow */
+.mp-testi-bg-glow {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 820px;
+  height: 440px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(148, 224, 0, 0.1) 0%,
+    rgba(148, 224, 0, 0.03) 48%,
+    transparent 74%
+  );
+  filter: blur(115px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.mp-testi-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin: auto;
+  padding: clamp(0.75rem, 2vh, 1.5rem) clamp(1.25rem, 3.5vw, 3rem) 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Centered Two-Tone Section Header */
+.mp-testi-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.9rem;
+  margin-bottom: clamp(2.5rem, 5.5vh, 3.85rem);
+  animation: mpTestiFadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mp-testi-title {
+  margin: 0;
+  font-size: clamp(2.15rem, 4.2vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.mp-testi-title-accent {
+  background: linear-gradient(90deg, #d8ff3e 0%, #a5f700 48%, #78b700 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 22px rgba(165, 247, 0, 0.25));
+}
+
+.mp-testi-subtitle {
+  margin: 0;
+  max-width: 660px;
+  font-size: clamp(0.92rem, 1.25vw, 1.02rem);
+  line-height: 1.65;
+  color: #9ca698;
+}
+
+/* Clean 2-Card Unclipped Smooth Sliding Stage */
+.mp-testi-stage {
+  position: relative;
+  width: 100%;
+  max-width: 1040px;
+}
+
+.mp-testi-viewport {
+  width: 100%;
+  overflow: hidden;
+  padding: 1.65rem 0 0.75rem;
+}
+
+.mp-testi-slider-track {
+  display: flex;
+  width: 100%;
+  will-change: transform;
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mp-testi-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 0.25rem;
+  opacity: 0.35;
+  transform: scale(0.985);
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mp-testi-slide.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.mp-testi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.75rem, 3.2vw, 2.75rem);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Individual Testimonial Card (Speech Bubble + Author Profile) */
+.mp-testi-card {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  outline: none;
+}
+
+.mp-testi-card:focus-visible .mp-testi-bubble-outline {
+  color: #a5f700;
+}
+
+/* Unified Single-Piece Frosted Glass Speech Bubble (Card + Pointer as One Shape) */
+.mp-testi-bubble {
+  position: relative;
+  padding: 2.35rem 1.85rem calc(2.25rem + var(--bubble-tail-h, 13px));
+  min-height: calc(190px + var(--bubble-tail-h, 13px));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  filter: drop-shadow(0 18px 34px rgba(0, 0, 0, 0.45));
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), filter 0.28s ease;
+}
+
+.mp-testi-bubble-glass {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.075) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  transition: background 0.28s ease;
+}
+
+.mp-testi-bubble-outline {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  color: rgba(255, 255, 255, 0.14);
+  transition: color 0.28s ease;
+}
+
+.mp-testi-card:hover .mp-testi-bubble {
+  transform: translateY(-4px);
+  filter: drop-shadow(0 22px 42px rgba(0, 0, 0, 0.55));
+}
+
+.mp-testi-card:hover .mp-testi-bubble-glass {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+}
+
+.mp-testi-card:hover .mp-testi-bubble-outline {
+  color: rgba(165, 247, 0, 0.42);
+}
+
+/* Subtle Frosted Glass Tones Across Cards */
+.mp-testi-card.tone-lime .mp-testi-bubble-glass {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.032) 100%
+  );
+}
+
+.mp-testi-card.tone-emerald .mp-testi-bubble-glass {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.068) 0%,
+    rgba(255, 255, 255, 0.026) 100%
+  );
+}
+
+.mp-testi-card.tone-olive .mp-testi-bubble-glass {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.022) 100%
+  );
+}
+
+/* Floating Circular Quote Badges (Top-Left & Bottom-Right, matching reference) */
+.mp-testi-quote-badge {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #94E000;
+  color: #0b1100;
+  border: 2px solid #141414;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+  z-index: 3;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.mp-testi-quote-badge.open {
+  top: -20px;
+  left: 22px;
+}
+
+.mp-testi-quote-badge.close {
+  bottom: calc(var(--bubble-tail-h, 13px) - 20px);
+  right: 22px;
+}
+
+.mp-testi-card:hover .mp-testi-quote-badge {
+  transform: scale(1.06);
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.52),
+    0 0 22px rgba(165, 247, 0, 0.48);
+}
+
+.mp-testi-quote-text {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: #e6efe1;
+  font-weight: 450;
+}
+
+/* Author Profile Row Below Speech Bubble Tail */
+.mp-testi-author {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.1rem;
+  padding-left: 0.9rem;
+}
+
+.mp-testi-avatar-ring {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  padding: 2.5px;
+  background: linear-gradient(135deg, rgba(165, 247, 0, 0.72) 0%, rgba(255, 255, 255, 0.14) 100%);
+  flex-shrink: 0;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.mp-testi-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  background: #1b1f18;
+}
+
+.mp-testi-avatar-initials {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #1c2416;
+  color: #c0ff7e;
+  font-size: 1.15rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mp-testi-author-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.mp-testi-author-name {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 750;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.mp-testi-author-tagline {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #9ca698;
+  line-height: 1.35;
+}
+
+/* Bottom Controls Row (Pagination Dots + Prev/Next Arrows) */
+.mp-testi-controls {
+  width: 100%;
+  max-width: 1040px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: clamp(1.5rem, 3.2vh, 2.4rem);
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.mp-testi-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mp-testi-dot {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+  cursor: pointer;
+  transition: width 0.28s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.mp-testi-dot:hover {
+  background: rgba(165, 247, 0, 0.45);
+}
+
+.mp-testi-dot.active {
+  width: 34px;
+  background: rgba(165, 247, 0, 0.22);
+  box-shadow: 0 0 12px rgba(165, 247, 0, 0.28);
+}
+
+.mp-testi-dot-progress {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: #a5f700;
+  transform-origin: left center;
+  animation-name: mpTestiProgressFill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.mp-testi-dot-progress.is-paused {
+  animation-play-state: paused;
+}
+
+@keyframes mpTestiProgressFill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.mp-testi-nav-arrows {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.mp-testi-arrow-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #1c1f19;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.42);
+  transition:
+    transform 0.22s ease,
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    color 0.22s ease,
+    opacity 0.2s ease,
+    box-shadow 0.22s ease;
+}
+
+.mp-testi-arrow-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: #a5f700;
+  border-color: #a5f700;
+  color: #0b1100;
+  box-shadow: 0 8px 22px rgba(165, 247, 0, 0.36);
+}
+
+.mp-testi-arrow-btn:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+@keyframes mpTestiFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   Expanded Big-Screen Testimonial Spotlight Modal
+   ========================================================================== */
+
+.mp-testi-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.25rem, 4vw, 3rem);
+  background: rgba(8, 10, 7, 0.84);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-sizing: border-box;
+  animation: mpTestiOverlayIn 0.22s ease-out both;
+}
+
+.mp-testi-modal-panel {
+  position: relative;
+  width: min(860px, 100%);
+  padding: clamp(1.75rem, 3.5vw, 2.75rem) clamp(1.5rem, 3.5vw, 2.75rem) clamp(1.5rem, 3vw, 2.25rem);
+  border-radius: 24px;
+  background: linear-gradient(
+    145deg,
+    rgba(32, 34, 31, 0.62) 0%,
+    rgba(18, 20, 18, 0.72) 100%
+  );
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 32px 80px rgba(0, 0, 0, 0.72);
+  box-sizing: border-box;
+  animation: mpTestiModalPop 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mp-testi-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 5;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: #cbd5c7;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.mp-testi-modal-close:hover {
+  background: rgba(165, 247, 0, 0.18);
+  border-color: rgba(165, 247, 0, 0.55);
+  color: #ffffff;
+  transform: rotate(90deg);
+}
+
+.mp-testi-modal-content {
+  padding-top: 1.4rem;
+  animation: mpTestiOverlayIn 0.24s ease-out both;
+}
+
+.mp-testi-modal-quote-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(2.6rem, 5vw, 3.8rem) clamp(1.75rem, 4.5vw, 3.25rem);
+  min-height: clamp(220px, 32vh, 300px);
+  box-sizing: border-box;
+}
+
+.mp-testi-modal-quote-badge {
+  width: 54px;
+  height: 54px;
+}
+
+.mp-testi-modal-quote-badge.open {
+  top: 0;
+  left: 14px;
+}
+
+.mp-testi-modal-quote-badge.close {
+  bottom: 0;
+  right: 14px;
+}
+
+.mp-testi-modal-quote-text {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  font-size: clamp(1.12rem, 2.1vw, 1.55rem);
+  line-height: 1.65;
+  color: #f0f6ec;
+  font-weight: 450;
+}
+
+.mp-testi-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-top: 1.35rem;
+}
+
+.mp-testi-modal-author {
+  margin-top: 0;
+  padding-left: 1rem;
+  gap: 1.2rem;
+}
+
+.mp-testi-modal-avatar {
+  width: 84px;
+  height: 84px;
+}
+
+.mp-testi-modal-author-name {
+  margin: 0;
+  font-size: clamp(1.2rem, 1.8vw, 1.45rem);
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.015em;
+}
+
+.mp-testi-modal-author-tagline {
+  margin: 0.2rem 0 0;
+  font-size: 0.96rem;
+  color: #a9b5a3;
+}
+
+.mp-testi-modal-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-left: auto;
+}
+
+.mp-testi-modal-counter {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #a5f700;
+  font-variant-numeric: tabular-nums;
+  margin-right: 0.35rem;
+}
+
+@keyframes mpTestiOverlayIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mpTestiModalPop {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+  .mp-testi-grid {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  .mp-testi-bubble {
+    padding: 2.15rem 1.45rem calc(2.05rem + var(--bubble-tail-h, 13px));
+    min-height: calc(175px + var(--bubble-tail-h, 13px));
+  }
+
+  .mp-testi-avatar-ring {
+    width: 60px;
+    height: 60px;
+  }
+
+  .mp-testi-modal-quote-badge {
+    width: 44px;
+    height: 44px;
+  }
+
+  .mp-testi-modal-quote-badge.open {
+    top: 0;
+    left: 6px;
+  }
+
+  .mp-testi-modal-quote-badge.close {
+    bottom: 0;
+    right: 6px;
+  }
+
+  .mp-testi-modal-avatar {
+    width: 66px;
+    height: 66px;
+  }
+}
