@@ -124,7 +124,7 @@ export default function MpServices() {
       />
 
       <div className="mp-services-shell">
-        {/* Stacked Full-Width Horizontal Service Cards */}
+        {/* One-Row 3-Column Service Cards */}
         <div className="mp-services-stack">
           {SERVICES.map((service, cardIndex) => (
             <article
@@ -132,7 +132,18 @@ export default function MpServices() {
               className={`mp-service-row-card ${service.variant}`}
               style={{ animationDelay: `${0.08 + cardIndex * 0.1}s` }}
             >
-              {/* Left Column: Bold Title + Interactive What's Included Rows */}
+              {/* Top: Rounded Visual Frame */}
+              <div className="mp-service-row-media">
+                <img
+                  src={service.image}
+                  alt={service.imageAlt}
+                  className="mp-service-media-img"
+                  loading="lazy"
+                />
+                <div className="mp-service-media-scrim" aria-hidden="true" />
+              </div>
+
+              {/* Body: Bold Title + Interactive What's Included Accordion */}
               <div className="mp-service-row-left">
                 <h2 className="mp-service-row-title">
                   {service.title.split('\n').map((line, idx) => (
@@ -172,20 +183,13 @@ export default function MpServices() {
                 </div>
               </div>
 
-              {/* Right Column: Rounded Visual Frame + Floating Top-Right Pill */}
-              <div className="mp-service-row-media">
-                <img
-                  src={service.image}
-                  alt={service.imageAlt}
-                  className="mp-service-media-img"
-                  loading="lazy"
-                />
-                <div className="mp-service-media-scrim" aria-hidden="true" />
+              {/* Bottom Glassmorphism Action Button */}
+              <div className="mp-service-card-footer">
                 <a href="#contact" className="mp-service-floating-pill">
                   <span>{service.badge}</span>
                   <svg
-                    width="12"
-                    height="12"
+                    width="13"
+                    height="13"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"

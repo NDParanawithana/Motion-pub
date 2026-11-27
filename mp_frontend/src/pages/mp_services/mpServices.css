@@ -27,12 +27,10 @@
   width: 860px;
   height: 520px;
   border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(148, 224, 0, 0.1) 0%,
-    rgba(148, 224, 0, 0.03) 48%,
-    transparent 74%
-  );
+  background: radial-gradient(circle,
+      rgba(148, 224, 0, 0.1) 0%,
+      rgba(148, 224, 0, 0.03) 48%,
+      transparent 74%);
   filter: blur(115px);
   pointer-events: none;
   z-index: 0;
@@ -42,36 +40,33 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 0 clamp(1rem, 3.2vw, 2.5rem);
+  max-width: 1320px;
+  margin: auto;
+  padding: clamp(0.75rem, 2vh, 1.5rem) clamp(1.25rem, 3vw, 2.5rem) 0;
   box-sizing: border-box;
 }
 
-/* Stacked Cards Container */
+/* One-Row 3-Column Grid */
 .mp-services-stack {
   position: relative;
   z-index: 2;
-  margin-top: clamp(1rem, 2.2vh, 1.85rem);
-  padding: 0 clamp(0.4rem, 2.4vw, 2.1rem);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.1rem, 1.8vw, 1.55rem);
+  align-items: stretch;
+}
+
+/* Individual Vertical Editorial Card */
+.mp-service-row-card {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-}
-
-/* Individual Horizontal Editorial Card */
-.mp-service-row-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  gap: clamp(1.35rem, 3vw, 2.5rem);
-  align-items: stretch;
-  padding: clamp(1.4rem, 2.6vw, 2.15rem) clamp(1.4rem, 2.8vw, 2.35rem);
-  border-radius: 24px;
+  padding: clamp(1.15rem, 1.7vw, 1.45rem);
+  border-radius: 22px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow:
-    inset 0 1px 0 rgba(216, 255, 140, 0.16),
-    0 -14px 36px rgba(0, 0, 0, 0.55),
-    0 20px 48px rgba(0, 0, 0, 0.52);
+    inset 0 1px 0 rgba(216, 255, 140, 0.14),
+    0 18px 42px rgba(0, 0, 0, 0.48);
   transition:
     transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
     border-color 0.28s ease,
@@ -103,23 +98,24 @@
   border-color: rgba(148, 224, 0, 0.24);
 }
 
-/* Left Column: Big Condensed Title + Divider List */
+/* Card Body: Big Condensed Title + Divider Accordion */
 .mp-service-row-left {
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1.2rem;
   min-width: 0;
-  padding: 0.25rem 0;
+  padding: 0.15rem 0.2rem 0.2rem;
 }
 
 .mp-service-row-title {
   margin: 0;
   display: flex;
   flex-direction: column;
-  font-size: clamp(1.9rem, 3.2vw, 2.75rem);
+  font-size: clamp(1.55rem, 2.15vw, 2.05rem);
   font-weight: 700;
-  line-height: 1.02;
+  line-height: 1.04;
   letter-spacing: 0.015em;
   text-transform: uppercase;
   color: #ffffff;
@@ -206,17 +202,17 @@
   animation: mpServicesFadeIn 0.2s ease-out;
 }
 
-/* Right Column: Rounded Image Frame + Floating Pill Badge */
+/* Top Visual Frame + Floating Glassmorphism Pill */
 .mp-service-row-media {
   position: relative;
   width: 100%;
-  min-height: 245px;
   aspect-ratio: 16 / 10;
-  border-radius: 18px;
+  border-radius: 15px;
   overflow: hidden;
   background: #0e100d;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  flex-shrink: 0;
 }
 
 .mp-service-media-img {
@@ -234,39 +230,43 @@
 .mp-service-media-scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(10, 12, 9, 0.38) 0%,
-    rgba(10, 12, 9, 0.06) 45%,
-    rgba(10, 12, 9, 0.28) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(10, 12, 9, 0.38) 0%,
+      rgba(10, 12, 9, 0.06) 45%,
+      rgba(10, 12, 9, 0.28) 100%);
   pointer-events: none;
 }
 
-/* Floating Glassmorphism Pill Badge (Top-Right inside Image) */
+/* Card Bottom CTA Row + Glassmorphism Pill Button */
+.mp-service-card-footer {
+  margin-top: auto;
+  padding-top: 0.25rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
 .mp-service-floating-pill {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 3;
+  width: 100%;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.44rem 0.95rem;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.68rem 1.1rem;
   border-radius: 9999px;
-  background: rgba(16, 20, 14, 0.48);
+  background: rgba(255, 255, 255, 0.055);
   backdrop-filter: blur(14px) saturate(160%);
   -webkit-backdrop-filter: blur(14px) saturate(160%);
-  border: 1px solid rgba(192, 255, 126, 0.34);
+  border: 1px solid rgba(192, 255, 126, 0.3);
   color: #e8ffce;
-  font-size: 0.7rem;
+  font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-decoration: none;
+  box-sizing: border-box;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    0 8px 22px rgba(0, 0, 0, 0.42);
+  inset 0 1px 0 rgba(255, 255, 255, 0.2),
+  0 8px 20px rgba(0, 0, 0, 0.35);
   transition:
     transform 0.22s ease,
     background-color 0.22s ease,
@@ -300,6 +300,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -310,6 +311,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -317,20 +319,30 @@
 }
 
 /* Responsive Breakpoints */
-@media (max-width: 860px) {
+@media (max-width: 1040px) {
   .mp-services-stack {
-    margin-top: 1.15rem;
-    padding: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mp-service-row-card:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 700px) {
+  .mp-services-stack {
+    grid-template-columns: 1fr;
+  }
+
+  .mp-service-row-card:last-child {
+    grid-column: auto;
   }
 
   .mp-service-row-card {
-    grid-template-columns: 1fr;
-    gap: 1.35rem;
     border-radius: 20px;
   }
 
   .mp-service-row-media {
-    min-height: 210px;
     aspect-ratio: 16 / 9;
   }
 }
@@ -341,13 +353,11 @@
   }
 
   .mp-service-row-card {
-    padding: 1.25rem;
+    padding: 1.15rem;
   }
 
   .mp-service-floating-pill {
-    top: 10px;
-    right: 10px;
-    padding: 0.35rem 0.75rem;
-    font-size: 0.65rem;
+    padding: 0.6rem 0.95rem;
+    font-size: 0.7rem;
   }
 }
