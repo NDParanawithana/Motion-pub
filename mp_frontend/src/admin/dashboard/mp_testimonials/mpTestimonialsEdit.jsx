@@ -1,6 +1,7 @@
 import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import ConfirmMessage from '../../../components/confirmMessage/confirmMessage';
+import AvatarCropper from '../../../components/avatarCropper/avatarCropper';
 import './mpTestimonialsEdit.css';
 
 const EMPTY_FORM = {
@@ -190,6 +191,8 @@ export default function MpTestimonialsEdit() {
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [uploadThumbBroken, setUploadThumbBroken] = useState(false);
+  const [cropSource, setCropSource] = useState(null); // { src, fileName, isObjectUrl }
   const [deletingTarget, setDeletingTarget] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [reorderingId, setReorderingId] = useState(null);
@@ -204,6 +207,10 @@ export default function MpTestimonialsEdit() {
     setAlert({ type, message });
     alertTimerRef.current = setTimeout(() => setAlert(null), 4500);
   }, []);
+
+  useEffect(() => {
+    setUploadThumbBroken(false);
+  }, [form.avatar]);
 
   useEffect(() => {
     return () => {
@@ -232,14 +239,24 @@ export default function MpTestimonialsEdit() {
     fetchTestimonials();
   }, [fetchTestimonials]);
 
+  const closeCropper = useCallback(() => {
+    setCropSource((prev) => {
+      if (prev?.isObjectUrl && prev.src) {
+        URL.revokeObjectURL(prev.src);
+      }
+      return null;
+    });
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  }, []);
+
   const closeModal = useCallback(() => {
-    if (isSaving || isUploading) return;
+    if (isSaving || isUploading || cropSource) return;
     setIsModalOpen(false);
     setEditingId(null);
     setForm(EMPTY_FORM);
     setIsDragging(false);
     if (fileInputRef.current) fileInputRef.current.value = '';
-  }, [isSaving, isUploading]);
+  }, [isSaving, isUploading, cropSource]);
 
   // Close editor modal on Escape and lock body scroll while open
   useEffect(() => {
@@ -288,7 +305,7 @@ export default function MpTestimonialsEdit() {
     }));
   };
 
-  const handleImageFile = async (file) => {
+  const handleImageFile = (file) => {
     if (!file) return;
     if (!file.type?.startsWith('image/')) {
       showAlert('error', 'Please select a valid image file (JPG, PNG, WebP, or AVIF).');
@@ -299,10 +316,28 @@ export default function MpTestimonialsEdit() {
       return;
     }
 
+    const objectUrl = URL.createObjectURL(file);
+    setCropSource((prev) => {
+      if (prev?.isObjectUrl && prev.src) URL.revokeObjectURL(prev.src);
+      return { src: objectUrl, fileName: file.name, isObjectUrl: true };
+    });
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleOpenCropExisting = () => {
+    if (!form.avatar) return;
+    setCropSource({
+      src: form.avatar,
+      fileName: `${(form.name || 'avatar').toLowerCase().replace(/\s+/g, '-')}.jpg`,
+      isObjectUrl: false,
+    });
+  };
+
+  const uploadCroppedAvatar = async (croppedFile) => {
     setIsUploading(true);
     try {
       const fd = new FormData();
-      fd.append('image', file);
+      fd.append('image', croppedFile);
 
       const res = await fetch('/api/content/testimonials/upload-image', {
         method: 'POST',
@@ -319,13 +354,13 @@ export default function MpTestimonialsEdit() {
         avatar: data.imageUrl,
         avatarPublicId: data.imagePublicId || null,
       }));
-      showAlert('success', 'Client avatar uploaded!');
+      closeCropper();
+      showAlert('success', 'Cropped client avatar uploaded!');
     } catch (err) {
       console.error('Avatar upload error:', err);
       showAlert('error', err.message || 'Failed to upload client avatar.');
     } finally {
       setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -684,19 +719,28 @@ export default function MpTestimonialsEdit() {
                       <div className="mp-testi-field-label-row">
                         <label>Client Portrait / Avatar</label>
                         {form.avatar && (
-                          <button
-                            type="button"
-                            className="mp-testi-remove-img-btn"
-                            onClick={() =>
-                              setForm((prev) => ({
-                                ...prev,
-                                avatar: '',
-                                avatarPublicId: null,
-                              }))
-                            }
-                          >
-                            Remove Image
-                          </button>
+                          <div className="mp-testi-img-label-actions">
+                            <button
+                              type="button"
+                              className="mp-testi-crop-img-btn"
+                              onClick={handleOpenCropExisting}
+                            >
+                              Crop / Resize
+                            </button>
+                            <button
+                              type="button"
+                              className="mp-testi-remove-img-btn"
+                              onClick={() =>
+                                setForm((prev) => ({
+                                  ...prev,
+                                  avatar: '',
+                                  avatarPublicId: null,
+                                }))
+                              }
+                            >
+                              Remove Image
+                            </button>
+                          </div>
                         )}
                       </div>
 
@@ -717,17 +761,34 @@ export default function MpTestimonialsEdit() {
                           style={{ display: 'none' }}
                           onChange={(e) => handleImageFile(e.target.files?.[0])}
                         />
-                        <div className="mp-testi-upload-icon">
-                          {isUploading ? (
-                            <span className="mp-testi-spinner sm" />
-                          ) : (
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                              <polyline points="17 8 12 3 7 8" />
-                              <line x1="12" y1="3" x2="12" y2="15" />
-                            </svg>
-                          )}
-                        </div>
+                        {form.avatar && !uploadThumbBroken && !isUploading ? (
+                          <div className="mp-testi-upload-thumb">
+                            <img
+                              src={form.avatar}
+                              alt={form.name || 'Client avatar preview'}
+                              onError={() => setUploadThumbBroken(true)}
+                            />
+                            <span className="mp-testi-upload-thumb-badge" aria-hidden="true">
+                              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="17 8 12 3 7 8" />
+                                <line x1="12" y1="3" x2="12" y2="15" />
+                              </svg>
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="mp-testi-upload-icon">
+                            {isUploading ? (
+                              <span className="mp-testi-spinner sm" />
+                            ) : (
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="17 8 12 3 7 8" />
+                                <line x1="12" y1="3" x2="12" y2="15" />
+                              </svg>
+                            )}
+                          </div>
+                        )}
                         <div className="mp-testi-upload-copy">
                           <strong>
                             {isUploading
@@ -844,6 +905,16 @@ export default function MpTestimonialsEdit() {
           </div>,
           document.body
         )}
+
+      {/* Circular Avatar Crop & Resize Modal */}
+      <AvatarCropper
+        isOpen={Boolean(cropSource)}
+        imageSrc={cropSource?.src || ''}
+        fileName={cropSource?.fileName || 'avatar.jpg'}
+        isUploading={isUploading}
+        onConfirm={uploadCroppedAvatar}
+        onCancel={closeCropper}
+      />
 
       {/* Reusable Delete Confirmation Modal */}
       <ConfirmMessage

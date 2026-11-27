@@ -1,0 +1,375 @@
+/* ==========================================================================
+   Reusable Circular Avatar Cropper & Resizer Modal (Motion Pub Theme)
+   ========================================================================== */
+
+.mp-cropper-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(8, 10, 8, 0.84);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-sizing: border-box;
+  animation: mpCropperFade 0.2s ease-out both;
+}
+
+@keyframes mpCropperFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.mp-cropper-dialog {
+  width: min(460px, 100%);
+  border-radius: 18px;
+  background: #141712;
+  border: 1px solid rgba(165, 247, 0, 0.24);
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.72),
+    0 0 40px rgba(148, 224, 0, 0.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: mpCropperPop 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes mpCropperPop {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.mp-cropper-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.05rem 1.3rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.mp-cropper-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+.mp-cropper-kicker {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a5f700;
+}
+
+.mp-cropper-title {
+  margin: 0;
+  font-size: 1.04rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.mp-cropper-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #9ca3af;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.mp-cropper-close:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+/* Interactive Circular Stage */
+.mp-cropper-stage {
+  position: relative;
+  width: 100%;
+  height: 336px;
+  background: #0c0e0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.mp-cropper-stage.is-dragging {
+  cursor: grabbing;
+}
+
+.mp-cropper-viewport {
+  position: relative;
+  pointer-events: none;
+}
+
+.mp-cropper-source-img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  max-width: none;
+  max-height: none;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+
+/* Circular Cutout Mask + Rim */
+.mp-cropper-circle-mask {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 2px solid rgba(165, 247, 0, 0.85);
+  box-shadow:
+    0 0 0 9999px rgba(8, 10, 8, 0.72),
+    0 0 22px rgba(165, 247, 0, 0.25);
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.mp-cropper-guide-h,
+.mp-cropper-guide-v {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.22);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.mp-cropper-guide-h {
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+}
+
+.mp-cropper-guide-v {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+}
+
+.mp-cropper-stage.is-dragging .mp-cropper-guide-h,
+.mp-cropper-stage.is-dragging .mp-cropper-guide-v {
+  opacity: 1;
+}
+
+.mp-cropper-drag-hint {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  padding: 0.24rem 0.72rem;
+  border-radius: 9999px;
+  background: rgba(12, 15, 11, 0.76);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #b7c2b2;
+  font-size: 0.71rem;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.mp-cropper-error {
+  margin: 0.85rem 1.25rem 0;
+  padding: 0.65rem 0.85rem;
+  border-radius: 9px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+/* Zoom Slider Controls */
+.mp-cropper-controls {
+  padding: 1rem 1.3rem 0.65rem;
+}
+
+.mp-cropper-zoom-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.mp-cropper-step-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #e5e7eb;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.mp-cropper-step-btn:hover:not(:disabled) {
+  background: rgba(165, 247, 0, 0.15);
+  border-color: rgba(165, 247, 0, 0.45);
+  color: #c0ff7e;
+}
+
+.mp-cropper-step-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.mp-cropper-slider {
+  flex: 1;
+  height: 5px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+}
+
+.mp-cropper-slider::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #a5f700;
+  border: 2px solid #141712;
+  box-shadow: 0 0 10px rgba(165, 247, 0, 0.55);
+  cursor: pointer;
+}
+
+.mp-cropper-slider::-moz-range-thumb {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #a5f700;
+  border: 2px solid #141712;
+  box-shadow: 0 0 10px rgba(165, 247, 0, 0.55);
+  cursor: pointer;
+}
+
+.mp-cropper-zoom-val {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #c0ff7e;
+  min-width: 38px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.mp-cropper-reset-btn {
+  padding: 0.34rem 0.65rem;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: #9ca3af;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mp-cropper-reset-btn:hover:not(:disabled) {
+  border-color: rgba(165, 247, 0, 0.4);
+  color: #ffffff;
+}
+
+.mp-cropper-reset-btn:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+/* Footer */
+.mp-cropper-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 0.9rem 1.3rem 1.2rem;
+}
+
+.mp-cropper-cancel-btn {
+  padding: 0.65rem 1.1rem;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #d1d5db;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.mp-cropper-cancel-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.09);
+  color: #ffffff;
+}
+
+.mp-cropper-apply-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.68rem 1.25rem;
+  border-radius: 9px;
+  border: none;
+  background: #a5f700;
+  color: #0b1100;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(165, 247, 0, 0.28);
+  transition: all 0.18s ease;
+}
+
+.mp-cropper-apply-btn:hover:not(:disabled) {
+  background: #b8ff29;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(165, 247, 0, 0.42);
+}
+
+.mp-cropper-apply-btn:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.mp-cropper-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(11, 17, 0, 0.28);
+  border-top-color: #0b1100;
+  border-radius: 50%;
+  animation: mpCropSpin 0.7s linear infinite;
+}
+
+@keyframes mpCropSpin {
+  to { transform: rotate(360deg); }
+}
