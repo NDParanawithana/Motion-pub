@@ -1,0 +1,434 @@
+/* ==========================================================================
+   Motion Pub - Partners Showcase Page
+   Clean 5-Column Monochrome Logo Wall (Dark Neon-Lime Studio Theme)
+   ========================================================================== */
+
+.mp-partners-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: var(--mp-page-top-offset, 74px) 0 clamp(3.5rem, 7vh, 5.5rem) 0;
+  background-color: var(--bg-color, #141414);
+  overflow-x: clip;
+  overflow-y: visible;
+  box-sizing: border-box;
+  scroll-margin-top: 80px;
+}
+
+/* Subtle Centered Ambient Neon-Lime Studio Glow */
+.mp-partners-bg-glow {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 900px;
+  height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(148, 224, 0, 0.085) 0%,
+    rgba(148, 224, 0, 0.025) 48%,
+    transparent 74%
+  );
+  filter: blur(125px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.mp-partners-shell {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+  padding: clamp(0.75rem, 2vh, 1.5rem) clamp(1.25rem, 3.5vw, 2.5rem) 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ==========================================================================
+   Elevated Editorial Heading ("We are proud to work with great companies")
+   ========================================================================== */
+
+.mp-partners-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 820px;
+  margin: 0 auto clamp(3rem, 6.2vh, 4.6rem);
+  animation: mpPartnersFadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mp-partners-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.36rem 0.92rem;
+  margin-bottom: 1.25rem;
+  border-radius: 9999px;
+  background: rgba(165, 247, 0, 0.07);
+  border: 1px solid rgba(165, 247, 0, 0.24);
+  font-family: 'Chakra Petch', system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #c0ff7e;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 6px 20px rgba(0, 0, 0, 0.28);
+}
+
+.mp-partners-eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #a5f700;
+  box-shadow: 0 0 10px #a5f700;
+  animation: mpPartnersDotPulse 2.4s ease-in-out infinite;
+}
+
+.mp-partners-title {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: clamp(2.15rem, 4.4vw, 3.65rem);
+  font-weight: 800;
+  line-height: 1.14;
+  letter-spacing: -0.032em;
+  color: #ffffff;
+}
+
+.mp-partners-title-line {
+  display: block;
+}
+
+.mp-partners-title-base {
+  background: linear-gradient(180deg, #ffffff 25%, #cfd6cc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.mp-partners-title-accent-wrap {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.16em;
+}
+
+.mp-partners-title-accent {
+  text-transform: uppercase;
+  letter-spacing: 0.015em;
+  background: linear-gradient(
+    90deg,
+    #e8ff7a 0%,
+    #a5f700 32%,
+    #d8ff3e 62%,
+    #78b700 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 26px rgba(165, 247, 0, 0.32));
+  animation: mpPartnersShimmer 6s ease-in-out infinite;
+}
+
+.mp-partners-accent-underline {
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  bottom: 0.02em;
+  width: 104%;
+  height: 0.24em;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(0 0 8px rgba(165, 247, 0, 0.55));
+}
+
+.mp-partners-accent-underline path {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  animation: mpPartnersDrawLine 1s cubic-bezier(0.22, 1, 0.36, 1) 0.28s forwards;
+}
+
+.mp-partners-subtitle {
+  margin: 0.95rem 0 0;
+  max-width: 560px;
+  font-size: clamp(0.9rem, 1.15vw, 1rem);
+  line-height: 1.6;
+  color: rgba(209, 213, 219, 0.72);
+  text-wrap: balance;
+}
+
+.mp-partners-header-rule {
+  margin-top: 1.65rem;
+  width: 96px;
+  height: 2px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(165, 247, 0, 0.75) 50%,
+    transparent 100%
+  );
+  box-shadow: 0 0 14px rgba(165, 247, 0, 0.4);
+}
+
+@keyframes mpPartnersDotPulse {
+  0%, 100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.32);
+  }
+}
+
+@keyframes mpPartnersShimmer {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes mpPartnersDrawLine {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ==========================================================================
+   Strict 5-Column Clean Monochrome Logo Wall
+   ========================================================================== */
+
+.mp-partners-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  column-gap: clamp(1.25rem, 3vw, 2.75rem);
+  row-gap: clamp(2.25rem, 5vh, 3.6rem);
+  align-items: center;
+  justify-items: center;
+}
+
+.mp-partner-cell {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: mpPartnersFadeUp 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mp-partner-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 76px;
+  padding: 0.65rem 0.5rem;
+  border-radius: 14px;
+  color: rgba(243, 244, 246, 0.82);
+  text-decoration: none;
+  box-sizing: border-box;
+  transition:
+    color 0.25s ease,
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.28s ease;
+}
+
+.mp-partner-item.is-link {
+  cursor: pointer;
+}
+
+.mp-partner-item:hover {
+  color: #ffffff;
+  transform: translateY(-3px);
+  filter: drop-shadow(0 0 18px rgba(165, 247, 0, 0.28));
+}
+
+.mp-partner-logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 54px;
+}
+
+.mp-partner-svg {
+  width: 100%;
+  max-width: 148px;
+  height: auto;
+  max-height: 44px;
+  display: block;
+}
+
+.mp-partner-svg.is-tall {
+  max-height: 56px;
+}
+
+.mp-partner-img {
+  max-width: 144px;
+  max-height: 46px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  filter: brightness(0) invert(1);
+  opacity: 0.84;
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.mp-partner-img.is-color {
+  filter: none;
+  opacity: 0.9;
+}
+
+.mp-partner-item:hover .mp-partner-img {
+  opacity: 1;
+}
+
+/* Subtle Hover-Only Category Caption (Keeps Wall Clean at Rest) */
+.mp-partner-caption {
+  position: absolute;
+  bottom: -0.6rem;
+  left: 50%;
+  transform: translate(-50%, 4px);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #c0ff7e;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.mp-partner-item:hover .mp-partner-caption {
+  opacity: 0.9;
+  transform: translate(-50%, 0);
+}
+
+/* ==========================================================================
+   Subtle Bottom Partner CTA
+   ========================================================================== */
+
+.mp-partners-footer {
+  margin-top: clamp(3.25rem, 6.5vh, 4.75rem);
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.65rem 1.25rem;
+  animation: mpPartnersFadeUp 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+}
+
+.mp-partners-footer-text {
+  font-size: 0.92rem;
+  color: rgba(160, 168, 160, 0.86);
+}
+
+.mp-partners-cta-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.05rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(165, 247, 0, 0.45);
+  background: rgba(165, 247, 0, 0.1);
+  color: #c0ff7e;
+  font-size: 0.84rem;
+  font-weight: 650;
+  text-decoration: none;
+  transition: all 0.22s ease;
+}
+
+.mp-partners-cta-link:hover {
+  background: #a5f700;
+  border-color: #a5f700;
+  color: #0b1100;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(165, 247, 0, 0.3);
+}
+
+@keyframes mpPartnersFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   Responsive Grid Breakpoints (5 -> 4 -> 3 -> 2 Columns)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .mp-partners-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .mp-partners-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 2rem;
+  }
+
+  .mp-partner-svg {
+    max-width: 128px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mp-partners-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1.15rem;
+    row-gap: 1.75rem;
+  }
+
+  .mp-partner-item {
+    min-height: 64px;
+  }
+
+  .mp-partner-caption {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mp-partners-header,
+  .mp-partner-cell,
+  .mp-partners-footer,
+  .mp-partners-eyebrow-dot,
+  .mp-partners-title-accent {
+    animation: none !important;
+  }
+
+  .mp-partners-accent-underline path {
+    animation: none !important;
+    stroke-dashoffset: 0;
+  }
+
+  .mp-partner-item,
+  .mp-partner-caption,
+  .mp-partners-cta-link {
+    transition: none !important;
+  }
+}

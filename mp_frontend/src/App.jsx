@@ -5,7 +5,9 @@ import About from './pages/about/about'
 import Team from './pages/team/team'
 import MpServices from './pages/mp_services/mpServices'
 import PubPulsePage from './pages/pubPulsePage/pubPulsePage'
+import MpWorks from './pages/mp_works/mpWorks'
 import MpTestimonials from './pages/mp_testimonials/mpTestimonials'
+import MpPartners from './pages/mp_partners/mpPartners'
 import Contact from './pages/contact/contact'
 import MongoStatus from './components/MongoStatus/MongoStatus'
 import AdminLogin from './admin/adminlogin/adminLogin'
@@ -20,7 +22,9 @@ function App() {
     if (hash === '#team') return 'team';
     if (hash === '#services') return 'services';
     if (hash === '#pubpulse') return 'pubpulse';
+    if (hash === '#works') return 'works';
     if (hash === '#testimonials') return 'testimonials';
+    if (hash === '#partners') return 'partners';
     if (hash === '#contact') return 'contact';
     return 'site';
   });
@@ -50,8 +54,14 @@ function App() {
       } else if (hash === '#pubpulse') {
         setCurrentView('pubpulse');
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      } else if (hash === '#works') {
+        setCurrentView('works');
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       } else if (hash === '#testimonials') {
         setCurrentView('testimonials');
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      } else if (hash === '#partners') {
+        setCurrentView('partners');
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       } else if (hash === '#contact') {
         setCurrentView('contact');
@@ -70,7 +80,9 @@ function App() {
       window.location.hash === '#team' ||
       window.location.hash === '#services' ||
       window.location.hash === '#pubpulse' ||
+      window.location.hash === '#works' ||
       window.location.hash === '#testimonials' ||
+      window.location.hash === '#partners' ||
       window.location.hash === '#contact'
     ) {
       window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
@@ -108,8 +120,12 @@ function App() {
       document.title = 'Services & Focus | Motion Pub';
     } else if (currentView === 'pubpulse') {
       document.title = 'PubPulse | Motion Pub';
+    } else if (currentView === 'works') {
+      document.title = 'Our Works | Motion Pub';
     } else if (currentView === 'testimonials') {
       document.title = 'Testimonials | Motion Pub';
+    } else if (currentView === 'partners') {
+      document.title = 'Partners | Motion Pub';
     } else if (currentView === 'contact') {
       document.title = 'Contact Us | Motion Pub';
     } else {
@@ -202,9 +218,15 @@ function App() {
         ) : currentView === 'pubpulse' ? (
           /* Standalone PubPulse Page */
           <PubPulsePage />
+        ) : currentView === 'works' ? (
+          /* Standalone Our Works Portfolio Page */
+          <MpWorks />
         ) : currentView === 'testimonials' ? (
           /* Standalone Testimonials Page */
           <MpTestimonials />
+        ) : currentView === 'partners' ? (
+          /* Standalone Partners Showcase Page */
+          <MpPartners />
         ) : currentView === 'contact' ? (
           /* Standalone Contact Page (Fits screen) */
           <Contact />

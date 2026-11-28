@@ -52,8 +52,16 @@ export default function Navbar({ currentView = 'site' }) {
         setActiveLink('Services')
         return
       }
+      if (hash === '#works') {
+        setActiveLink('Our Works')
+        return
+      }
       if (hash === '#testimonials') {
         setActiveLink('Testimonials')
+        return
+      }
+      if (hash === '#partners') {
+        setActiveLink('Partners')
         return
       }
       if (hash === '#contact') {
@@ -125,8 +133,12 @@ export default function Navbar({ currentView = 'site' }) {
         setActiveLink('Team')
       } else if (hash === '#services' || hash === '#pubpulse') {
         setActiveLink('Services')
+      } else if (hash === '#works') {
+        setActiveLink('Our Works')
       } else if (hash === '#testimonials') {
         setActiveLink('Testimonials')
+      } else if (hash === '#partners') {
+        setActiveLink('Partners')
       } else if (hash === '#contact') {
         setActiveLink('Contact Us')
       } else {
@@ -173,8 +185,14 @@ export default function Navbar({ currentView = 'site' }) {
         showBackButton: true,
       }
     }
+    if (currentView === 'works') {
+      return { items: [{ label: 'Our Works', current: true }], showBackButton: false }
+    }
     if (currentView === 'testimonials') {
       return { items: [{ label: 'Testimonials', current: true }], showBackButton: false }
+    }
+    if (currentView === 'partners') {
+      return { items: [{ label: 'Partners', current: true }], showBackButton: false }
     }
     if (currentView === 'contact') {
       return { items: [{ label: 'Contact Us', current: true }], showBackButton: false }
@@ -242,7 +260,11 @@ export default function Navbar({ currentView = 'site' }) {
       )}
 
       {/* Mobile Drawer Navigation */}
-      <div className={`mp-mobile-drawer ${isMobileMenuOpen ? 'open' : ''}`}>
+      <div
+        className={`mp-mobile-drawer ${isMobileMenuOpen ? 'open' : ''}`}
+        aria-hidden={!isMobileMenuOpen}
+        inert={!isMobileMenuOpen ? '' : undefined}
+      >
         <ul className="mp-mobile-links">
           {navLinks.map((link) => (
             <li key={link.name}>
