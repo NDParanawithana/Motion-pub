@@ -54,28 +54,6 @@ export default function PubPulsePage() {
           <div className="mp-pubpulse-hero-orb" />
         </div>
 
-        {/* Top-Left Back to Services Navigation */}
-        <div className="mp-pubpulse-top-nav">
-          <div className="mp-pubpulse-top-nav-inner">
-            <a href="#services" className="mp-pubpulse-back-btn">
-              <svg
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-              <span>Back to Services</span>
-            </a>
-          </div>
-        </div>
-
         {/* Left-Aligned PubPulse Hero Editorial Content */}
         <div className="mp-pubpulse-hero-inner">
           <div className="mp-pubpulse-hero-editorial">
@@ -93,7 +71,18 @@ export default function PubPulsePage() {
             </p>
 
             <div className="mp-pubpulse-hero-actions">
-              <a href="#contact" className="mp-pubpulse-cta-btn">
+              <a
+                href="#contact"
+                className="mp-pubpulse-cta-btn"
+                onClick={() => {
+                  try {
+                    sessionStorage.setItem('mp_preselected_service', 'PubPulse')
+                    sessionStorage.setItem('mp_open_booking_modal', 'true')
+                  } catch {
+                    // ignore storage errors
+                  }
+                }}
+              >
                 <span>Start a PubPulse Project</span>
                 <svg
                   width="16"
@@ -102,24 +91,6 @@ export default function PubPulsePage() {
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <line x1="7" y1="17" x2="17" y2="7" />
-                  <polyline points="7 7 17 7 17 17" />
-                </svg>
-              </a>
-
-              <a href="#works" className="mp-pubpulse-ghost-btn">
-                <span>Explore Our Work</span>
-                <svg
-                  width="15"
-                  height="15"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   aria-hidden="true"

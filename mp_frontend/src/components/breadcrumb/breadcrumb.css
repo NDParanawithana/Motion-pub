@@ -1,0 +1,453 @@
+/* ==========================================================================
+   Motion Pub - Reusable Breadcrumb Component
+   Variants: glass (default), minimal, inline | Dark Neon-Lime Aesthetic
+   ========================================================================== */
+
+.mp-breadcrumb {
+  display: flex;
+  align-items: center;
+  max-width: 100%;
+  font-family: var(--font-family, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  animation: mpBreadcrumbFadeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mp-breadcrumb--align-left {
+  justify-content: flex-start;
+}
+
+.mp-breadcrumb--align-center {
+  justify-content: center;
+}
+
+.mp-breadcrumb--align-right {
+  justify-content: flex-end;
+}
+
+/* Optional Sticky Wrapper (matches PageHeader sticky band beneath navbar) */
+.mp-breadcrumb-sticky {
+  position: sticky;
+  top: 68px;
+  left: 0;
+  z-index: 94;
+  width: 100%;
+  pointer-events: none;
+  padding-top: 18px;
+  padding-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.mp-breadcrumb-sticky-inner {
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 2.5vw, 2rem);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.mp-breadcrumb-sticky--left {
+  justify-content: flex-start;
+}
+
+.mp-breadcrumb-sticky--center {
+  justify-content: center;
+}
+
+.mp-breadcrumb-sticky--right {
+  justify-content: flex-end;
+}
+
+/* Interactive Surface Container */
+.mp-breadcrumb-surface {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* ---- Variant: Glass (Default for Public Pages & Video Hero Overlays) ---- */
+.mp-breadcrumb--glass .mp-breadcrumb-surface {
+  gap: 0.25rem;
+  padding: 0.36rem 0.78rem;
+  border-radius: 9999px;
+  background: rgba(16, 20, 14, 0.56);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 8px 24px rgba(0, 0, 0, 0.34);
+  transition: border-color 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.mp-breadcrumb--glass .mp-breadcrumb-surface:hover {
+  border-color: rgba(165, 247, 0, 0.34);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 10px 28px rgba(0, 0, 0, 0.42),
+    0 0 18px rgba(148, 224, 0, 0.08);
+}
+
+/* ---- Variant: Minimal (Subtle Borderless Trail for Landing Sections) ---- */
+.mp-breadcrumb--minimal .mp-breadcrumb-surface {
+  padding: 0.2rem 0.35rem;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* ---- Variant: Navbar (Directly Beneath the Mp Logo in Fixed Header) ---- */
+.mp-breadcrumb--navbar {
+  animation: mpBreadcrumbFadeIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mp-breadcrumb--navbar .mp-breadcrumb-surface {
+  gap: 0.18rem;
+  padding: 0;
+  margin-left: -0.35rem;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.mp-breadcrumb--navbar .mp-breadcrumb-surface:has(.mp-breadcrumb-back-btn) {
+  margin-left: 0;
+}
+
+.mp-breadcrumb--navbar .mp-breadcrumb-link {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.78rem;
+  padding: 0.16rem 0.38rem;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.85);
+}
+
+.mp-breadcrumb--navbar .mp-breadcrumb-link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.mp-breadcrumb--navbar .mp-breadcrumb-link.is-home:hover {
+  color: #c0ff7e;
+  background: rgba(148, 224, 0, 0.14);
+}
+
+.mp-breadcrumb--navbar .mp-breadcrumb-current {
+  font-size: 0.78rem;
+  padding: 0.16rem 0.38rem;
+  color: #c0ff7e;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.85), 0 0 12px rgba(148, 224, 0, 0.28);
+}
+
+.mp-breadcrumb--navbar .mp-breadcrumb-sep {
+  color: rgba(255, 255, 255, 0.36);
+}
+
+.mp-breadcrumb--navbar .mp-breadcrumb-back-btn {
+  width: 24px;
+  height: 24px;
+  margin-left: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* ---- Variant: Inline (Compact Topbar Trail for Admin Dashboard) ---- */
+.mp-breadcrumb--inline {
+  animation: none;
+}
+
+.mp-breadcrumb--inline .mp-breadcrumb-surface {
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* Quick Back Button (Optional) */
+.mp-breadcrumb-back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin-left: -0.2rem;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.06);
+  color: #e5e7eb;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.mp-breadcrumb-back-btn:hover {
+  background: rgba(165, 247, 0, 0.18);
+  border-color: rgba(165, 247, 0, 0.45);
+  color: #c0ff7e;
+  transform: translateX(-1px);
+}
+
+.mp-breadcrumb-back-btn:focus-visible {
+  outline: 2px solid #a5f700;
+  outline-offset: 2px;
+}
+
+.mp-breadcrumb-divider {
+  width: 1px;
+  height: 14px;
+  margin: 0 0.28rem;
+  background: rgba(255, 255, 255, 0.16);
+  flex-shrink: 0;
+}
+
+/* Ordered List */
+.mp-breadcrumb-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0.18rem;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.mp-breadcrumb-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.18rem;
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+.mp-breadcrumb-item:first-child,
+.mp-breadcrumb-item:last-child {
+  flex-shrink: 0;
+}
+
+/* Links & Buttons */
+.mp-breadcrumb-link,
+.mp-breadcrumb-static,
+.mp-breadcrumb-current {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.36rem;
+  font-size: 0.8rem;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  min-width: 0;
+  border-radius: 9999px;
+}
+
+.mp-breadcrumb-link {
+  color: rgba(229, 231, 235, 0.78);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.2rem 0.45rem;
+  transition: color 0.18s ease, background-color 0.18s ease;
+}
+
+.mp-breadcrumb-btn-link {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.mp-breadcrumb-link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.mp-breadcrumb-link:focus-visible {
+  outline: 2px solid #a5f700;
+  outline-offset: 2px;
+  color: #ffffff;
+}
+
+.mp-breadcrumb-link.is-home:hover {
+  color: #c0ff7e;
+  background: rgba(148, 224, 0, 0.12);
+}
+
+.mp-breadcrumb-static {
+  color: rgba(156, 163, 175, 0.85);
+  font-weight: 500;
+  padding: 0.2rem 0.35rem;
+}
+
+/* Current Active Crumb */
+.mp-breadcrumb-current {
+  color: #c0ff7e;
+  font-weight: 650;
+  padding: 0.2rem 0.48rem;
+  cursor: default;
+}
+
+.mp-breadcrumb-current-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #a5f700;
+  box-shadow: 0 0 8px rgba(165, 247, 0, 0.85);
+  flex-shrink: 0;
+}
+
+/* Inline Variant Overrides (Admin Dashboard Topbar) */
+.mp-breadcrumb--inline .mp-breadcrumb-link,
+.mp-breadcrumb--inline .mp-breadcrumb-static,
+.mp-breadcrumb--inline .mp-breadcrumb-current {
+  font-size: 0.82rem;
+  border-radius: 6px;
+  padding: 0.18rem 0.36rem;
+}
+
+.mp-breadcrumb--inline .mp-breadcrumb-link {
+  color: #9ca3af;
+}
+
+.mp-breadcrumb--inline .mp-breadcrumb-link:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mp-breadcrumb--inline .mp-breadcrumb-current {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.mp-breadcrumb--inline .mp-breadcrumb-sep {
+  color: rgba(156, 163, 175, 0.55);
+}
+
+/* Icons & Labels */
+.mp-breadcrumb-home-icon,
+.mp-breadcrumb-item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.mp-breadcrumb-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Separators */
+.mp-breadcrumb-sep {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.3);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.mp-breadcrumb-sep-chevron {
+  display: block;
+}
+
+.mp-breadcrumb-sep-text {
+  font-size: 0.78rem;
+  line-height: 1;
+  padding: 0 0.12rem;
+}
+
+.mp-breadcrumb-sep-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  margin: 0 0.25rem;
+}
+
+/* Expandable Ellipsis Button */
+.mp-breadcrumb-ellipsis-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.14rem 0.45rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(229, 231, 235, 0.85);
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.mp-breadcrumb-ellipsis-btn:hover {
+  background: rgba(165, 247, 0, 0.15);
+  border-color: rgba(165, 247, 0, 0.45);
+  color: #c0ff7e;
+}
+
+@keyframes mpBreadcrumbFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .mp-breadcrumb-sticky {
+    top: 60px;
+    padding-top: 14px;
+    padding-bottom: 8px;
+  }
+
+  .mp-breadcrumb-sticky-inner {
+    padding: 0 1rem;
+  }
+
+  .mp-breadcrumb--glass .mp-breadcrumb-surface {
+    padding: 0.3rem 0.62rem;
+  }
+
+  .mp-breadcrumb-link,
+  .mp-breadcrumb-static,
+  .mp-breadcrumb-current {
+    font-size: 0.74rem;
+    padding: 0.16rem 0.34rem;
+  }
+
+  .mp-breadcrumb-label {
+    max-width: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mp-breadcrumb-label {
+    max-width: 108px;
+  }
+
+  .mp-breadcrumb-current-dot {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mp-breadcrumb {
+    animation: none !important;
+  }
+
+  .mp-breadcrumb-surface,
+  .mp-breadcrumb-link,
+  .mp-breadcrumb-back-btn,
+  .mp-breadcrumb-ellipsis-btn {
+    transition: none !important;
+  }
+}

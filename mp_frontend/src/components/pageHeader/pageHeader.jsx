@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useLayoutEffect, useId } from 'react';
+import Breadcrumb from '../breadcrumb/breadcrumb';
 import './pageheader.css';
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
@@ -255,6 +256,7 @@ export default function PageHeader({
   expandOnScrollUp = true,
   expandOnHover = true,
   showDot = true,
+  breadcrumb = null,
   className = '',
   style = {},
   contentStyle = {},
@@ -652,11 +654,26 @@ export default function PageHeader({
     );
   }
 
+  const renderedBreadcrumb = React.isValidElement(breadcrumb)
+    ? breadcrumb
+    : breadcrumb === true
+    ? <Breadcrumb align="right" />
+    : Array.isArray(breadcrumb)
+    ? <Breadcrumb items={breadcrumb} align="right" />
+    : breadcrumb && typeof breadcrumb === 'object'
+    ? <Breadcrumb align="right" {...breadcrumb} />
+    : null;
+
   if (sticky) {
     return (
       <div className="mp-pageheader-sticky" key={animateKey} style={resolvedTopPaddingStyle}>
         <div className="mp-pageheader-sticky-inner">
           {badgeContent}
+          {renderedBreadcrumb && (
+            <div className="mp-pageheader-right-slot">
+              {renderedBreadcrumb}
+            </div>
+          )}
         </div>
       </div>
     );
@@ -665,6 +682,11 @@ export default function PageHeader({
   return (
     <div key={animateKey} className="mp-pageheader-static-wrap">
       {badgeContent}
+      {renderedBreadcrumb && (
+        <div className="mp-pageheader-right-slot">
+          {renderedBreadcrumb}
+        </div>
+      )}
     </div>
   );
 }

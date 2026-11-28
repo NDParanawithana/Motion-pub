@@ -6,7 +6,7 @@
 .mp-pageheader-sticky,
 .mp-sticky-page-header {
   position: sticky;
-  top: 68px; /* Sticks right beneath the 68px sticky navbar */
+  top: var(--mp-header-offset, 68px); /* Sticks right beneath the sticky navbar + breadcrumb bar */
   left: 0;
   z-index: 95;
   width: 100%;
@@ -27,7 +27,18 @@
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.mp-pageheader-right-slot {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
+  max-width: 100%;
+  min-width: 0;
 }
 
 /* Static wrapper when sticky is false */
@@ -311,7 +322,7 @@
 @media (max-width: 768px) {
   .mp-pageheader-sticky,
   .mp-sticky-page-header {
-    top: 60px; /* Mobile navbar height */
+    top: var(--mp-header-offset-mobile, 60px); /* Mobile navbar + breadcrumb height */
     padding-top: var(--pageheader-top-padding-mobile, 14px);
     padding-bottom: 8px;
     padding-left: 0;

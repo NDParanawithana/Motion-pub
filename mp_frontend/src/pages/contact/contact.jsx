@@ -3,6 +3,7 @@ import PageHeader from '../../components/pageHeader/pageHeader';
 import './contact.css';
 import { detectPlatform, PLATFORM_META, renderSocialIcon } from '../../utils/socialIcons';
 import MpCalender from '../../components/mpCalender/mpCalender';
+import { getServicesCatalog } from '../mp_services/mpServices';
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -80,12 +81,6 @@ const DEFAULT_CONTACT_SETTINGS = {
     customSocials: [],
 };
 
-const DEFAULT_SERVICE_OPTIONS = [
-    { _id: '1', name: 'Edit Video' },
-    { _id: '2', name: 'Video Production' },
-    { _id: '3', name: 'Reel' },
-];
-
 const ONLINE_MEETING_METHODS = [
     {
         id: 'google_meet',
@@ -140,7 +135,7 @@ const ONLINE_MEETING_METHODS = [
 ];
 
 export default function Contact() {
-    const [serviceOptions, setServiceOptions] = useState(DEFAULT_SERVICE_OPTIONS);
+    const [serviceOptions, setServiceOptions] = useState(() => getServicesCatalog());
     const [isServiceDropdownOpen, setIsServiceDropdownOpen] = useState(false);
     const serviceDropdownRef = useRef(null);
 
@@ -149,6 +144,7 @@ export default function Contact() {
         lastName: '',
         email: '',
         phone: '',
+        selectedService: '',
         serviceType: '',
         meetingMethod: 'Google Meet',
         message: '',
@@ -196,35 +192,85 @@ export default function Contact() {
         }
     };
 
-    // Fetch dynamic service options from backend (with live updates listener)
+    // Apply preselected service & auto-open booking modal when arriving from Services / PubPulse inquiry buttons
+    useEffect(() => {
+        let cleanupTimer;
+        try {
+            const preselected = sessionStorage.getItem('mp_preselected_service');
+            const shouldOpenModal = sessionStorage.getItem('mp_open_booking_modal') === 'true';
+
+            if (preselected) {
+                setFormData((prev) => ({ ...prev, selectedService: preselected }));
+            }
+            if (shouldOpenModal) {
+                setStatus({ state: 'idle', message: '' });
+                setActiveBookingSection('datetime');
+                setIsBookingModalOpen(true);
+            }
+
+            if (preselected || shouldOpenModal) {
+                cleanupTimer = setTimeout(() => {
+                    try {
+                        sessionStorage.removeItem('mp_preselected_service');
+                        sessionStorage.removeItem('mp_open_booking_modal');
+                    } catch {
+                        // ignore storage errors
+                    }
+                }, 0);
+            }
+        } catch {
+            // ignore storage errors
+        }
+
+        return () => {
+            if (cleanupTimer) clearTimeout(cleanupTimer);
+        };
+    }, []);
+
+    // Sync services catalog from Services page (+ PubPulse) and live backend/storage updates
     useEffect(() => {
         let isMounted = true;
-        const fetchServices = async () => {
+        const loadCatalog = async () => {
+            if (isMounted) {
+                setServiceOptions(getServicesCatalog());
+            }
             try {
-                const res = await fetch('/api/contact/services');
+                const res = await fetch('/api/content/services');
                 if (res.ok) {
                     const json = await res.json();
-                    if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-                        if (isMounted) {
-                            setServiceOptions(json.data);
-                        }
+                    if (isMounted && json.success && Array.isArray(json.data) && json.data.length > 0) {
+                        setServiceOptions(getServicesCatalog(json.data));
                     }
                 }
-            } catch (err) {
-                console.warn('Could not load service options from backend, using defaults:', err.message);
+            } catch {
+                // Keep Services page catalog + PubPulse
             }
         };
 
-        fetchServices();
+        loadCatalog();
 
-        const handleServiceUpdate = () => {
-            fetchServices();
+        const handleServiceUpdate = (e) => {
+            if (Array.isArray(e?.detail?.services)) {
+                setServiceOptions(getServicesCatalog(e.detail.services));
+            } else {
+                loadCatalog();
+            }
         };
+        const handleStorage = (e) => {
+            if (e.key === 'mp_services') {
+                setServiceOptions(getServicesCatalog());
+            }
+        };
+
         window.addEventListener('mp_services_updated', handleServiceUpdate);
+        window.addEventListener('mp-services-updated', handleServiceUpdate);
+        window.addEventListener('storage', handleStorage);
 
         return () => {
             isMounted = false;
             window.removeEventListener('mp_services_updated', handleServiceUpdate);
+            window.removeEventListener('mp-services-updated', handleServiceUpdate);
+            window.removeEventListener('storage', handleStorage);
         };
     }, []);
 
@@ -363,6 +409,15 @@ export default function Contact() {
             return;
         }
 
+        if (!formData.selectedService || !formData.selectedService.trim()) {
+            setStatus({
+                state: 'error',
+                message: 'Please select a service for your project.',
+            });
+            handleSectionChange('details');
+            return;
+        }
+
         if (!formData.serviceType || !formData.serviceType.trim()) {
             setStatus({
                 state: 'error',
@@ -408,15 +463,23 @@ export default function Contact() {
 
         // 1. Appointment Booking Mode
         if (activeMode === 'appointment') {
+            const chosenService = formData.selectedService.trim();
+            const briefText = formData.serviceType.trim();
+            const extraNotes = formData.message.trim();
+            const combinedNotes = extraNotes
+                ? `Project Brief: ${briefText}\nNotes: ${extraNotes}`
+                : `Project Brief: ${briefText}`;
+
             const apptPayload = {
                 clientName: fullName,
                 clientEmail: trimmedEmail,
                 clientPhone: formattedPhone,
-                serviceType: formData.serviceType.trim(),
+                serviceType: chosenService,
+                projectBrief: briefText,
                 meetingMethod: formData.meetingMethod || 'Google Meet',
                 date: selectedMeetingDate,
                 timeSlot: selectedMeetingTime,
-                notes: formData.message.trim(),
+                notes: combinedNotes,
                 source: 'client',
                 status: 'pending',
             };
@@ -463,8 +526,8 @@ export default function Contact() {
                         lastName: formData.lastName.trim(),
                         email: trimmedEmail,
                         phone: formattedPhone,
-                        serviceType: formData.serviceType.trim(),
-                        message: `[Scheduled Online Meeting: ${selectedMeetingDate} at ${selectedMeetingTime} via ${formData.meetingMethod || 'Google Meet'}] ${formData.message.trim()}`.trim(),
+                        serviceType: chosenService,
+                        message: `[Scheduled Online Meeting: ${selectedMeetingDate} at ${selectedMeetingTime} via ${formData.meetingMethod || 'Google Meet'}] ${combinedNotes}`.trim(),
                     }),
                 }).catch(() => { });
 
@@ -483,7 +546,7 @@ export default function Contact() {
                     name: fullName,
                     date: selectedMeetingDate,
                     time: selectedMeetingTime,
-                    service: formData.serviceType.trim(),
+                    service: chosenService,
                     method: formData.meetingMethod || 'Google Meet',
                 });
 
@@ -504,6 +567,7 @@ export default function Contact() {
                     lastName: '',
                     email: '',
                     phone: '',
+                    selectedService: '',
                     serviceType: '',
                     meetingMethod: 'Google Meet',
                     message: '',
@@ -526,7 +590,7 @@ export default function Contact() {
             countryCode: selectedCountry.code,
             rawPhone: phoneDigits,
             phone: formattedPhone,
-            serviceType: formData.serviceType.trim(),
+            serviceType: formData.selectedService.trim() || formData.serviceType.trim(),
             message: formData.message.trim(),
         };
 
@@ -560,7 +624,9 @@ export default function Contact() {
                 lastName: '',
                 email: '',
                 phone: '',
+                selectedService: '',
                 serviceType: '',
+                meetingMethod: 'Google Meet',
                 message: '',
             });
         } catch (err) {
@@ -948,7 +1014,7 @@ export default function Contact() {
                                             </svg>
                                         </span>
                                         <span className="mp-swap-tab-label">2. Client &amp; Project Details</span>
-                                        {formData.firstName && formData.email && formData.phone && formData.serviceType && (
+                                        {formData.firstName && formData.email && formData.phone && formData.selectedService && formData.serviceType && (
                                             <span className="mp-swap-tab-dot" title="Details entered" />
                                         )}
                                     </button>
@@ -1129,8 +1195,8 @@ export default function Contact() {
                                                 </svg>
                                                 Step 2: Client &amp; Project Details
                                             </span>
-                                            <span className={`mp-cal-section-badge ${formData.firstName && formData.email && formData.phone && formData.serviceType ? 'active' : ''}`}>
-                                                {formData.firstName && formData.email && formData.phone && formData.serviceType ? 'Details Added ✓' : 'Required'}
+                                            <span className={`mp-cal-section-badge ${formData.firstName && formData.email && formData.phone && formData.selectedService && formData.serviceType ? 'active' : ''}`}>
+                                                {formData.firstName && formData.email && formData.phone && formData.selectedService && formData.serviceType ? 'Details Added ✓' : 'Required'}
                                             </span>
                                         </div>
 
@@ -1306,7 +1372,151 @@ export default function Contact() {
                                             </div>
                                         </div>
 
-                                        {/* Row 4: Project Brief Field */}
+                                        {/* Row 4: Service Selection Dropdown (Fetched from Services Page + PubPulse) */}
+                                        <div className="mp-form-group">
+                                            <label htmlFor="modal_selectedService" className="mp-form-label">
+                                                Service*
+                                            </label>
+                                            <div className="mp-service-select-wrap" ref={serviceDropdownRef}>
+                                                {(() => {
+                                                    const selectedSvc = serviceOptions.find(
+                                                        (opt) => opt.name === formData.selectedService
+                                                    );
+                                                    return (
+                                                        <button
+                                                            type="button"
+                                                            id="modal_selectedService"
+                                                            className={`mp-service-select-btn ${isServiceDropdownOpen ? 'active' : ''}`}
+                                                            onClick={() => setIsServiceDropdownOpen((prev) => !prev)}
+                                                            aria-haspopup="listbox"
+                                                            aria-expanded={isServiceDropdownOpen}
+                                                        >
+                                                            <span className="mp-service-select-val">
+                                                                {selectedSvc?.icon ? (
+                                                                    <img
+                                                                        src={selectedSvc.icon}
+                                                                        alt=""
+                                                                        className="mp-service-thumb-icon"
+                                                                        aria-hidden="true"
+                                                                    />
+                                                                ) : (
+                                                                    <svg
+                                                                        width="16"
+                                                                        height="16"
+                                                                        viewBox="0 0 24 24"
+                                                                        fill="none"
+                                                                        stroke="currentColor"
+                                                                        strokeWidth="2.1"
+                                                                        strokeLinecap="round"
+                                                                        strokeLinejoin="round"
+                                                                        className="mp-service-icon"
+                                                                        aria-hidden="true"
+                                                                    >
+                                                                        <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                                                                        <polyline points="2 17 12 22 22 17" />
+                                                                        <polyline points="2 12 12 17 22 12" />
+                                                                    </svg>
+                                                                )}
+                                                                <span
+                                                                    className={
+                                                                        formData.selectedService
+                                                                            ? 'mp-service-name-text'
+                                                                            : 'mp-service-placeholder'
+                                                                    }
+                                                                >
+                                                                    {formData.selectedService || 'Select a service...'}
+                                                                </span>
+                                                            </span>
+                                                            <svg
+                                                                width="15"
+                                                                height="15"
+                                                                viewBox="0 0 24 24"
+                                                                fill="none"
+                                                                stroke="currentColor"
+                                                                strokeWidth="2.4"
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                className={`mp-service-chevron ${isServiceDropdownOpen ? 'open' : ''}`}
+                                                                aria-hidden="true"
+                                                            >
+                                                                <path d="m6 9 6 6 6-6" />
+                                                            </svg>
+                                                        </button>
+                                                    );
+                                                })()}
+
+                                                {isServiceDropdownOpen && (
+                                                    <ul
+                                                        className="mp-service-dropdown-list"
+                                                        role="listbox"
+                                                        aria-label="Available Motion Pub Services"
+                                                    >
+                                                        {serviceOptions.map((option) => {
+                                                            const isSelected = formData.selectedService === option.name;
+                                                            return (
+                                                                <li
+                                                                    key={option.id || option._id || option.name}
+                                                                    role="option"
+                                                                    aria-selected={isSelected}
+                                                                    className={`mp-service-option ${isSelected ? 'selected' : ''} ${option.isPubPulse ? 'is-pubpulse' : ''}`}
+                                                                    onClick={() => {
+                                                                        setFormData((prev) => ({
+                                                                            ...prev,
+                                                                            selectedService: option.name,
+                                                                        }));
+                                                                        setIsServiceDropdownOpen(false);
+                                                                        if (status.state === 'error') {
+                                                                            setStatus({ state: 'idle', message: '' });
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    <div className="mp-service-option-left">
+                                                                        {option.icon ? (
+                                                                            <img
+                                                                                src={option.icon}
+                                                                                alt=""
+                                                                                className="mp-service-thumb-icon"
+                                                                                aria-hidden="true"
+                                                                            />
+                                                                        ) : (
+                                                                            <span className="mp-service-option-dot" aria-hidden="true" />
+                                                                        )}
+                                                                        <div className="mp-service-option-copy">
+                                                                            <span className="mp-service-option-name">
+                                                                                {option.name}
+                                                                            </span>
+                                                                            {option.subtitle && (
+                                                                                <span className="mp-service-option-sub">
+                                                                                    {option.subtitle}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                    {isSelected && (
+                                                                        <svg
+                                                                            width="16"
+                                                                            height="16"
+                                                                            viewBox="0 0 24 24"
+                                                                            fill="none"
+                                                                            stroke="currentColor"
+                                                                            strokeWidth="2.6"
+                                                                            strokeLinecap="round"
+                                                                            strokeLinejoin="round"
+                                                                            className="mp-service-check-icon"
+                                                                            aria-hidden="true"
+                                                                        >
+                                                                            <polyline points="20 6 9 17 4 12" />
+                                                                        </svg>
+                                                                    )}
+                                                                </li>
+                                                            );
+                                                        })}
+                                                    </ul>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Row 5: Project Brief Field */}
                                         <div className="mp-form-group">
                                             <label htmlFor="modal_serviceType" className="mp-form-label">
                                                 Project Brief*

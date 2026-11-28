@@ -58,6 +58,9 @@ function App() {
         window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       } else {
         setCurrentView('site');
+        if (!hash || hash === '#' || hash === '#home' || hash === '#site') {
+          window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        }
       }
     };
 
@@ -176,7 +179,7 @@ function App() {
   }
 
   return (
-    <div className="landing-page">
+    <div className={`landing-page ${currentView !== 'site' ? 'has-breadcrumb' : ''}`}>
       {/* Admin Login Modal (Triggered by Ctrl+Q or bottom-right badge) */}
       <AdminLogin onEnterDashboard={handleEnterDashboard} adminUser={adminUser} />
 
@@ -184,7 +187,7 @@ function App() {
       <MongoStatus />
 
       {/* Navigation Bar */}
-      <Navbar />
+      <Navbar currentView={currentView} />
 
       <main className="main-content">
         {currentView === 'about' ? (

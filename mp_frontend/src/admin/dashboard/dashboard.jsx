@@ -6,6 +6,7 @@ import MpTestimonialsEdit from './mp_testimonials/mpTestimonialsEdit';
 import ContactEdit from './contact/contactEdit';
 import MpCalenderAdmin from './contact/mpCalenderAdmin/mpCalenderAdmin';
 import AppointmentsDrawer from './appointments/appointmentsDrawer';
+import Breadcrumb from '../../components/breadcrumb/breadcrumb';
 import './dashboard.css';
 
 export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
@@ -69,6 +70,83 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
       document.title = 'Motion Pub';
     };
   }, []);
+
+  // Build reusable breadcrumb items for the admin topbar
+  const adminBreadcrumbItems = (() => {
+    const root = {
+      label: 'Dashboard',
+      onClick: () => {
+        setActivePage('hero');
+        setActiveHeroSection('all');
+      },
+      title: 'Return to Hero overview',
+    };
+
+    if (activePage === 'about') {
+      return [root, { label: 'About Page', current: true }];
+    }
+    if (activePage === 'team') {
+      return [root, { label: 'Team Page', current: true }];
+    }
+    if (activePage === 'testimonials') {
+      return [root, { label: 'Testimonials Page', current: true }];
+    }
+    if (activePage === 'appointments') {
+      return [
+        root,
+        {
+          label: 'Appointments',
+          onClick: () => setActivePage('appointments'),
+          title: 'Client Appointments Calendar',
+        },
+        { label: 'Client Meetings', current: true },
+      ];
+    }
+    if (activePage === 'contact') {
+      const contactSectionLabels = {
+        channels: 'Contact Channels',
+        hours: 'Working Hours',
+        socials: 'Social Profiles',
+        services: 'Service Options',
+        calendar: 'Appointments Calendar',
+      };
+      return [
+        root,
+        {
+          label: 'Contact Page',
+          onClick: () => {
+            setActivePage('contact');
+            setActiveContactSection('all');
+          },
+          title: 'View all Contact sections',
+        },
+        {
+          label: contactSectionLabels[activeContactSection] || 'All Sections',
+          current: true,
+        },
+      ];
+    }
+
+    const heroSectionLabels = {
+      text: 'Text Section',
+      video: 'Hero Background',
+    };
+    return [
+      root,
+      {
+        label: 'Hero Page',
+        onClick: () => {
+          setActivePage('hero');
+          setActiveHeroSection('all');
+        },
+        title: 'View all Hero sections',
+      },
+      {
+        label: heroSectionLabels[activeHeroSection] || 'All Sections',
+        current: true,
+      },
+    ];
+  })();
 
   return (
     <div className="mp-dashboard-root">
@@ -469,77 +547,13 @@ export default function AdminDashboard({ onBackToSite, onLogout, adminUser }) {
       <main className="mp-dashboard-main">
         {/* Topbar */}
         <header className="mp-dashboard-topbar">
-          <div className="mp-topbar-breadcrumb">
-            <span>Dashboard</span>
-            <span>/</span>
-            {activePage === 'about' ? (
-              <span className="current">About Page</span>
-            ) : activePage === 'team' ? (
-              <span className="current">Team Page</span>
-            ) : activePage === 'testimonials' ? (
-              <span className="current">Testimonials Page</span>
-            ) : activePage === 'appointments' ? (
-              <>
-                <span
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => setActivePage('appointments')}
-                  title="Client Appointments Calendar"
-                >
-                  Appointments
-                </span>
-                <span>/</span>
-                <span className="current">Client Meetings</span>
-              </>
-            ) : activePage === 'contact' ? (
-              <>
-                <span
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    setActivePage('contact');
-                    setActiveContactSection('all');
-                  }}
-                  title="View all Contact sections"
-                >
-                  Contact Page
-                </span>
-                <span>/</span>
-                <span className="current">
-                  {activeContactSection === 'channels'
-                    ? 'Contact Channels'
-                    : activeContactSection === 'hours'
-                      ? 'Working Hours'
-                      : activeContactSection === 'socials'
-                        ? 'Social Profiles'
-                        : activeContactSection === 'services'
-                          ? 'Service Options'
-                          : activeContactSection === 'calendar'
-                            ? 'Appointments Calendar'
-                            : 'All Sections'}
-                </span>
-              </>
-            ) : (
-              <>
-                <span
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    setActivePage('hero');
-                    setActiveHeroSection('all');
-                  }}
-                  title="View all Hero sections"
-                >
-                  Hero Page
-                </span>
-                <span>/</span>
-                <span className="current">
-                  {activeHeroSection === 'text'
-                    ? 'Text Section'
-                    : activeHeroSection === 'video'
-                      ? 'Hero Background'
-                      : 'All Sections'}
-                </span>
-              </>
-            )}
-          </div>
+          <Breadcrumb
+            variant="inline"
+            showHome={false}
+            separator="slash"
+            items={adminBreadcrumbItems}
+            className="mp-topbar-breadcrumb"
+          />
 
           <div className="mp-topbar-actions">
             {/* Appointments Icon Button (Replaces Messages Section) */}

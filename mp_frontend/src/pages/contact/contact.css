@@ -10,7 +10,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  padding: 74px 0 0 0;
+  padding: var(--mp-page-top-offset, 74px) 0 0 0;
   background-color: var(--bg-color, #141414);
   border-top: 1px solid var(--surface-border, rgba(255, 255, 255, 0.08));
   overflow-x: clip;
@@ -1181,6 +1181,22 @@ a.mp-info-val:hover {
   color: #ffffff;
 }
 
+.mp-service-placeholder {
+  font-size: 0.92rem;
+  color: #64748b;
+  font-weight: 400;
+}
+
+.mp-service-thumb-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid rgba(165, 247, 0, 0.45);
+  box-shadow: 0 0 8px rgba(148, 224, 0, 0.25);
+}
+
 .mp-service-chevron {
   color: #94a3b8;
   transition: transform 0.2s ease;
@@ -1197,7 +1213,7 @@ a.mp-info-val:hover {
   top: calc(100% + 6px);
   left: 0;
   right: 0;
-  max-height: 230px;
+  max-height: 260px;
   overflow-y: auto;
   background: #181b22;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -1210,26 +1226,31 @@ a.mp-info-val:hover {
   animation: mpServiceMenuFade 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+.mp-service-dropdown-list::-webkit-scrollbar,
 .mp-service-dropdown-menu::-webkit-scrollbar {
   width: 5px;
 }
 
+.mp-service-dropdown-list::-webkit-scrollbar-button,
 .mp-service-dropdown-menu::-webkit-scrollbar-button {
   display: none !important;
 }
 
+.mp-service-dropdown-list::-webkit-scrollbar-track,
 .mp-service-dropdown-menu::-webkit-scrollbar-track {
   background: transparent;
   margin-top: 8px;
   margin-bottom: 8px;
 }
 
+.mp-service-dropdown-list::-webkit-scrollbar-thumb,
 .mp-service-dropdown-menu::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 999px;
 }
 
 @supports not selector(::-webkit-scrollbar) {
+  .mp-service-dropdown-list,
   .mp-service-dropdown-menu {
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
@@ -1251,12 +1272,47 @@ a.mp-info-val:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.68rem 0.85rem;
-  border-radius: 7px;
+  gap: 0.75rem;
+  padding: 0.65rem 0.82rem;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
   color: #cbd5e1;
   transition: all 0.15s ease;
+}
+
+.mp-service-option + .mp-service-option {
+  margin-top: 2px;
+}
+
+.mp-service-option.is-pubpulse {
+  margin-top: 5px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.72rem;
+}
+
+.mp-service-option-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.mp-service-option-dot {
+  width: 7px;
+  height: 7px;
+  margin: 0 7px;
+  border-radius: 50%;
+  background: rgba(148, 224, 0, 0.75);
+  box-shadow: 0 0 8px rgba(148, 224, 0, 0.45);
+  flex-shrink: 0;
+}
+
+.mp-service-option-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  min-width: 0;
 }
 
 .mp-service-option:hover {
@@ -1265,17 +1321,30 @@ a.mp-info-val:hover {
 }
 
 .mp-service-option.selected {
-  background: rgba(148, 224, 0, 0.24);
-  color: #94e000;
+  background: rgba(148, 224, 0, 0.22);
+  color: #a5f700;
   font-weight: 600;
 }
 
 .mp-service-option-name {
   font-size: 0.9rem;
+  line-height: 1.25;
+}
+
+.mp-service-option-sub {
+  font-size: 0.74rem;
+  font-weight: 400;
+  color: rgba(148, 163, 184, 0.88);
+  line-height: 1.2;
+}
+
+.mp-service-option.selected .mp-service-option-sub {
+  color: rgba(208, 255, 166, 0.82);
 }
 
 .mp-service-check-icon {
-  color: #94e000;
+  color: #a5f700;
+  flex-shrink: 0;
 }
 
 /* ==========================================================================

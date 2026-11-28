@@ -2,6 +2,15 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  --mp-header-offset: 68px;
+  --mp-header-offset-mobile: 60px;
+  --mp-page-top-offset: 74px;
+}
+
+.landing-page.has-breadcrumb {
+  --mp-header-offset: 106px;
+  --mp-header-offset-mobile: 96px;
+  --mp-page-top-offset: 110px;
 }
 
 .main-content {

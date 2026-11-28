@@ -4,9 +4,10 @@ import PubPulse from '../../components/pubPulse/pubPulse'
 import animatedVideoImg from '../../assets/services/animated-video-production.jpg'
 import postProductionImg from '../../assets/services/post-production-editing.jpg'
 import brandStorytellingImg from '../../assets/services/brand-storytelling.jpg'
+import pubPulseIcon from '../../assets/icons/pubpulse.jpg'
 import './mpServices.css'
 
-const SERVICES = [
+export const SERVICES = [
   {
     id: 'animated-video',
     variant: 'tone-lime',
@@ -83,6 +84,55 @@ const SERVICES = [
     ],
   },
 ]
+
+export const PUB_PULSE_SERVICE = {
+  id: 'pubpulse',
+  name: 'PubPulse',
+  subtitle: 'Creative Mobile Filmmaking · Powered by Motion Pub',
+  isPubPulse: true,
+  icon: pubPulseIcon,
+}
+
+export function getServicesCatalog(customServices = null) {
+  let source = Array.isArray(customServices) && customServices.length > 0 ? customServices : null
+
+  if (!source) {
+    try {
+      const cached = localStorage.getItem('mp_services')
+      if (cached) {
+        const parsed = JSON.parse(cached)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          source = parsed
+        }
+      }
+    } catch {
+      // ignore invalid cache
+    }
+  }
+
+  const baseServices = (source || SERVICES).map((svc, idx) => {
+    const rawName = svc.name || svc.title || `Service ${idx + 1}`
+    const cleanName = String(rawName).replace(/\n/g, ' ').replace(/\s+/g, ' ').trim()
+    const cleanSubtitle =
+      svc.subtitle ||
+      (svc.badge ? String(svc.badge).split('·')[0].trim() : '') ||
+      'Motion Pub Service'
+
+    return {
+      id: svc.id || svc._id || `service-${idx + 1}`,
+      name: cleanName,
+      subtitle: cleanSubtitle,
+      isPubPulse: Boolean(svc.isPubPulse || cleanName.toLowerCase() === 'pubpulse'),
+      icon: svc.isPubPulse || cleanName.toLowerCase() === 'pubpulse' ? pubPulseIcon : null,
+    }
+  })
+
+  const hasPubPulse = baseServices.some(
+    (s) => s.isPubPulse || s.name.toLowerCase() === 'pubpulse'
+  )
+
+  return hasPubPulse ? baseServices : [...baseServices, PUB_PULSE_SERVICE]
+}
 
 export default function MpServices() {
   const [openItems, setOpenItems] = useState({})
@@ -186,7 +236,19 @@ export default function MpServices() {
 
               {/* Bottom Glassmorphism Action Button */}
               <div className="mp-service-card-footer">
-                <a href="#contact" className="mp-service-floating-pill">
+                <a
+                  href="#contact"
+                  className="mp-service-floating-pill"
+                  onClick={() => {
+                    try {
+                      const cleanName = service.title.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim()
+                      sessionStorage.setItem('mp_preselected_service', cleanName)
+                      sessionStorage.setItem('mp_open_booking_modal', 'true')
+                    } catch {
+                      // ignore storage errors
+                    }
+                  }}
+                >
                   <span>{service.badge}</span>
                   <svg
                     width="13"

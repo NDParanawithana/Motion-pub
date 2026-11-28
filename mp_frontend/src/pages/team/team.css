@@ -10,9 +10,10 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 86px 0 clamp(2.5rem, 5vh, 4rem);
+  padding: var(--mp-page-top-offset, 86px) 0 clamp(2.5rem, 5vh, 4rem);
   background-color: var(--bg-color, #141414);
   overflow-x: clip;
+  overflow-y: visible;
   box-sizing: border-box;
   scroll-margin-top: 80px;
 }
@@ -42,8 +43,8 @@
   z-index: 1;
   width: 100%;
   max-width: 1320px;
-  margin: 0 auto;
-  padding: 0 clamp(1.25rem, 3.5vw, 3rem);
+  margin: auto;
+  padding: clamp(0.5rem, 1.5vh, 1.25rem) clamp(1.25rem, 3.5vw, 3rem) 0;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

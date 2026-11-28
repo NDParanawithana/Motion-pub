@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import mainLogo from '../../assets/icons/mainlogo.png'
+import Breadcrumb from '../breadcrumb/breadcrumb'
 import './navbar.css'
 
-export default function Navbar() {
+export default function Navbar({ currentView = 'site' }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   // No link highlighted when in Hero section (at top of page)
@@ -153,8 +154,39 @@ export default function Navbar() {
     }
   }, [])
 
+  const breadcrumbConfig = useMemo(() => {
+    if (currentView === 'about') {
+      return { items: [{ label: 'About', current: true }], showBackButton: false }
+    }
+    if (currentView === 'team') {
+      return { items: [{ label: 'Team', current: true }], showBackButton: false }
+    }
+    if (currentView === 'services') {
+      return { items: [{ label: 'Services', current: true }], showBackButton: false }
+    }
+    if (currentView === 'pubpulse') {
+      return {
+        items: [
+          { label: 'Services', href: '#services' },
+          { label: 'PubPulse', current: true },
+        ],
+        showBackButton: true,
+      }
+    }
+    if (currentView === 'testimonials') {
+      return { items: [{ label: 'Testimonials', current: true }], showBackButton: false }
+    }
+    if (currentView === 'contact') {
+      return { items: [{ label: 'Contact Us', current: true }], showBackButton: false }
+    }
+    if (currentView === 'site' && activeLink === 'Our Works') {
+      return { items: [{ label: 'Our Works', current: true }], showBackButton: false }
+    }
+    return null
+  }, [currentView, activeLink])
+
   return (
-    <header className={`mp-header ${isScrolled ? 'scrolled' : ''}`}>
+    <header className={`mp-header ${isScrolled ? 'scrolled' : ''} ${breadcrumbConfig ? 'has-breadcrumb' : ''}`}>
       <div className="mp-nav-container">
         {/* Brand Logo - Navigates to Hero (#home) and clears active nav indication */}
         <a
@@ -195,6 +227,19 @@ export default function Navbar() {
           <span className="mp-hamburger-bar"></span>
         </button>
       </div>
+
+      {/* Site-Wide Breadcrumb Bar Directly Beneath the Brand Logo */}
+      {breadcrumbConfig && (
+        <div className="mp-nav-breadcrumb-bar">
+          <div className="mp-nav-breadcrumb-inner">
+            <Breadcrumb
+              variant="navbar"
+              items={breadcrumbConfig.items}
+              showBackButton={breadcrumbConfig.showBackButton}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Mobile Drawer Navigation */}
       <div className={`mp-mobile-drawer ${isMobileMenuOpen ? 'open' : ''}`}>
